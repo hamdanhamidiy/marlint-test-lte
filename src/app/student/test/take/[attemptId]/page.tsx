@@ -258,18 +258,18 @@ export default function TestTakingPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between select-none">
       {/* 1. TOP HEADER (Responsive & Clean) */}
-      <header className="bg-white border-b border-slate-200/80 px-3 sm:px-8 py-2.5 sm:py-3.5 sticky top-0 z-30 shadow-2xs">
+      <header className="bg-white border-b border-slate-200/90 px-3 sm:px-8 py-2.5 sm:py-3.5 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          {/* Left: Test Branding (Compact on Mobile, Full on Desktop) */}
+          {/* Left: Test Branding */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-none">
             <Logo size="sm" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
             <div className="h-5 w-px bg-slate-200 hidden sm:block" />
             <div className="min-w-0">
-              <h1 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+              <h1 className="text-xs sm:text-sm font-bold text-slate-950 truncate">
                 {attempt.test_name || 'Marlint Test 1'}
               </h1>
-              <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden sm:block">
-                Soal <strong className="text-[#4F46E5] font-bold">{currentIndex + 1}</strong> dari {totalQuestionsCount} • Terjawab: <strong className="text-emerald-600 font-bold">{answeredCount}/{totalQuestionsCount}</strong>
+              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden sm:block">
+                Soal <strong className="text-[#0284C7] font-bold">{currentIndex + 1}</strong> dari {totalQuestionsCount} • Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong>
               </p>
             </div>
           </div>
@@ -277,8 +277,8 @@ export default function TestTakingPage() {
           {/* Right: Stopwatch Timer, Navigator Trigger, Help, Exit */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Real-time Stopwatch Timer */}
-            <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-slate-100/90 border border-slate-200/80 text-slate-700 font-mono text-[11px] sm:text-xs font-bold shadow-2xs">
-              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#4F46E5]" />
+            <div className="inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-full bg-slate-950 text-white font-mono text-[11px] sm:text-xs font-bold shadow-2xs">
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
             </div>
 
@@ -286,10 +286,10 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] sm:text-xs font-bold shadow-2xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-[11px] sm:text-xs font-bold shadow-2xs transition-all cursor-pointer"
               title="Lihat Semua 60 Soal"
             >
-              <Grid className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-500" />
+              <Grid className="w-3.5 h-3.5 text-[#0284C7]" />
               <span className="hidden md:inline">Daftar Soal</span>
             </button>
 
@@ -297,17 +297,17 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setHelpModalOpen(true)}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 hover:bg-indigo-100 text-[#4F46E5] font-bold flex items-center justify-center text-xs transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200 font-bold flex items-center justify-center text-xs transition-colors cursor-pointer"
               title="Panduan Pengerjaan"
             >
-              ?
+              <HelpCircle className="w-4 h-4" />
             </button>
 
             {/* Exit Button */}
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="p-1 sm:px-2.5 sm:py-1 rounded-full text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1.5 rounded-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer flex items-center gap-1"
               title="Keluar dari Ujian"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -318,21 +318,21 @@ export default function TestTakingPage() {
       </header>
 
       {/* 2. MAIN CONTENT AREA (Centered & Spacious) */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-3 sm:py-6 flex flex-col justify-center space-y-3 sm:space-y-4">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-center space-y-3.5 sm:space-y-4">
         {/* Category Header & Instruction Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1.5 sm:space-y-2">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>{categoryInfo.name}</span>
             </span>
 
-            <div className="flex items-center gap-2 text-[11px] font-medium text-slate-400">
-              <span>Terjawab: <strong className="text-emerald-600 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
+            <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
               <span>•</span>
-              <span className="font-mono font-bold text-slate-700">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
+              <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
             </div>
           </div>
 
@@ -342,9 +342,9 @@ export default function TestTakingPage() {
         </div>
 
         {/* Question Canvas Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] min-h-[260px] flex flex-col justify-between space-y-5">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] min-h-[280px] flex flex-col justify-between space-y-6">
           {/* Question Prompt & Visuals */}
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3.5 sm:space-y-4">
             {/* Audio Listening player if audio question */}
             {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
               <AudioListeningQuestion
@@ -355,18 +355,18 @@ export default function TestTakingPage() {
 
             {/* Question Text */}
             {currentQuestion.question_type !== 'paragraph_title_match' && (
-              <h2 className="text-sm sm:text-lg font-bold text-slate-900 leading-snug sm:leading-relaxed text-left break-words">
+              <h2 className="text-base sm:text-xl font-bold text-slate-950 leading-relaxed text-left break-words">
                 {currentQuestion.question_text}
               </h2>
             )}
 
             {/* Optional Image */}
             {currentQuestion.image_url && (
-              <div className="flex justify-center p-2.5 sm:p-3 rounded-2xl bg-slate-50 border border-slate-100">
+              <div className="flex justify-center p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-100">
                 <img
                   src={currentQuestion.image_url}
                   alt="Question Visual"
-                  className="max-h-48 sm:max-h-56 object-contain rounded-xl"
+                  className="max-h-48 sm:max-h-56 object-contain rounded-xl shadow-2xs"
                 />
               </div>
             )}
@@ -414,34 +414,34 @@ export default function TestTakingPage() {
           </div>
 
           {/* Question Footer Actions: Flag toggle */}
-          <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
             <button
               type="button"
               onClick={() => handleToggleFlag(currentIndex)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
                 flaggedQuestions.has(currentIndex)
-                  ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-slate-200/60'
+                  ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-slate-200'
               }`}
             >
-              <Flag className="w-3.5 h-3.5" />
-              <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu' : 'Tandai Ragu'}</span>
+              <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
+              <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
             </button>
 
-            <span className="text-[11px] font-mono text-slate-400 font-medium">
+            <span className="text-xs font-mono text-slate-500 font-bold">
               Soal {currentIndex + 1} dari {totalQuestionsCount}
             </span>
           </div>
         </div>
       </main>
 
-      {/* 3. BOTTOM CONTROL BAR (Mobile Resilient & Smooth) */}
-      <footer className="bg-white border-t border-slate-200/80 py-2.5 sm:py-4 px-3 sm:px-8 space-y-2 sticky bottom-0 z-30 shadow-xs">
-        <div className="max-w-6xl mx-auto space-y-2">
+      {/* 3. BOTTOM CONTROL BAR */}
+      <footer className="bg-white border-t border-slate-200/90 py-3 sm:py-4 px-3 sm:px-8 space-y-2.5 sticky bottom-0 z-30 shadow-xs">
+        <div className="max-w-4xl mx-auto space-y-2.5">
           {/* Progress Track */}
-          <div className="w-full bg-slate-100 h-1 sm:h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#4F46E5] rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -453,26 +453,26 @@ export default function TestTakingPage() {
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-1 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-1 px-4 sm:px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
             >
-              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <ChevronLeft className="w-4 h-4" />
               <span className="hidden xs:inline sm:inline">Sebelumnya</span>
             </button>
 
             {/* Question Counter Indicator */}
-            <span className="text-[11px] sm:text-xs font-bold text-slate-500 font-mono text-center">
+            <span className="text-xs font-bold text-slate-600 font-mono text-center">
               {currentIndex + 1} / {totalQuestionsCount} Soal
             </span>
 
             {/* Next / Submit Buttons */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setSubmitModalOpen(true)}
-                className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold text-xs transition-all cursor-pointer shrink-0"
+                className="inline-flex items-center justify-center gap-1 px-3 sm:px-4 py-2.5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-xs transition-all cursor-pointer shrink-0"
                 title="Kirim Lembar Jawaban"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5 text-emerald-600" />
                 <span className="hidden sm:inline">Kirim</span>
               </button>
 
@@ -480,19 +480,19 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-1 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold text-xs shadow-sm hover:shadow transition-all cursor-pointer shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Berikutnya</span>
-                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold text-xs shadow-sm hover:shadow transition-all cursor-pointer shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <span>Selesaikan</span>
-                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span>Selesaikan Ujian</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               )}
             </div>

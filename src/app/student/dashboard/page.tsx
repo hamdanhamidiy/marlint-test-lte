@@ -166,51 +166,51 @@ export default function StudentDashboardPage() {
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
-        
-        {/* Modern Stratify/Hormn-Inspired Executive Hero Greeting Card */}
-        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[26px] bg-gradient-to-br from-white via-indigo-50/25 to-slate-50 border border-slate-200/80 px-5 py-4 sm:px-6 sm:py-5 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-2.5 sm:space-y-3">
+
+        {/* Modern Maritime Executive Hero Greeting Card with Blue, Dark Orange & Black Accents */}
+        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[26px] bg-gradient-to-br from-white via-sky-50/30 to-orange-50/20 border border-slate-200/90 px-5 py-4 sm:px-6 sm:py-5 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-2.5 sm:space-y-3">
           
-          {/* Subtle Ambient Glow */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-cyan-400/10 rounded-full blur-xl pointer-events-none" />
+          {/* Subtle Ambient Glow (Blue & Warm Orange) */}
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-sky-400/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-orange-400/10 rounded-full blur-xl pointer-events-none" />
 
           {/* Top Row: Pill Badge */}
           <div className="flex items-center justify-between gap-2 flex-wrap relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/90 border border-slate-200/80 backdrop-blur-xs text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/95 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
               <span className="font-bold text-slate-900">Platform Resmi</span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-500 font-medium">Standar IMO STCW & SMCP</span>
+              <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
             </div>
           </div>
 
           {/* Main Greeting Heading */}
           <div className="space-y-1 relative z-10">
-            <h1 className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-black text-slate-900 tracking-tight leading-snug">
-              Halo, <span className="inline-block px-3 py-0.5 rounded-2xl bg-[#EEF2FF] text-[#4F46E5] border border-indigo-100/90 shadow-2xs font-extrabold">{greetingName}</span>!<span className="animate-wave inline-block text-2xl sm:text-3xl ml-1.5">👋</span>
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-black text-slate-950 tracking-tight leading-snug">
+              Halo, <span className="inline-block px-3 py-0.5 rounded-2xl bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] shadow-2xs font-extrabold">{greetingName}</span>!<span className="animate-wave inline-block text-2xl sm:text-3xl ml-1.5">👋</span>
             </h1>
 
             {/* Dynamic Typewriter Subtitle with Cursor */}
             <div className="min-h-[26px] sm:min-h-[28px] flex items-center">
               <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl">
                 <span>{currentText}</span>
-                <span className="animate-cursor font-bold text-[#4F46E5] text-sm sm:text-base ml-0.5">|</span>
+                <span className="animate-cursor font-bold text-[#EA580C] text-sm sm:text-base ml-0.5">|</span>
               </p>
             </div>
           </div>
 
-          {/* Quick Metrics Badges */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2 border-t border-slate-200/50 text-xs font-bold text-slate-600 relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
-              <Clock className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+          {/* Quick Metrics Badges (Harmonious Blue, Dark Orange & Black) */}
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2 border-t border-slate-200/50 text-xs font-bold text-slate-700 relative z-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
+              <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
               <span>60 Mnt Waktu Ujian</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
-              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
+              <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
               <span>60 Butir Soal Terstandar</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
-              <Award className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-slate-950 text-white shadow-2xs">
+              <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Passing 70% Standar Perwira</span>
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function StudentDashboardPage() {
             <div className="min-w-0">
               <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Paket Ujian Marlins</span>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-[#4F46E5] border border-indigo-100">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200">
                   Ready
                 </span>
               </h2>
@@ -232,7 +232,7 @@ export default function StudentDashboardPage() {
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#4F46E5] hover:text-[#4338CA] transition-colors shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0 whitespace-nowrap"
             >
               <span>Lihat Semua</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -242,7 +242,7 @@ export default function StudentDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-5">
             {loading ? (
               <div className="col-span-full p-12 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
                   <FileCheck2 className="w-4 h-4" />
                 </div>
                 <p className="font-semibold text-slate-700">Memuat paket ujian resmi...</p>
@@ -257,7 +257,7 @@ export default function StudentDashboardPage() {
                     key={test.id}
                     className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
                       isTest1
-                        ? 'border-indigo-200/90 shadow-[0_4px_20px_rgba(79,70,229,0.06)] hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1.5'
+                        ? 'border-sky-300 shadow-[0_4px_20px_rgba(2,132,199,0.08)] hover:shadow-xl hover:border-sky-500 hover:-translate-y-1.5'
                         : 'border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-300 hover:-translate-y-1'
                     }`}
                   >
@@ -266,7 +266,7 @@ export default function StudentDashboardPage() {
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
-                            isTest1 ? 'bg-indigo-50 text-[#4F46E5]' : 'bg-slate-100 text-slate-700'
+                            isTest1 ? 'bg-[#D8EEFD] text-[#0369A1]' : 'bg-slate-100 text-slate-700'
                           }`}>
                             Paket #{test.test_number}
                           </span>
@@ -276,13 +276,13 @@ export default function StudentDashboardPage() {
                         </div>
 
                         {hasAccess ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200/80 shrink-0 shadow-2xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shrink-0 shadow-2xs">
                             <Unlock className="w-3 h-3 text-emerald-600" />
                             <span>{test.is_free ? 'Gratis' : 'Akses Terbuka'}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold border border-slate-200 shrink-0">
-                            <Lock className="w-3 h-3 text-slate-400" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shrink-0">
+                            <Lock className="w-3 h-3 text-[#EA580C]" />
                             <span>{formatPriceIDR(test.price)}</span>
                           </span>
                         )}
@@ -290,7 +290,7 @@ export default function StudentDashboardPage() {
 
                       {/* Title & Description */}
                       <div className="space-y-1">
-                        <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors leading-snug line-clamp-1">
+                        <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors leading-snug line-clamp-1">
                           {test.test_name}
                         </h3>
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[2.25rem]">
@@ -317,13 +317,13 @@ export default function StudentDashboardPage() {
                         </div>
                       </div>
 
-                      {/* Action Button */}
+                      {/* Action Button: Primary Blue for Test 1, Deep Black for Test 2 & 3 */}
                       <Link
                         href={`/student/test/${test.test_number}`}
                         className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs group-hover:shadow-md ${
-                          hasAccess
-                            ? 'bg-[#4F46E5] hover:bg-[#4338CA] text-white shadow-indigo-500/15 group-hover:scale-[1.01] active:scale-[0.99]'
-                            : 'bg-slate-900 hover:bg-slate-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
+                          isTest1
+                            ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20 group-hover:scale-[1.01] active:scale-[0.99]'
+                            : 'bg-slate-950 hover:bg-slate-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
                         }`}
                       >
                         <span>{hasAccess ? 'Mulai Ujian Sekarang' : 'Buka Akses Ujian'}</span>
@@ -389,11 +389,10 @@ export default function StudentDashboardPage() {
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-bold text-[#4F46E5] text-xs">{res.score}%</span>
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
-                              res.is_passed
+                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${res.is_passed
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                 : 'bg-slate-100 text-slate-600'
-                            }`}
+                              }`}
                           >
                             {res.is_passed ? 'LULUS' : 'REMEDIAL'}
                           </span>
@@ -510,11 +509,10 @@ export default function StudentDashboardPage() {
                         STANDAR CEFR
                       </span>
                       <span
-                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
-                          res.is_passed
+                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${res.is_passed
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : 'bg-slate-100 text-slate-600'
-                        }`}
+                          }`}
                       >
                         {res.is_passed ? 'LULUS' : 'REMEDIAL'}
                       </span>

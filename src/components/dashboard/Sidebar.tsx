@@ -98,21 +98,21 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                   onClick={onCloseMobile}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-150 ${
                     isActive
-                      ? 'bg-[#EEF0FF] text-[#4F46E5] font-bold shadow-xs'
+                      ? 'bg-[#E0F2FE] text-[#0369A1] font-bold shadow-xs border border-[#BAE6FD]'
                       : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={`w-4 h-4 ${
-                        isActive ? 'text-[#4F46E5]' : 'text-slate-400'
+                        isActive ? 'text-[#0284C7]' : 'text-slate-400'
                       }`}
                     />
                     <span>{item.name}</span>
                   </div>
 
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-[#4F46E5] text-white text-[9px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-[#EA580C] text-white text-[9px] font-black shadow-xs">
                       {item.badge}
                     </span>
                   )}

@@ -97,21 +97,21 @@ export default function RightStatsPanel({
             </h3>
             <span className="text-amber-500 text-xs">⚓</span>
           </div>
-          <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
-            Level {profile?.level_code || 'B1+'} • {currentPoints} XP
+          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+            Level {profile?.level_code || 'B1+'} • <span className="text-[#C2410C] font-bold">{currentPoints} XP</span>
           </p>
         </div>
 
-        <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-[#4F46E5] text-[10px] font-bold border border-indigo-100 shrink-0">
+        <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] text-[10px] font-bold border border-sky-200 shrink-0">
           {profile?.level_code || 'B1+'}
         </span>
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/70 space-y-3">
+      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-bold text-slate-700 tracking-tight">Kompetensi Maritim</span>
-          <span className="text-xs text-[#4F46E5] font-extrabold px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-100/80">
+          <span className="text-xs text-[#C2410C] font-extrabold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200">
             {scoreAverage}% Rata-rata
           </span>
         </div>
@@ -124,8 +124,8 @@ export default function RightStatsPanel({
                 <div
                   className={`w-6 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer ${
                     bar.isHighlight
-                      ? 'bg-gradient-to-t from-[#4F46E5] to-[#6366F1] shadow-xs'
-                      : 'bg-[#D6DCFA] hover:bg-[#C2CBF8]'
+                      ? 'bg-gradient-to-t from-[#0284C7] to-[#38BDF8] shadow-xs'
+                      : 'bg-[#BAE6FD] hover:bg-[#7DD3FC]'
                   }`}
                   style={{ height: `${bar.height}%` }}
                 />
@@ -135,11 +135,11 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-1 pt-1 border-t border-slate-200/60">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1 border-t border-slate-200/70">
           <span>Grammar</span>
           <span>Listen</span>
           <span>Vocab</span>
-          <span className="font-bold text-[#4F46E5]">SMCP</span>
+          <span className="font-bold text-[#0284C7]">SMCP</span>
           <span>Read</span>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function RightStatsPanel({
           </h3>
           <Link
             href="/student/articles"
-            className="text-[11px] font-semibold text-[#4F46E5] hover:text-[#4338CA]"
+            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1]"
           >
             Lihat Semua
           </Link>
@@ -187,7 +187,7 @@ export default function RightStatsPanel({
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
                     isFollowed
                       ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:border-indigo-400 hover:text-indigo-600 shadow-2xs'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:border-sky-400 hover:text-[#0284C7] shadow-2xs'
                   }`}
                 >
                   {isFollowed ? (
@@ -210,7 +210,7 @@ export default function RightStatsPanel({
         {/* See All Materials Button */}
         <Link
           href="/student/articles"
-          className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-[#4F46E5] bg-[#EEF0FF] hover:bg-[#E0E7FF] transition-colors shadow-2xs"
+          className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-[#0284C7] bg-[#E0F2FE] hover:bg-[#BAE6FD] transition-colors shadow-2xs"
         >
           <span>Buka Semua Materi IMO SMCP</span>
         </Link>

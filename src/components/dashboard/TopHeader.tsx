@@ -72,33 +72,33 @@ export default function TopHeader({
 
       {/* Right: Actions, Token shortcut & Profile */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Token Voucher Shortcut Button */}
+        {/* Token Voucher Shortcut Button (Dark Orange Accent) */}
         <Link
           href="/student/redeem"
-          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 transition-colors shadow-xs"
+          className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#C2410C] bg-[#FFF7ED] hover:bg-[#FFEDD5] border border-[#FDBA74] transition-all shadow-xs"
         >
-          <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+          <KeyRound className="w-3.5 h-3.5 text-[#EA580C]" />
           <span>Klaim Token</span>
         </Link>
 
         {/* Learning Materials Button */}
         <Link
           href="/student/articles"
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-[#5046E5] hover:bg-slate-50 transition-colors shadow-xs relative"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-slate-50 transition-colors shadow-xs relative"
           title="Materi SMCP"
         >
           <BookOpen className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 h-2 rounded-full bg-[#5046E5] ring-2 ring-white" />
+          <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 h-2 rounded-full bg-[#0284C7] ring-2 ring-white" />
         </Link>
 
         {/* Notification Bell Button */}
         <button
           type="button"
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-[#5046E5] hover:bg-slate-50 transition-colors shadow-xs relative cursor-pointer"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-slate-50 transition-colors shadow-xs relative cursor-pointer"
           title="Notifikasi"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+          <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 h-2 rounded-full bg-[#EA580C] ring-2 ring-white" />
         </button>
 
         {/* User Profile Pill */}
@@ -106,11 +106,11 @@ export default function TopHeader({
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-1.5 sm:gap-2.5 p-1 pl-1 pr-2 sm:pr-3 rounded-full bg-white hover:bg-slate-50 border border-slate-200/70 text-slate-800 transition-all shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 sm:gap-2.5 p-1 pl-1 pr-2 sm:pr-3 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 transition-all shadow-xs cursor-pointer"
           >
-            {/* Avatar */}
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#4F46E5] to-[#06B6D4] p-0.5 shadow-xs">
-              <div className="w-full h-full rounded-full bg-amber-100 flex items-center justify-center text-xs sm:text-sm font-bold text-slate-800 overflow-hidden">
+            {/* Avatar with Blue & Dark Orange Gradient */}
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0284C7] to-[#EA580C] p-0.5 shadow-xs">
+              <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-xs sm:text-sm font-bold text-slate-800 overflow-hidden">
                 {profile?.photo_url ? (
                   <img
                     src={profile.photo_url}
@@ -124,10 +124,10 @@ export default function TopHeader({
             </div>
 
             <div className="text-left hidden sm:block">
-              <p className="font-bold text-xs text-slate-800 max-w-[120px] truncate leading-tight">
+              <p className="font-bold text-xs text-slate-900 max-w-[120px] truncate leading-tight">
                 {displayName}
               </p>
-              <p className="text-[10px] font-semibold text-[#5046E5] leading-none">
+              <p className="text-[10px] font-bold text-[#0284C7] leading-none">
                 Level {profile?.level_code || 'A1'}
               </p>
             </div>

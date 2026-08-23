@@ -17,6 +17,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, jobTitle?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<UserProfile | null>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<{ error: Error | null }>;
   redeemToken: (tokenCode: string) => Promise<{ success: boolean; message?: string }>;
 }
 
@@ -301,6 +302,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return await fetchProfile(user.id);
   };
 
+  const updateProfile = async (updates: Partial<UserProfile>) => {
+    try {
+      if (!user) return { error: new Error('User not logged in') };
+
+      const updated = {
+        ...(profile || {}),
+        ...updates,
+        updated_at: new Date().toISOString(),
+      } as UserProfile;
+
+      // 1. Immediately update React state
+      setProfile(updated);
+
+      // 2. Persist in localStorage so demo mode retains it across refreshes
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('marlins_demo_user', JSON.stringify(updated));
+      }
+
+      // 3. Persist to Supabase users table
+      try {
+        await supabase
+          .from('users')
+          .update({
+            ...updates,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+      } catch (dbErr) {
+        console.warn('Supabase profile update warning:', dbErr);
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      console.error('Error in updateProfile:', err);
+      return { error: err };
+    }
+  };
+
   const redeemToken = async (tokenCode: string) => {
     try {
       const { data, error } = await supabase.rpc('redeem_access_token', {
@@ -339,6 +378,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signOut,
         refreshProfile,
+        updateProfile,
         redeemToken,
       }}
     >

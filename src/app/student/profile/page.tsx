@@ -22,7 +22,7 @@ import { supabase } from '@/lib/supabase/client';
 import { getLevelBadge } from '@/lib/utils';
 
 export default function StudentProfilePage() {
-  const { profile, user, refreshProfile, signOut } = useAuth();
+  const { profile, user, updateProfile, signOut } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [fullName, setFullName] = useState(profile?.full_name || '');
@@ -108,7 +108,10 @@ export default function StudentProfilePage() {
       setPhotoError(null);
       setPhotoSuccess(null);
 
-      let finalPhotoUrl: string | null = null;
+      // Generate instant local base64 preview & storage format
+      const base64Data = await fileToBase64(file);
+      let finalPhotoUrl: string = base64Data;
+
       const fileExt = file.name.split('.').pop() || 'jpg';
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `profile_photos/${fileName}`;
@@ -132,29 +135,18 @@ export default function StudentProfilePage() {
           }
         }
       } catch (storageErr) {
-        console.warn('Storage bucket upload fallback:', storageErr);
+        console.warn('Storage bucket upload fallback to Base64:', storageErr);
       }
 
-      // 2. Fallback to optimized Base64 if storage is not ready or restricted
-      if (!finalPhotoUrl) {
-        finalPhotoUrl = await fileToBase64(file);
+      // 2. Persist to Auth Context and Supabase database
+      const { error: updateErr } = await updateProfile({
+        photo_url: finalPhotoUrl,
+      });
+
+      if (updateErr) {
+        throw new Error(updateErr.message || 'Gagal menyimpan foto profil.');
       }
 
-      // 3. Save to database in public.users
-      const { error: dbError } = await supabase
-        .from('users')
-        .update({
-          photo_url: finalPhotoUrl,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (dbError) {
-        throw new Error(dbError.message || 'Gagal menyimpan foto profil ke database.');
-      }
-
-      // 4. Refresh Auth Profile
-      await refreshProfile();
       setPhotoSuccess('Foto profil berhasil diperbarui!');
       setTimeout(() => setPhotoSuccess(null), 3500);
     } catch (err: any) {
@@ -176,17 +168,10 @@ export default function StudentProfilePage() {
       setPhotoError(null);
       setPhotoSuccess(null);
 
-      const { error } = await supabase
-        .from('users')
-        .update({
-          photo_url: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
+      await updateProfile({
+        photo_url: null,
+      });
 
-      if (error) throw error;
-
-      await refreshProfile();
       setPhotoSuccess('Foto profil berhasil dihapus.');
       setTimeout(() => setPhotoSuccess(null), 3000);
     } catch (err: any) {
@@ -204,21 +189,16 @@ export default function StudentProfilePage() {
       setSaving(true);
       setSaveSuccess(false);
 
-      const { error } = await supabase
-        .from('users')
-        .update({
-          full_name: fullName,
-          phone_number: phoneNumber,
-          job_title: jobTitle,
-          nationality: nationality,
-          date_of_birth: dateOfBirth || null,
-          about: about,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
+      const { error } = await updateProfile({
+        full_name: fullName,
+        phone_number: phoneNumber,
+        job_title: jobTitle,
+        nationality: nationality,
+        date_of_birth: dateOfBirth || null,
+        about: about,
+      });
 
       if (!error) {
-        await refreshProfile();
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }

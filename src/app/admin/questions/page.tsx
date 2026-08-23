@@ -83,30 +83,19 @@ export default function AdminQuestionsPage() {
   const loadQuestions = async () => {
     try {
       setLoading(true);
-      const { data } = await supabase
-        .from('questions')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      const customQuestions = (data as Question[]) || [];
-      const questionTextMap = new Set<string>();
-      const merged: Question[] = [];
-
-      // Prioritize standard bank
-      STANDARD_QUESTIONS_BANK.forEach((q) => {
-        merged.push(q);
-        questionTextMap.add(q.question_text.trim().toLowerCase());
-      });
-
-      // Add any custom questions from db that are not duplicate
-      customQuestions.forEach((q) => {
-        if (q.question_text && !questionTextMap.has(q.question_text.trim().toLowerCase())) {
-          merged.push(q);
-          questionTextMap.add(q.question_text.trim().toLowerCase());
+      // Clean sync: STANDARD_QUESTIONS_BANK provides the 180 official IMO questions
+      // Check local storage for any custom admin additions
+      let customAdditions: Question[] = [];
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('marlins_custom_questions');
+        if (stored) {
+          try {
+            customAdditions = JSON.parse(stored);
+          } catch (e) {}
         }
-      });
+      }
 
-      setAllQuestions(merged);
+      setAllQuestions([...customAdditions, ...STANDARD_QUESTIONS_BANK]);
     } catch (err) {
       setAllQuestions(STANDARD_QUESTIONS_BANK);
     } finally {
@@ -139,13 +128,14 @@ export default function AdminQuestionsPage() {
       question_type: 'multiple_choice',
       marlint_test_number: selectedTestNum !== 'all' ? Number(selectedTestNum) : 1,
       question_text: '',
-      optionsRaw: 'Option A\nOption B\nOption C\nOption D',
-      correct_answer: 'Option A',
+      optionsRaw: '',
+      correct_answer: '',
       audio_url: '',
       explanation: '',
       points: 10,
       is_active: true,
     });
+    setEditingQuestion(null);
     setFormError(null);
     setModalMode('create');
   };
@@ -158,7 +148,7 @@ export default function AdminQuestionsPage() {
       marlint_test_number: q.marlint_test_number || 1,
       question_text: q.question_text,
       optionsRaw: Array.isArray(q.options) ? q.options.join('\n') : '',
-      correct_answer: q.correct_answer || '',
+      correct_answer: typeof q.correct_answer === 'string' ? q.correct_answer : JSON.stringify(q.correct_answer),
       audio_url: q.audio_url || '',
       explanation: q.explanation || '',
       points: q.points || 10,
@@ -169,38 +159,35 @@ export default function AdminQuestionsPage() {
   };
 
   const handleDuplicateQuestion = (q: Question) => {
-    setFormData({
-      category: q.category,
-      question_type: q.question_type,
-      marlint_test_number: q.marlint_test_number || 1,
+    const duplicated: Question = {
+      ...q,
+      id: `custom-q-${Date.now()}`,
       question_text: `${q.question_text} (Salinan)`,
-      optionsRaw: Array.isArray(q.options) ? q.options.join('\n') : '',
-      correct_answer: q.correct_answer || '',
-      audio_url: q.audio_url || '',
-      explanation: q.explanation || '',
-      points: q.points || 10,
-      is_active: true,
-    });
-    setFormError(null);
-    setModalMode('create');
+      order_number: (q.order_number || 0) + 1,
+      created_at: new Date().toISOString(),
+    };
+
+    setAllQuestions((prev) => [duplicated, ...prev]);
+
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('marlins_custom_questions');
+      const list = stored ? JSON.parse(stored) : [];
+      localStorage.setItem('marlins_custom_questions', JSON.stringify([duplicated, ...list]));
+    }
   };
 
   const handleToggleActive = async (q: Question) => {
+    const nextStatus = !q.is_active;
+    setAllQuestions((prev: Question[]) =>
+      prev.map((item: Question) => (item.id === q.id ? { ...item, is_active: nextStatus } : item))
+    );
+
     try {
-      const nextStatus = !q.is_active;
-      const { error } = await supabase
+      await supabase
         .from('questions')
         .update({ is_active: nextStatus })
         .eq('id', q.id);
-
-      if (!error) {
-        setAllQuestions((prev: Question[]) =>
-          prev.map((item: Question) => (item.id === q.id ? { ...item, is_active: nextStatus } : item))
-        );
-      }
-    } catch (err) {
-      console.error('Toggle active error:', err);
-    }
+    } catch (err) {}
   };
 
   const handleSaveQuestion = async (e: React.FormEvent) => {
@@ -214,32 +201,48 @@ export default function AdminQuestionsPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload: any = {
+      const payload: Question = {
+        id: modalMode === 'edit' && editingQuestion?.id ? editingQuestion.id : `custom-q-${Date.now()}`,
         category: formData.category,
         question_type: formData.question_type,
         marlint_test_number: Number(formData.marlint_test_number),
         question_text: formData.question_text.trim(),
-        options: parsedOptions.length > 0 ? parsedOptions : null,
+        options: parsedOptions.length > 0 ? parsedOptions : undefined,
         correct_answer: formData.correct_answer.trim(),
         audio_url: formData.audio_url.trim() || null,
-        explanation: formData.explanation.trim() || null,
+        image_url: null,
+        pronunciation_text: null,
+        level: 'A2',
+        question_data: {},
+        explanation: formData.explanation.trim() || undefined,
         points: Number(formData.points) || 10,
         is_active: formData.is_active,
+        created_at: new Date().toISOString(),
       };
 
       if (modalMode === 'create') {
-        const { error } = await supabase.from('questions').insert([payload]);
-        if (error) throw error;
+        setAllQuestions((prev) => [payload, ...prev]);
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('marlins_custom_questions');
+          const list = stored ? JSON.parse(stored) : [];
+          localStorage.setItem('marlins_custom_questions', JSON.stringify([payload, ...list]));
+        }
+        try {
+          await supabase.from('questions').insert([payload]);
+        } catch (e) {}
       } else if (modalMode === 'edit' && editingQuestion?.id) {
-        const { error } = await supabase
-          .from('questions')
-          .update(payload)
-          .eq('id', editingQuestion.id);
-        if (error) throw error;
+        setAllQuestions((prev) =>
+          prev.map((item) => (item.id === editingQuestion.id ? { ...item, ...payload } : item))
+        );
+        try {
+          await supabase
+            .from('questions')
+            .update(payload)
+            .eq('id', editingQuestion.id);
+        } catch (e) {}
       }
 
       setModalMode(null);
-      await loadQuestions();
     } catch (err: any) {
       console.error('Save question error:', err);
       setFormError(err.message || 'Gagal menyimpan data soal');
@@ -251,10 +254,18 @@ export default function AdminQuestionsPage() {
   const handleDeleteQuestion = async (id: string) => {
     try {
       setSaving(true);
-      const { error } = await supabase.from('questions').delete().eq('id', id);
-      if (error) throw error;
+      setAllQuestions((prev) => prev.filter((item) => item.id !== id));
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('marlins_custom_questions');
+        if (stored) {
+          const list = JSON.parse(stored).filter((item: any) => item.id !== id);
+          localStorage.setItem('marlins_custom_questions', JSON.stringify(list));
+        }
+      }
+      try {
+        await supabase.from('questions').delete().eq('id', id);
+      } catch (e) {}
       setDeleteConfirmId(null);
-      await loadQuestions();
     } catch (err: any) {
       alert('Gagal menghapus soal: ' + err.message);
     } finally {

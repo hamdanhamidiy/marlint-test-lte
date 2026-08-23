@@ -14,6 +14,8 @@ import {
   BookOpen,
   ShieldCheck,
   RotateCcw,
+  Sparkles,
+  Ship,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -65,31 +67,34 @@ export default function StudentHistoryPage() {
   const passRate = totalAttempts > 0 ? Math.round((passedCount / totalAttempts) * 100) : 0;
 
   return (
-    <div className="space-y-5 sm:space-y-6 min-w-0">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+    <div className="space-y-6 min-w-0 font-sans">
+      {/* Page Header (Clean, Formal & Professional) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E0E7FF] text-[#4338CA] text-[11px] font-bold tracking-tight">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Rekam Jejak Asesmen Resmi IMO STCW</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+            <span className="font-bold text-slate-900">Rekam Jejak Evaluasi Resmi</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-medium">Standar IMO STCW</span>
           </div>
-          <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+
+          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
             Riwayat Ujian Marlins Saya
           </h1>
-          <p className="text-xs text-slate-500 font-normal leading-relaxed max-w-xl">
-            Catatan evaluasi skor kompetensi dan hasil pengerjaan ujian Bahasa Inggris Maritim Anda.
+          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
+            Catatan rekapitulasi skor kompetensi, analisis sub-kategori, dan hasil evaluasi Bahasa Inggris Maritim Anda.
           </p>
         </div>
 
-        {/* Filter Pills */}
+        {/* Filter Pills with Deep Black & Clean Borders */}
         <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveFilter('all')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               activeFilter === 'all'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border border-slate-200'
             }`}
           >
             Semua ({results.length})
@@ -97,10 +102,10 @@ export default function StudentHistoryPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('passed')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               activeFilter === 'passed'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border border-slate-200'
             }`}
           >
             Lulus ({passedCount})
@@ -108,10 +113,10 @@ export default function StudentHistoryPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('failed')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               activeFilter === 'failed'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border border-slate-200'
             }`}
           >
             Remedial ({totalAttempts - passedCount})
@@ -119,119 +124,119 @@ export default function StudentHistoryPage() {
         </div>
       </div>
 
-      {/* Summary KPI Metric Cards (4 Cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4">
+      {/* Summary KPI Metric Cards (4 Cards in Ocean Blue, Dark Orange & Deep Black) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Total Sessions */}
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between h-28">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32 hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Total Sesi
             </span>
-            <div className="w-7 h-7 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xs">
-              <FileCheck2 className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center text-xs border border-sky-100">
+              <FileCheck2 className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+            <span className="font-mono text-2xl sm:text-3xl font-black text-slate-950 leading-tight">
               {totalAttempts}
             </span>
-            <p className="text-[10px] text-slate-400 font-medium">Sesi Ujian Resmi</p>
+            <p className="text-[11px] text-slate-500 font-medium">Sesi Ujian Resmi</p>
           </div>
         </div>
 
         {/* Card 2: Average Score */}
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between h-28">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32 hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Rata-Rata Skor
             </span>
-            <div className="w-7 h-7 rounded-xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center text-xs">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#C2410C] flex items-center justify-center text-xs border border-orange-100">
+              <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono text-xl sm:text-2xl font-black text-[#4F46E5] leading-tight">
+            <span className="font-mono text-2xl sm:text-3xl font-black text-[#C2410C] leading-tight">
               {avgScore}%
             </span>
-            <p className="text-[10px] text-slate-400 font-medium">Standar Passing 70%</p>
+            <p className="text-[11px] text-slate-500 font-medium">Standar Passing 70%</p>
           </div>
         </div>
 
         {/* Card 3: Pass Rate */}
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between h-28">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32 hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Kelulusan
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Tingkat Kelulusan
             </span>
-            <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs border border-emerald-100">
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono text-xl sm:text-2xl font-black text-emerald-600 leading-tight">
+            <span className="font-mono text-2xl sm:text-3xl font-black text-emerald-600 leading-tight">
               {totalAttempts > 0 ? `${passRate}%` : '100%'}
             </span>
-            <p className="text-[10px] text-slate-400 font-medium">{passedCount} Tes Lulus</p>
+            <p className="text-[11px] text-slate-500 font-medium">{passedCount} Tes Berhasil Lulus</p>
           </div>
         </div>
 
-        {/* Card 4: Experience Points */}
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between h-28">
+        {/* Card 4: Experience Points / Level */}
+        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32 hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Poin Kemahiran
             </span>
-            <div className="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
-              <Award className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xs border border-amber-100">
+              <Award className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <span className="font-mono text-xl sm:text-2xl font-black text-amber-600 leading-tight">
-              {profile?.total_points || 480} XP
+            <span className="font-mono text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+              {profile?.total_points || 480} <span className="text-sm font-sans font-bold text-amber-600">XP</span>
             </span>
-            <p className="text-[10px] text-slate-400 font-medium">Level {profile?.level_code || 'B1+'}</p>
+            <p className="text-[11px] text-slate-500 font-medium">Standar Level {profile?.level_code || 'B1+'}</p>
           </div>
         </div>
       </div>
 
-      {/* Results List or Empty State */}
+      {/* Results List or Clean Empty State */}
       {loading ? (
         <div className="p-12 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2.5">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto animate-pulse">
+          <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <FileCheck2 className="w-4 h-4" />
           </div>
-          <p className="font-semibold text-slate-700">Memuat riwayat ujian...</p>
+          <p className="font-semibold text-slate-700">Memuat riwayat ujian resmi...</p>
         </div>
       ) : filteredResults.length === 0 ? (
-        <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/80 shadow-2xs text-center space-y-4 max-w-md mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto shadow-2xs border border-indigo-100">
-            <FileCheck2 className="w-7 h-7" />
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] text-center space-y-4 max-w-lg mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto shadow-2xs border border-sky-200/70">
+            <FileCheck2 className="w-8 h-8" />
           </div>
           
-          <div className="space-y-1">
-            <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900">
+          <div className="space-y-1.5">
+            <h3 className="font-heading text-lg font-bold text-slate-950">
               {activeFilter !== 'all' ? 'Tidak Ada Riwayat dengan Filter Ini' : 'Belum Ada Riwayat Ujian'}
             </h3>
-            <p className="text-xs text-slate-500 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
               {activeFilter !== 'all'
-                ? 'Silakan ubah filter kategori untuk melihat hasil ujian lainnya.'
-                : 'Mulai sesi ujian pertama Anda untuk mengukur kemampuan Bahasa Inggris Maritim standar IMO STCW.'}
+                ? 'Silakan ubah filter status untuk meninjau hasil evaluasi lainnya.'
+                : 'Mulai sesi evaluasi pertama Anda untuk mengukur kecakapan Bahasa Inggris Maritim standar IMO STCW & SMCP.'}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
-              href="/student/tests"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4F46E5] text-white font-bold text-xs shadow-sm hover:shadow-md hover:bg-[#4338CA] transition-all cursor-pointer"
+              href="/student/test/1"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
-              <FileCheck2 className="w-3.5 h-3.5" />
-              <span>Buka Katalog Ujian</span>
+              <Ship className="w-4 h-4" />
+              <span>Mulai Marlins Test 1 (Gratis)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 
             <Link
               href="/student/articles"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xs transition-all cursor-pointer"
             >
               <BookOpen className="w-3.5 h-3.5 text-slate-500" />
               <span>Pelajari Materi Dulu</span>
@@ -243,15 +248,15 @@ export default function StudentHistoryPage() {
           {filteredResults.map((res) => (
             <div
               key={res.id}
-              className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-300/80 hover:shadow-md transition-all group"
+              className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-sm transition-all group"
             >
               <div className="flex items-start sm:items-center gap-4">
                 {/* Score badge */}
                 <div
-                  className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-base shrink-0 shadow-xs ${
+                  className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-base shrink-0 shadow-2xs ${
                     res.is_passed
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
-                      : 'bg-rose-50 text-rose-700 border border-rose-200/80'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'bg-rose-50 text-rose-700 border border-rose-200'
                   }`}
                 >
                   <span>{res.score}%</span>
@@ -262,7 +267,7 @@ export default function StudentHistoryPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-heading text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors leading-snug">
+                    <h3 className="font-heading text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors leading-snug">
                       {res.test_name}
                     </h3>
                     <span
@@ -274,17 +279,17 @@ export default function StudentHistoryPage() {
                     >
                       {res.is_passed ? 'LULUS' : 'REMEDIAL'}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#EEF0FF] text-[#4F46E5] text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] text-[10px] font-bold uppercase tracking-wider border border-sky-200">
                       {res.level || 'CEFR B1'}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3.5 text-xs text-slate-400 font-medium">
+                  <div className="flex flex-wrap items-center gap-3.5 text-xs text-slate-500 font-medium">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>{formatDateIndo(res.created_at)}</span>
                     </span>
-                    <span>Benar: <strong className="text-slate-700 font-bold">{res.correct_answers}/{res.total_questions}</strong></span>
+                    <span>Benar: <strong className="text-slate-800 font-bold">{res.correct_answers}/{res.total_questions}</strong></span>
                     {res.time_spent_seconds > 0 && (
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3 text-slate-400" />
@@ -299,7 +304,7 @@ export default function StudentHistoryPage() {
               <div className="flex items-center justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 shrink-0">
                 <Link
                   href={`/student/test/result/${res.attempt_id || res.id}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-[#4F46E5] bg-[#EEF0FF] hover:bg-[#E0E4FF] transition-all shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-[#0284C7] bg-sky-50 hover:bg-sky-100 border border-sky-200/80 transition-all shadow-2xs cursor-pointer"
                 >
                   <span>Lihat Analisis Hasil</span>
                   <ArrowRight className="w-3.5 h-3.5" />

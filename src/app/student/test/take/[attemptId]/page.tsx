@@ -37,6 +37,7 @@ import {
   MARLINS_TEST_2_STANDARD_QUESTIONS,
   MARLINS_TEST_3_STANDARD_QUESTIONS,
   MARLINS_TEST_4_STANDARD_QUESTIONS,
+  MARLINS_TEST_5_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
@@ -54,6 +55,12 @@ interface AttemptData {
 
 function getTestInfo(testNum: number) {
   switch (testNum) {
+    case 5:
+      return {
+        test_number: 5,
+        test_name: 'Marlins Test 5 - Offshore Operations & Dynamic Positioning Systems',
+        questions: MARLINS_TEST_5_STANDARD_QUESTIONS,
+      };
     case 4:
       return {
         test_number: 4,
@@ -119,7 +126,8 @@ export default function TestTakingPage() {
       try {
         setLoading(true);
         let parsedTestNum = 1;
-        if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;
+        if (attemptId.includes('test-5') || attemptId.includes('test5')) parsedTestNum = 5;
+        else if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;
         else if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 

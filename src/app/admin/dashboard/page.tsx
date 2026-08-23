@@ -22,12 +22,22 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDateIndo } from '@/lib/utils';
+import {
+  MARLINS_60_STANDARD_QUESTIONS,
+  MARLINS_TEST_2_STANDARD_QUESTIONS,
+  MARLINS_TEST_3_STANDARD_QUESTIONS,
+} from '@/lib/marlinsQuestionBank';
+
+const TOTAL_STANDARD_QUESTIONS_COUNT =
+  MARLINS_60_STANDARD_QUESTIONS.length +
+  MARLINS_TEST_2_STANDARD_QUESTIONS.length +
+  MARLINS_TEST_3_STANDARD_QUESTIONS.length;
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
     totalUsers: 0,
-    totalQuestions: 0,
-    totalTests: 0,
+    totalQuestions: TOTAL_STANDARD_QUESTIONS_COUNT,
+    totalTests: 10,
     totalAttempts: 0,
     totalCertificates: 0,
   });
@@ -56,8 +66,8 @@ export default function AdminDashboardPage() {
 
         setStats({
           totalUsers: uCount || 0,
-          totalQuestions: qCount || 0,
-          totalTests: tCount || 0,
+          totalQuestions: Math.max(qCount || 0, TOTAL_STANDARD_QUESTIONS_COUNT),
+          totalTests: tCount || 10,
           totalAttempts: aCount || 0,
           totalCertificates: cCount || 0,
         });
@@ -81,7 +91,13 @@ export default function AdminDashboardPage() {
           .limit(3);
 
         if (testsData) {
-          setTestsSummary(testsData);
+          const adjusted = testsData.map((t) => {
+            if (t.test_number <= 3) {
+              return { ...t, total_questions: 60 };
+            }
+            return t;
+          });
+          setTestsSummary(adjusted);
         }
       } catch (err) {
         console.error('Error loading admin dashboard stats:', err);

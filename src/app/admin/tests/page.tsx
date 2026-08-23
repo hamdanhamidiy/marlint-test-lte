@@ -51,7 +51,13 @@ export default function AdminTestsPage() {
         .order('test_number', { ascending: true });
 
       if (data) {
-        setTests(data as MarlintTest[]);
+        const adjusted = data.map((t) => {
+          if (t.test_number <= 3) {
+            return { ...t, total_questions: 60 };
+          }
+          return t;
+        });
+        setTests(adjusted as MarlintTest[]);
       }
     } catch (err) {
       console.error('Error loading tests for admin:', err);

@@ -34,9 +34,20 @@ import DragDropLabelQuestion from '@/components/test-engine/DragDropLabelQuestio
 import ImageChoiceQuestion from '@/components/test-engine/ImageChoiceQuestion';
 import ParagraphTitleMatchQuestion from '@/components/test-engine/ParagraphTitleMatchQuestion';
 import AudioListeningQuestion from '@/components/test-engine/AudioListeningQuestion';
+import {
+  MARLINS_60_STANDARD_QUESTIONS,
+  MARLINS_TEST_2_STANDARD_QUESTIONS,
+  MARLINS_TEST_3_STANDARD_QUESTIONS,
+} from '@/lib/marlinsQuestionBank';
+
+const STANDARD_QUESTIONS_BANK: Question[] = [
+  ...MARLINS_60_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 1 })),
+  ...MARLINS_TEST_2_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 2 })),
+  ...MARLINS_TEST_3_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 3 })),
+];
 
 export default function AdminQuestionsPage() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [allQuestions, setAllQuestions] = useState<Question[]>(STANDARD_QUESTIONS_BANK);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -72,27 +83,32 @@ export default function AdminQuestionsPage() {
   const loadQuestions = async () => {
     try {
       setLoading(true);
-      let query = supabase
+      const { data } = await supabase
         .from('questions')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
-      }
-      if (selectedType !== 'all') {
-        query = query.eq('question_type', selectedType);
-      }
-      if (selectedTestNum !== 'all') {
-        query = query.eq('marlint_test_number', Number(selectedTestNum));
-      }
+      const customQuestions = (data as Question[]) || [];
+      const questionTextMap = new Set<string>();
+      const merged: Question[] = [];
 
-      const { data, error } = await query;
-      if (data) {
-        setQuestions(data as Question[]);
-      }
+      // Prioritize standard bank
+      STANDARD_QUESTIONS_BANK.forEach((q) => {
+        merged.push(q);
+        questionTextMap.add(q.question_text.trim().toLowerCase());
+      });
+
+      // Add any custom questions from db that are not duplicate
+      customQuestions.forEach((q) => {
+        if (q.question_text && !questionTextMap.has(q.question_text.trim().toLowerCase())) {
+          merged.push(q);
+          questionTextMap.add(q.question_text.trim().toLowerCase());
+        }
+      });
+
+      setAllQuestions(merged);
     } catch (err) {
-      console.error('Error loading questions:', err);
+      setAllQuestions(STANDARD_QUESTIONS_BANK);
     } finally {
       setLoading(false);
     }
@@ -100,8 +116,22 @@ export default function AdminQuestionsPage() {
 
   useEffect(() => {
     loadQuestions();
-    setCurrentPage(1);
-  }, [selectedCategory, selectedType, selectedTestNum]);
+  }, []);
+
+  // Filter questions dynamically
+  const questions = allQuestions.filter((q) => {
+    if (selectedCategory !== 'all' && q.category !== selectedCategory) return false;
+    if (selectedType !== 'all' && q.question_type !== selectedType) return false;
+    if (selectedTestNum !== 'all' && q.marlint_test_number !== Number(selectedTestNum)) return false;
+    if (search.trim() !== '') {
+      const s = search.toLowerCase();
+      const matchText = q.question_text?.toLowerCase().includes(s);
+      const matchCat = q.category?.toLowerCase().includes(s);
+      const matchAns = typeof q.correct_answer === 'string' && q.correct_answer.toLowerCase().includes(s);
+      if (!matchText && !matchCat && !matchAns) return false;
+    }
+    return true;
+  });
 
   const handleOpenCreate = () => {
     setFormData({
@@ -164,8 +194,8 @@ export default function AdminQuestionsPage() {
         .eq('id', q.id);
 
       if (!error) {
-        setQuestions((prev) =>
-          prev.map((item) => (item.id === q.id ? { ...item, is_active: nextStatus } : item))
+        setAllQuestions((prev: Question[]) =>
+          prev.map((item: Question) => (item.id === q.id ? { ...item, is_active: nextStatus } : item))
         );
       }
     } catch (err) {
@@ -232,14 +262,8 @@ export default function AdminQuestionsPage() {
     }
   };
 
-  const filteredQuestions = questions.filter((q) =>
-    q.question_text.toLowerCase().includes(search.toLowerCase()) ||
-    (q.correct_answer && q.correct_answer.toLowerCase().includes(search.toLowerCase())) ||
-    (q.explanation && q.explanation.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-  const paginatedQuestions = filteredQuestions.slice(
+  const totalPages = Math.ceil(questions.length / itemsPerPage);
+  const paginatedQuestions = questions.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -277,7 +301,7 @@ export default function AdminQuestionsPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{questions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
+            Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
           </p>
         </div>
 
@@ -294,15 +318,18 @@ export default function AdminQuestionsPage() {
       {/* Quick Test Package Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {[
-          { label: 'Semua Paket', val: 'all', count: questions.length },
-          { label: 'Paket #1', val: '1', count: questions.filter((q) => q.marlint_test_number === 1).length },
-          { label: 'Paket #2', val: '2', count: questions.filter((q) => q.marlint_test_number === 2).length },
-          { label: 'Paket #3', val: '3', count: questions.filter((q) => q.marlint_test_number === 3).length },
+          { label: 'Semua Paket', val: 'all', count: allQuestions.length },
+          { label: 'Paket #1', val: '1', count: allQuestions.filter((q) => q.marlint_test_number === 1).length },
+          { label: 'Paket #2', val: '2', count: allQuestions.filter((q) => q.marlint_test_number === 2).length },
+          { label: 'Paket #3', val: '3', count: allQuestions.filter((q) => q.marlint_test_number === 3).length },
         ].map((tab) => (
           <button
             key={tab.val}
             type="button"
-            onClick={() => setSelectedTestNum(tab.val)}
+            onClick={() => {
+              setSelectedTestNum(tab.val);
+              setCurrentPage(1);
+            }}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               selectedTestNum === tab.val
                 ? 'bg-[#0284C7] text-white shadow-md shadow-sky-500/20'
@@ -374,7 +401,7 @@ export default function AdminQuestionsPage() {
         <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-2 px-1 border-t border-slate-100">
           <span>
             Menampilkan <strong className="text-slate-900 font-bold">{paginatedQuestions.length}</strong> dari{' '}
-            <strong className="text-slate-900 font-bold">{filteredQuestions.length}</strong> butir soal terfilter
+            <strong className="text-slate-900 font-bold">{questions.length}</strong> butir soal terfilter
           </span>
           {(search || selectedCategory !== 'all' || selectedType !== 'all' || selectedTestNum !== 'all') && (
             <button
@@ -400,7 +427,7 @@ export default function AdminQuestionsPage() {
           </div>
           <p className="font-semibold text-slate-700">Memuat bank soal dari database Supabase...</p>
         </div>
-      ) : filteredQuestions.length === 0 ? (
+      ) : questions.length === 0 ? (
         <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
           <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
             <FileQuestion className="w-6 h-6" />

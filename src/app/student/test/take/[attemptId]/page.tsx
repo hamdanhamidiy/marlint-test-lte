@@ -40,6 +40,7 @@ import {
   MARLINS_TEST_5_STANDARD_QUESTIONS,
   MARLINS_TEST_6_STANDARD_QUESTIONS,
   MARLINS_TEST_7_STANDARD_QUESTIONS,
+  MARLINS_TEST_8_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
@@ -57,6 +58,12 @@ interface AttemptData {
 
 function getTestInfo(testNum: number) {
   switch (testNum) {
+    case 8:
+      return {
+        test_number: 8,
+        test_name: 'Marlins Test 8 - Heavy Lift, Dry Docking, Ocean Towage & Bio-Fouling',
+        questions: MARLINS_TEST_8_STANDARD_QUESTIONS,
+      };
     case 7:
       return {
         test_number: 7,
@@ -140,7 +147,8 @@ export default function TestTakingPage() {
       try {
         setLoading(true);
         let parsedTestNum = 1;
-        if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
+        if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
+        else if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
         else if (attemptId.includes('test-6') || attemptId.includes('test6')) parsedTestNum = 6;
         else if (attemptId.includes('test-5') || attemptId.includes('test5')) parsedTestNum = 5;
         else if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;

@@ -129,6 +129,7 @@ export interface Question {
   marlint_test_id?: string | null;
   marlint_test_number?: number | null;
   is_active: boolean;
+  points?: number;
   created_at?: string;
   order_number?: number;
 }

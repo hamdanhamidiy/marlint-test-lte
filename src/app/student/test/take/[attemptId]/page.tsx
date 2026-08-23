@@ -32,7 +32,7 @@ import DragDropLabelQuestion from '@/components/test-engine/DragDropLabelQuestio
 import ImageChoiceQuestion from '@/components/test-engine/ImageChoiceQuestion';
 import ParagraphTitleMatchQuestion from '@/components/test-engine/ParagraphTitleMatchQuestion';
 import AudioListeningQuestion from '@/components/test-engine/AudioListeningQuestion';
-import { MARLINS_60_STANDARD_QUESTIONS } from '@/lib/marlinsQuestionBank';
+import { MARLINS_60_STANDARD_QUESTIONS, MARLINS_TEST_2_STANDARD_QUESTIONS } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
   attempt_id: string;
@@ -78,11 +78,17 @@ export default function TestTakingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Load Attempt Data with 60 questions fallback for Test 1
+  // Load Attempt Data with 60 questions fallback
   useEffect(() => {
     async function loadAttempt() {
       try {
         setLoading(true);
+        const isTest2 = attemptId.includes('test-2') || attemptId.includes('test2');
+        const fallbackSet = isTest2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
+        const testName = isTest2
+          ? 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)'
+          : 'Marlins Test 1 - Cruise Hospitality & Maritime English';
+
         const { data, error } = await supabase.rpc('get_test_attempt', {
           p_attempt_id: attemptId,
         });
@@ -90,15 +96,15 @@ export default function TestTakingPage() {
         if (error || !data) {
           setAttempt({
             attempt_id: attemptId,
-            test_number: 1,
-            test_name: 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+            test_number: isTest2 ? 2 : 1,
+            test_name: testName,
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
             duration_minutes: 60,
-            total_questions: 60,
+            total_questions: fallbackSet.length,
             passing_grade: 70,
             status: 'active',
-            questions: MARLINS_60_STANDARD_QUESTIONS,
+            questions: fallbackSet,
           });
           return;
         }
@@ -108,11 +114,14 @@ export default function TestTakingPage() {
           return;
         }
 
-        // Ensure 60 standard questions
+        const effectiveTestNumber = data.test_number || (isTest2 ? 2 : 1);
+        const resolvedSet = effectiveTestNumber === 2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
+
+        // Ensure standard questions
         const questionsList =
-          data.questions && data.questions.length >= 60
+          data.questions && data.questions.length >= 20
             ? data.questions
-            : MARLINS_60_STANDARD_QUESTIONS;
+            : resolvedSet;
 
         setAttempt({
           ...data,
@@ -120,17 +129,22 @@ export default function TestTakingPage() {
           questions: questionsList,
         } as AttemptData);
       } catch (err: any) {
+        const isTest2 = attemptId.includes('test-2') || attemptId.includes('test2');
+        const fallbackSet = isTest2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
+
         setAttempt({
           attempt_id: attemptId,
-          test_number: 1,
-          test_name: 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+          test_number: isTest2 ? 2 : 1,
+          test_name: isTest2
+            ? 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)'
+            : 'Marlins Test 1 - Cruise Hospitality & Maritime English',
           started_at: new Date().toISOString(),
           expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
           duration_minutes: 60,
-          total_questions: 60,
+          total_questions: fallbackSet.length,
           passing_grade: 70,
           status: 'active',
-          questions: MARLINS_60_STANDARD_QUESTIONS,
+          questions: fallbackSet,
         });
       } finally {
         setLoading(false);

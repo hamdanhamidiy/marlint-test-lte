@@ -261,18 +261,21 @@ export default function AdminQuestionsPage() {
   return (
     <div className="space-y-7 min-w-0 font-sans pb-12">
       {/* Top Header & Add Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
-            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-            <span className="font-bold text-slate-900">Bank Soal Standar IMO STCW & SMCP</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-slate-600 font-medium">Evaluation Repository</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
+        <div className="space-y-3">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+              <span className="font-bold text-slate-900">Bank Soal Standar IMO STCW & SMCP</span>
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-600 font-medium">Evaluation Repository</span>
+            </div>
           </div>
 
-          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
             Kelola Bank Soal Maritim
           </h1>
+
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
             Total <strong className="text-slate-900 font-bold">{questions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
           </p>

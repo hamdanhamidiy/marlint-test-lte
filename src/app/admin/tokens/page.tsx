@@ -89,17 +89,23 @@ export default function AdminTokensPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-amber-700 text-xs font-bold uppercase tracking-wider mb-1">
-            <KeyRound className="w-4 h-4 text-amber-600" />
-            <span>Manajemen Token & Voucher Akses</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
+        <div className="space-y-3">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+              <span className="font-bold text-slate-900">Manajemen Voucher & Token</span>
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-600 font-medium">Access Generator</span>
+            </div>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-900">
+
+          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
             Access Token Generator
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium">
-            Terbitkan kode voucher ujian Marlins untuk instansi maritim, akademi pelayaran, dan siswa khusus.
+
+          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
+            Terbitkan kode voucher ujian Marlins untuk instansi maritim, akademi pelayaran, dan siswa khusus secara realtime.
           </p>
         </div>
 
@@ -108,7 +114,7 @@ export default function AdminTokensPage() {
             setGeneratedCode(null);
             setModalOpen(true);
           }}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-amber-600 hover:bg-amber-700 shadow-md shadow-amber-500/20 transition-all hover:scale-105 shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs text-white bg-[#EA580C] hover:bg-[#C2410C] shadow-md shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Terbitkan Token Baru</span>

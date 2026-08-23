@@ -168,16 +168,16 @@ export default function StudentDashboardPage() {
       <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
         
         {/* Modern Stratify/Hormn-Inspired Executive Hero Greeting Card */}
-        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[26px] bg-gradient-to-br from-white via-indigo-50/25 to-slate-50 border border-slate-200/80 p-5 sm:p-6 lg:p-7 shadow-[0_3px_20px_rgba(0,0,0,0.025)] space-y-3.5 sm:space-y-4">
+        <div className="relative overflow-hidden rounded-[22px] sm:rounded-[24px] bg-gradient-to-br from-white via-indigo-50/25 to-slate-50 border border-slate-200/80 px-4 py-3.5 sm:px-6 sm:py-4.5 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-2 sm:space-y-2.5">
           
           {/* Subtle Ambient Glow */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-cyan-400/10 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute -top-12 -right-12 w-44 h-44 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-cyan-400/10 rounded-full blur-xl pointer-events-none" />
 
           {/* Top Row: Pill Badge */}
           <div className="flex items-center justify-between gap-2 flex-wrap relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-slate-200/80 backdrop-blur-xs text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/90 border border-slate-200/80 backdrop-blur-xs text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span className="font-bold text-slate-900">Platform Resmi</span>
               <span className="text-slate-300">•</span>
               <span className="text-slate-500 font-medium">Standar IMO STCW & SMCP</span>
@@ -185,18 +185,14 @@ export default function StudentDashboardPage() {
           </div>
 
           {/* Main Greeting Heading */}
-          <div className="space-y-1.5 relative z-10">
-            <h1 className="font-heading text-xl sm:text-2xl lg:text-[27px] font-black text-slate-900 tracking-tight leading-snug">
-              Halo,{' '}
-              <span className="inline-block px-2.5 py-0.5 rounded-xl bg-[#EEF2FF] text-[#4F46E5] border border-indigo-100/90 shadow-2xs font-extrabold">
-                {greetingName}
-              </span>
-              ! <span className="animate-wave inline-block text-xl sm:text-2xl">👋</span>
+          <div className="space-y-0.5 relative z-10">
+            <h1 className="font-heading text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 tracking-tight leading-snug">
+              Halo, <span className="inline-block px-2.5 py-0.5 rounded-xl bg-[#EEF2FF] text-[#4F46E5] border border-indigo-100/90 shadow-2xs font-extrabold">{greetingName}</span>!<span className="animate-wave inline-block text-xl sm:text-2xl ml-1.5">👋</span>
             </h1>
 
             {/* Dynamic Typewriter Subtitle with Cursor */}
-            <div className="min-h-[28px] sm:min-h-[30px] flex items-center">
-              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-2xl">
+            <div className="min-h-[20px] sm:min-h-[22px] flex items-center">
+              <p className="text-xs sm:text-[13px] text-slate-600 font-medium leading-relaxed max-w-2xl">
                 <span>{currentText}</span>
                 <span className="animate-cursor font-bold text-[#4F46E5] text-xs sm:text-sm ml-0.5">|</span>
               </p>
@@ -204,16 +200,16 @@ export default function StudentDashboardPage() {
           </div>
 
           {/* Quick Metrics Badges */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2.5 border-t border-slate-200/50 text-[11px] sm:text-xs font-bold text-slate-600 relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2 border-t border-slate-200/50 text-[11px] font-bold text-slate-600 relative z-10">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
               <Clock className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
               <span>60 Mnt Waktu Ujian</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
               <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
               <span>60 Butir Soal Terstandar</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white/90 border border-slate-200/80 shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
               <Award className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>Passing 70% Standar Perwira</span>
             </div>

@@ -167,42 +167,45 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
 
-        {/* Executive Maritime Header (Clean, Formal & Professional) */}
-        <div className="space-y-3 pb-4 border-b border-slate-200/80">
-          {/* Top Status & Specs Row */}
+        {/* Modern Clean Executive Maritime Hero Card */}
+        <div className="bg-white rounded-[26px] border border-slate-200/90 p-5 sm:p-6 lg:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4 relative overflow-hidden">
+          
+          {/* Subtle Top Ambient Gradient Line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+
+          {/* Top Row: Official Status & Quick Metric Badges */}
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900 uppercase tracking-wide">Platform Standar Resmi IMO STCW & SMCP</span>
+              <span className="font-bold text-slate-900">Platform Resmi</span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-500 font-medium">Maritime English Evaluation</span>
+              <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
             </div>
 
-            <div className="hidden sm:flex items-center gap-4 text-xs font-medium text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#0284C7]" />
-                <strong className="text-slate-900 font-bold">60 Mnt</strong> / Sesi
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="flex items-center gap-1.5">
-                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C]" />
-                <strong className="text-slate-900 font-bold">60 Soal</strong> Terstandar
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-emerald-600" />
-                Passing <strong className="text-emerald-700 font-bold">70%</strong>
-              </span>
+            {/* Quick Metrics Strip */}
+            <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-slate-700">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
+                <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
+                <span>60 Mnt</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
+                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
+                <span>60 Soal</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950 text-white shadow-2xs">
+                <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Passing 70%</span>
+              </div>
             </div>
           </div>
 
-          {/* Main Greeting & Subtitle */}
-          <div className="space-y-1">
+          {/* Center Row: Main Greeting & Typewriter Subtitle */}
+          <div className="space-y-1 pt-1">
             <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-snug">
               Halo, {greetingName}! <span className="animate-wave inline-block text-2xl sm:text-3xl ml-1">👋</span>
             </h1>
 
-            {/* Dynamic Typewriter Subtitle with Dark Orange Cursor */}
+            {/* Dynamic Typewriter Subtitle */}
             <div className="min-h-[26px] flex items-center">
               <p className="text-sm text-slate-600 font-medium leading-relaxed max-w-3xl">
                 <span>{currentText}</span>
@@ -211,12 +214,21 @@ export default function StudentDashboardPage() {
             </div>
           </div>
 
-          {/* Mobile Metrics (Visible on small screens) */}
-          <div className="flex sm:hidden items-center gap-2 flex-wrap pt-1 text-[11px] font-bold">
-            <span className="px-2.5 py-1 rounded-lg bg-sky-50 text-[#0369A1] border border-sky-200">60 Mnt Ujian</span>
-            <span className="px-2.5 py-1 rounded-lg bg-orange-50 text-[#C2410C] border border-orange-200">60 Soal</span>
-            <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-white">Passing 70%</span>
+          {/* Bottom Info Strip */}
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>Simulasi Soal Interaktif Marlins • Audio VHF Anjungan Kapal • Sertifikasi Digital</span>
+            </div>
+            <Link
+              href="/student/test/1"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors"
+            >
+              <span>Mulai Ujian Langsung</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
+
         </div>
 
         {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}

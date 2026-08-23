@@ -10,12 +10,23 @@ import {
   BookOpen,
   Lock,
   Unlock,
+  Sparkles,
+  Award,
+  Clock,
+  Compass,
+  CheckCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
 import { MarlintTest, StudentResult, Article } from '@/lib/supabase/types';
 import { formatPriceIDR, formatDateIndo } from '@/lib/utils';
 import RightStatsPanel from '@/components/dashboard/RightStatsPanel';
+
+const TYPEWRITER_PHRASES = [
+  'Siap melanjutkan evaluasi dan sertifikasi kompetensi Bahasa Inggris Maritim Anda hari ini?',
+  'Uji kecakapan SMCP, VHF Radio, Navigation & Engineering English standar STCW.',
+  'Raih sertifikat resmi Marlins Test yang diakui oleh perusahaan pelayaran global.',
+];
 
 export default function StudentDashboardPage() {
   const { profile, user } = useAuth();
@@ -24,6 +35,36 @@ export default function StudentDashboardPage() {
   const [recentResults, setRecentResults] = useState<StudentResult[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Typewriter Animation State
+  const [currentText, setCurrentText] = useState('');
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentPhrase = TYPEWRITER_PHRASES[phraseIndex];
+    let timer: NodeJS.Timeout;
+
+    if (!isDeleting && currentText === currentPhrase) {
+      // Pause when full text is typed
+      timer = setTimeout(() => setIsDeleting(true), 2600);
+    } else if (isDeleting && currentText === '') {
+      // Move to next phrase
+      setIsDeleting(false);
+      setPhraseIndex((prev) => (prev + 1) % TYPEWRITER_PHRASES.length);
+    } else {
+      const speed = isDeleting ? 20 : 38;
+      timer = setTimeout(() => {
+        setCurrentText(
+          isDeleting
+            ? currentPhrase.substring(0, currentText.length - 1)
+            : currentPhrase.substring(0, currentText.length + 1)
+        );
+      }, speed);
+    }
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, phraseIndex]);
 
   useEffect(() => {
     async function loadData() {
@@ -121,37 +162,71 @@ export default function StudentDashboardPage() {
     },
   ];
 
-  const totalTests = recentResults.length;
-  const avgScore =
-    totalTests > 0
-      ? Math.round(recentResults.reduce((acc, curr) => acc + curr.score, 0) / totalTests)
-      : 82;
-
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
       {/* Center Main Content Area */}
-      <div className="flex-1 w-full space-y-7 sm:space-y-8 min-w-0">
+      <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
         
-        {/* Header Greeting (Clean, Human, Stratify Style) */}
-        <div className="space-y-2 pt-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E0E7FF] text-[#4338CA] text-xs font-bold tracking-tight">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Standar Resmi IMO STCW & SMCP</span>
+        {/* Modern Stratify/Hormn-Inspired Executive Hero Greeting Card */}
+        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-white via-indigo-50/30 to-slate-50 border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4">
+          
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -top-16 -right-16 w-56 h-56 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
+
+          {/* Pill Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 border border-slate-200/80 backdrop-blur-xs text-xs font-semibold text-slate-700 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="font-bold text-slate-900">Platform Resmi</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Standar IMO STCW & SMCP</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            Halo, <span className="text-[#4F46E5]">{greetingName}</span>! 👋
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed max-w-xl">
-            Siap melanjutkan evaluasi dan sertifikasi kompetensi Bahasa Inggris Maritim Anda hari ini?
-          </p>
+
+          {/* Main Greeting Heading */}
+          <div className="space-y-2 relative z-10">
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-black text-slate-900 tracking-tight leading-tight">
+              Halo,{' '}
+              <span className="inline-block px-3 py-0.5 rounded-2xl bg-[#EEF2FF] text-[#4F46E5] border border-indigo-100/90 shadow-2xs font-extrabold">
+                {greetingName}
+              </span>
+              ! <span className="animate-wave inline-block text-2xl sm:text-3xl">👋</span>
+            </h1>
+
+            {/* Dynamic Typewriter Subtitle with Cursor */}
+            <div className="min-h-[44px] flex items-center">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-2xl">
+                <span>{currentText}</span>
+                <span className="animate-cursor font-bold text-[#4F46E5] text-sm ml-0.5">|</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Metrics Badges */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap pt-2 border-t border-slate-200/60 text-[11px] font-bold text-slate-600">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+              <Clock className="w-3.5 h-3.5 text-indigo-600" />
+              <span>60 Menit Waktu Ujian</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600" />
+              <span>60 Butir Soal Terstandar</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+              <Award className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Passing 70% Standar Perwira</span>
+            </div>
+          </div>
         </div>
 
-        {/* Featured Marlins Test Cards Grid (3 Paket Utama Saja) */}
+        {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Paket Ujian Marlins
+              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <span>Paket Ujian Marlins</span>
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-[#4F46E5] border border-indigo-100">
+                  Ready
+                </span>
               </h2>
               <p className="text-xs text-slate-400 font-normal truncate sm:whitespace-normal">
                 Pilihan paket asesmen kompetensi maritim standar perwira & rating kapal
@@ -177,17 +252,24 @@ export default function StudentDashboardPage() {
             ) : (
               tests.slice(0, 3).map((test) => {
                 const hasAccess = test.is_free || entitlements.has(test.test_number);
+                const isTest1 = test.test_number === 1;
 
                 return (
                   <div
                     key={test.id}
-                    className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-indigo-300/80 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden"
+                    className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
+                      isTest1
+                        ? 'border-indigo-200/90 shadow-[0_4px_20px_rgba(79,70,229,0.06)] hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1.5'
+                        : 'border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-300 hover:-translate-y-1'
+                    }`}
                   >
-                    {/* Top Header Row */}
+                    {/* Top Tag & Access Indicator */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-extrabold tracking-tight">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
+                            isTest1 ? 'bg-indigo-50 text-[#4F46E5]' : 'bg-slate-100 text-slate-700'
+                          }`}>
                             Paket #{test.test_number}
                           </span>
                           <span className="text-[10px] font-semibold text-slate-400">
@@ -450,39 +532,6 @@ export default function StudentDashboardPage() {
                   </div>
                 </div>
               ))
-            ) : articles.length > 0 ? (
-              articles.map((art) => (
-                <div
-                  key={art.id}
-                  className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 space-y-2.5 shadow-2xs"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold text-xs shrink-0">
-                        <BookOpen className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-xs leading-snug truncate">{art.title}</p>
-                        <p className="text-[10px] text-slate-400">{formatDateIndo(art.created_at)}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#ECFEFF] text-[#06B6D4] uppercase tracking-wider">
-                      {art.category || 'IMO SMCP'}
-                    </span>
-
-                    <Link
-                      href={`/student/articles/${art.id}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5] hover:text-[#4338CA] shrink-0"
-                    >
-                      <span>Baca Materi</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              ))
             ) : (
               defaultSampleRows.map((row) => (
                 <div
@@ -502,15 +551,9 @@ export default function StudentDashboardPage() {
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
-                        {row.type}
-                      </span>
-                      <span className="text-[10px] font-semibold text-slate-600">
-                        {row.statusText}
-                      </span>
-                    </div>
-
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
+                      {row.type}
+                    </span>
                     <Link
                       href={row.href}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5] hover:text-[#4338CA] shrink-0"
@@ -524,10 +567,11 @@ export default function StudentDashboardPage() {
             )}
           </div>
         </div>
+
       </div>
 
-      {/* Right Column: Statistics & Mentors Panel */}
-      <RightStatsPanel scoreAverage={avgScore} totalTestsCompleted={totalTests} />
+      {/* Right Sidebar Widgets Panel */}
+      <RightStatsPanel />
     </div>
   );
 }

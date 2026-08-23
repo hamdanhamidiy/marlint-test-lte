@@ -61,6 +61,41 @@
   background: #94a3b8;
 }
 
+/* Custom Micro-Animations */
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave 2.2s infinite ease-in-out;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-cursor {
+  animation: cursor-blink 0.85s infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-float {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
 /* Print Specific Certificate Styling */
 @media print {
   body {
@@ -81,3 +116,4 @@
     width: 100% !important;
   }
 }
+

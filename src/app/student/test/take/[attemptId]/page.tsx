@@ -32,7 +32,11 @@ import DragDropLabelQuestion from '@/components/test-engine/DragDropLabelQuestio
 import ImageChoiceQuestion from '@/components/test-engine/ImageChoiceQuestion';
 import ParagraphTitleMatchQuestion from '@/components/test-engine/ParagraphTitleMatchQuestion';
 import AudioListeningQuestion from '@/components/test-engine/AudioListeningQuestion';
-import { MARLINS_60_STANDARD_QUESTIONS, MARLINS_TEST_2_STANDARD_QUESTIONS } from '@/lib/marlinsQuestionBank';
+import {
+  MARLINS_60_STANDARD_QUESTIONS,
+  MARLINS_TEST_2_STANDARD_QUESTIONS,
+  MARLINS_TEST_3_STANDARD_QUESTIONS,
+} from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
   attempt_id: string;
@@ -45,6 +49,30 @@ interface AttemptData {
   passing_grade: number;
   status: string;
   questions: Question[];
+}
+
+function getTestInfo(testNum: number) {
+  switch (testNum) {
+    case 3:
+      return {
+        test_number: 3,
+        test_name: 'Marlins Test 3 - Bridge Watchkeeping & Engineering Operations',
+        questions: MARLINS_TEST_3_STANDARD_QUESTIONS,
+      };
+    case 2:
+      return {
+        test_number: 2,
+        test_name: 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)',
+        questions: MARLINS_TEST_2_STANDARD_QUESTIONS,
+      };
+    case 1:
+    default:
+      return {
+        test_number: 1,
+        test_name: 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+        questions: MARLINS_60_STANDARD_QUESTIONS,
+      };
+  }
 }
 
 export default function TestTakingPage() {
@@ -83,11 +111,11 @@ export default function TestTakingPage() {
     async function loadAttempt() {
       try {
         setLoading(true);
-        const isTest2 = attemptId.includes('test-2') || attemptId.includes('test2');
-        const fallbackSet = isTest2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
-        const testName = isTest2
-          ? 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)'
-          : 'Marlins Test 1 - Cruise Hospitality & Maritime English';
+        let parsedTestNum = 1;
+        if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
+        else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
+
+        const info = getTestInfo(parsedTestNum);
 
         const { data, error } = await supabase.rpc('get_test_attempt', {
           p_attempt_id: attemptId,
@@ -96,15 +124,15 @@ export default function TestTakingPage() {
         if (error || !data) {
           setAttempt({
             attempt_id: attemptId,
-            test_number: isTest2 ? 2 : 1,
-            test_name: testName,
+            test_number: info.test_number,
+            test_name: info.test_name,
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
             duration_minutes: 60,
-            total_questions: fallbackSet.length,
+            total_questions: info.questions.length,
             passing_grade: 70,
             status: 'active',
-            questions: fallbackSet,
+            questions: info.questions,
           });
           return;
         }
@@ -114,14 +142,14 @@ export default function TestTakingPage() {
           return;
         }
 
-        const effectiveTestNumber = data.test_number || (isTest2 ? 2 : 1);
-        const resolvedSet = effectiveTestNumber === 2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
+        const effectiveTestNumber = data.test_number || parsedTestNum;
+        const resolvedInfo = getTestInfo(effectiveTestNumber);
 
         // Ensure standard questions
         const questionsList =
           data.questions && data.questions.length >= 20
             ? data.questions
-            : resolvedSet;
+            : resolvedInfo.questions;
 
         setAttempt({
           ...data,
@@ -129,22 +157,23 @@ export default function TestTakingPage() {
           questions: questionsList,
         } as AttemptData);
       } catch (err: any) {
-        const isTest2 = attemptId.includes('test-2') || attemptId.includes('test2');
-        const fallbackSet = isTest2 ? MARLINS_TEST_2_STANDARD_QUESTIONS : MARLINS_60_STANDARD_QUESTIONS;
+        let parsedTestNum = 1;
+        if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
+        else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
+
+        const info = getTestInfo(parsedTestNum);
 
         setAttempt({
           attempt_id: attemptId,
-          test_number: isTest2 ? 2 : 1,
-          test_name: isTest2
-            ? 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)'
-            : 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+          test_number: info.test_number,
+          test_name: info.test_name,
           started_at: new Date().toISOString(),
           expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
           duration_minutes: 60,
-          total_questions: fallbackSet.length,
+          total_questions: info.questions.length,
           passing_grade: 70,
           status: 'active',
-          questions: fallbackSet,
+          questions: info.questions,
         });
       } finally {
         setLoading(false);

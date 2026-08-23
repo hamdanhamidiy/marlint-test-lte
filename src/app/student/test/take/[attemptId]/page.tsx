@@ -201,20 +201,28 @@ export default function TestTakingPage() {
         const effectiveTestNumber = data.test_number || parsedTestNum;
         const resolvedInfo = getTestInfo(effectiveTestNumber);
 
-        // Ensure standard questions
         const questionsList =
-          data.questions && data.questions.length >= 20
+          data.questions && data.questions.length >= 60
             ? data.questions
             : resolvedInfo.questions;
 
         setAttempt({
           ...data,
+          test_number: resolvedInfo.test_number,
+          test_name: resolvedInfo.test_name,
           total_questions: questionsList.length,
           questions: questionsList,
         } as AttemptData);
       } catch (err: any) {
         let parsedTestNum = 1;
-        if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
+        if (attemptId.includes('test-10') || attemptId.includes('test10')) parsedTestNum = 10;
+        else if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
+        else if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
+        else if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
+        else if (attemptId.includes('test-6') || attemptId.includes('test6')) parsedTestNum = 6;
+        else if (attemptId.includes('test-5') || attemptId.includes('test5')) parsedTestNum = 5;
+        else if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;
+        else if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 
         const info = getTestInfo(parsedTestNum);
@@ -260,31 +268,133 @@ export default function TestTakingPage() {
     });
   };
 
-  const handleSubmitTest = useCallback(async () => {
+  const handleFinalSubmit = async () => {
     if (!attempt || submitting) return;
 
     try {
       setSubmitting(true);
       setErrorMsg(null);
 
-      const latestAnswers = answersRef.current;
+      const formattedAnswers = Object.entries(answersRef.current).map(
+        ([questionId, answerValue]) => ({
+          question_id: questionId,
+          answer_value: answerValue,
+        })
+      );
 
       const { data, error } = await supabase.rpc('submit_test_attempt', {
-        p_attempt_id: attempt.attempt_id,
-        p_answers: latestAnswers,
+        p_attempt_id: attemptId,
+        p_answers: formattedAnswers,
       });
 
       if (error) {
-        console.warn('Direct RPC submit warning:', error);
+        console.warn('RPC submit failed, using client-side evaluation fallback:', error.message);
+        evaluateAndSaveClientSide(formattedAnswers);
+        return;
       }
 
-      router.replace(`/student/test/result/${attempt.attempt_id}`);
+      router.replace(`/student/test/result/${attemptId}`);
     } catch (err: any) {
-      router.replace(`/student/test/result/${attempt.attempt_id}`);
+      console.error('Error submitting test:', err);
+      evaluateAndSaveClientSide(
+        Object.entries(answersRef.current).map(([qId, val]) => ({
+          question_id: qId,
+          answer_value: val,
+        }))
+      );
     } finally {
       setSubmitting(false);
     }
-  }, [attempt, submitting, router]);
+  };
+
+  const evaluateAndSaveClientSide = (userAnswers: { question_id: string; answer_value: any }[]) => {
+    if (!attempt) return;
+
+    const answerMap = new Map(userAnswers.map((a) => [a.question_id, a.answer_value]));
+    let totalScore = 0;
+    const categoryStats: Record<string, { total: number; correct: number }> = {};
+
+    attempt.questions.forEach((q) => {
+      const cat = q.category || 'general';
+      if (!categoryStats[cat]) {
+        categoryStats[cat] = { total: 0, correct: 0 };
+      }
+      categoryStats[cat].total += 1;
+
+      const userAns = answerMap.get(q.id);
+      let isCorrect = false;
+
+      if (userAns !== undefined && userAns !== null) {
+        if (q.question_type === 'paragraph_title_match') {
+          if (typeof userAns === 'object') {
+            const correctMatches = q.question_data?.correct_matches || {};
+            const keys = Object.keys(correctMatches);
+            const matchesCount = keys.filter((k) => userAns[k] === correctMatches[k]).length;
+            if (keys.length > 0 && matchesCount === keys.length) isCorrect = true;
+          }
+        } else if (q.question_type === 'gap_fill') {
+          if (typeof userAns === 'object') {
+            const correctAnsStr = q.correct_answer || '';
+            const correctParts = correctAnsStr.split(',').map((s) => s.trim().toLowerCase());
+            const userParts = Object.values(userAns).map((s: any) => String(s).trim().toLowerCase());
+            if (correctParts.length === userParts.length && correctParts.every((cp, i) => cp === userParts[i])) {
+              isCorrect = true;
+            }
+          } else if (String(userAns).trim().toLowerCase() === String(q.correct_answer).trim().toLowerCase()) {
+            isCorrect = true;
+          }
+        } else if (q.question_type === 'drag_drop_label') {
+          if (typeof userAns === 'object') {
+            const dropZones = q.question_data?.drop_zones || [];
+            const allMatched = dropZones.every(
+              (dz: any) => String(userAns[dz.id] || '').trim().toLowerCase() === String(dz.correct_label || '').trim().toLowerCase()
+            );
+            if (dropZones.length > 0 && allMatched) isCorrect = true;
+          }
+        } else if (String(userAns).trim().toLowerCase() === String(q.correct_answer).trim().toLowerCase()) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
+        totalScore += 1;
+        categoryStats[cat].correct += 1;
+      }
+    });
+
+    const finalPercentage = Math.round((totalScore / Math.max(1, attempt.questions.length)) * 100);
+
+    const clientResult = {
+      attempt_id: attemptId,
+      test_number: attempt.test_number,
+      test_name: attempt.test_name,
+      overall_score: finalPercentage,
+      total_score: totalScore,
+      total_questions: attempt.questions.length,
+      passing_grade: attempt.passing_grade || 70,
+      is_passed: finalPercentage >= (attempt.passing_grade || 70),
+      category_scores: Object.entries(categoryStats).map(([cat, stat]) => ({
+        category: cat,
+        score: Math.round((stat.correct / Math.max(1, stat.total)) * 100),
+        correct: stat.correct,
+        total: stat.total,
+      })),
+      completed_at: new Date().toISOString(),
+      user_answers: userAnswers,
+    };
+
+    try {
+      localStorage.setItem(`test_result_${attemptId}`, JSON.stringify(clientResult));
+    } catch (e) {
+      console.warn('Failed to save result to localStorage:', e);
+    }
+
+    router.replace(`/student/test/result/${attemptId}`);
+  };
+
+  const handleExit = () => {
+    router.replace('/student/dashboard');
+  };
 
   if (loading) {
     return (
@@ -355,9 +465,9 @@ export default function TestTakingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between select-none">
-      {/* 1. TOP HEADER (Responsive & Clean) */}
-      <header className="bg-white border-b border-slate-200/90 px-3 sm:px-8 py-2.5 sm:py-3.5 sticky top-0 z-30 shadow-2xs">
+    <div className="h-screen w-full bg-[#F8FAFC] flex flex-col overflow-hidden select-none">
+      {/* 1. TOP HEADER (Fixed at top, no jumping) */}
+      <header className="bg-white border-b border-slate-200/90 px-3 sm:px-8 py-2.5 sm:py-3 shrink-0 z-30 shadow-2xs">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Test Branding */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-none">
@@ -416,126 +526,128 @@ export default function TestTakingPage() {
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT AREA (Centered & Spacious) */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-center space-y-3.5 sm:space-y-4">
-        {/* Category Header & Instruction Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-2">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{categoryInfo.name}</span>
-            </span>
+      {/* 2. MAIN CONTENT AREA (Scrolls independently with smooth scrollbar, perfectly centered) */}
+      <main className="flex-1 overflow-y-auto w-full px-3 sm:px-6 py-4 sm:py-5">
+        <div className="max-w-4xl mx-auto space-y-3.5 sm:space-y-4 pb-4">
+          {/* Category Header & Instruction Card */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>{categoryInfo.name}</span>
+              </span>
 
-            <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
-              <span>•</span>
-              <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
-            </div>
-          </div>
-
-          <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-            {getInstructionText(currentQuestion)}
-          </p>
-        </div>
-
-        {/* Question Canvas Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] min-h-[280px] flex flex-col justify-between space-y-6">
-          {/* Question Prompt & Visuals */}
-          <div className="space-y-3.5 sm:space-y-4">
-            {/* Audio Listening player if audio question */}
-            {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
-              <AudioListeningQuestion
-                audioUrl={currentQuestion.audio_url || undefined}
-                pronunciationText={currentQuestion.pronunciation_text || currentQuestion.question_text || undefined}
-              />
-            )}
-
-            {/* Question Text */}
-            {currentQuestion.question_type !== 'paragraph_title_match' && (
-              <h2 className="text-base sm:text-xl font-bold text-slate-950 leading-relaxed text-left break-words">
-                {currentQuestion.question_text}
-              </h2>
-            )}
-
-            {/* Optional Image */}
-            {currentQuestion.image_url && (
-              <div className="flex justify-center p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <img
-                  src={currentQuestion.image_url}
-                  alt="Question Visual"
-                  className="max-h-48 sm:max-h-56 object-contain rounded-xl shadow-2xs"
-                />
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
+                <span>•</span>
+                <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
               </div>
-            )}
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+              {getInstructionText(currentQuestion)}
+            </p>
           </div>
 
-          {/* Interactive Question Input Renderer */}
-          <div className="pt-1">
-            {currentQuestion.question_type === 'paragraph_title_match' ? (
-              <ParagraphTitleMatchQuestion
-                question={currentQuestion}
-                selectedAnswers={answers[currentQuestion.id] || {}}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            ) : currentQuestion.question_type === 'gap_fill' ? (
-              <GapFillQuestion
-                question={currentQuestion}
-                selectedAnswers={answers[currentQuestion.id] || {}}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            ) : currentQuestion.question_type === 'sentence_reorder' ? (
-              <SentenceReorderQuestion
-                question={currentQuestion}
-                selectedOrder={answers[currentQuestion.id] || []}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            ) : currentQuestion.question_type === 'drag_drop_label' ? (
-              <DragDropLabelQuestion
-                question={currentQuestion}
-                selectedAnswers={answers[currentQuestion.id] || {}}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            ) : currentQuestion.question_type === 'image_choice' ? (
-              <ImageChoiceQuestion
-                question={currentQuestion}
-                selectedAnswer={answers[currentQuestion.id]}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            ) : (
-              <MultipleChoiceQuestion
-                question={currentQuestion}
-                selectedAnswer={answers[currentQuestion.id]}
-                onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-              />
-            )}
-          </div>
+          {/* Question Canvas Card */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] min-h-[280px] flex flex-col justify-between space-y-6">
+            {/* Question Prompt & Visuals */}
+            <div className="space-y-3.5 sm:space-y-4">
+              {/* Audio Listening player if audio question */}
+              {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
+                <AudioListeningQuestion
+                  audioUrl={currentQuestion.audio_url || undefined}
+                  pronunciationText={currentQuestion.pronunciation_text || currentQuestion.question_text || undefined}
+                />
+              )}
 
-          {/* Question Footer Actions: Flag toggle */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-            <button
-              type="button"
-              onClick={() => handleToggleFlag(currentIndex)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
-                flaggedQuestions.has(currentIndex)
-                  ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-slate-200'
-              }`}
-            >
-              <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
-              <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
-            </button>
+              {/* Question Text */}
+              {currentQuestion.question_type !== 'paragraph_title_match' && (
+                <h2 className="text-base sm:text-xl font-bold text-slate-950 leading-relaxed text-left break-words">
+                  {currentQuestion.question_text}
+                </h2>
+              )}
 
-            <span className="text-xs font-mono text-slate-500 font-bold">
-              Soal {currentIndex + 1} dari {totalQuestionsCount}
-            </span>
+              {/* Optional Image */}
+              {currentQuestion.image_url && (
+                <div className="flex justify-center p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <img
+                    src={currentQuestion.image_url}
+                    alt="Question Visual"
+                    className="max-h-48 sm:max-h-56 object-contain rounded-xl shadow-2xs"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Interactive Question Input Renderer */}
+            <div className="pt-1">
+              {currentQuestion.question_type === 'paragraph_title_match' ? (
+                <ParagraphTitleMatchQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'gap_fill' ? (
+                <GapFillQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'sentence_reorder' ? (
+                <SentenceReorderQuestion
+                  question={currentQuestion}
+                  selectedOrder={answers[currentQuestion.id] || []}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'drag_drop_label' ? (
+                <DragDropLabelQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'image_choice' ? (
+                <ImageChoiceQuestion
+                  question={currentQuestion}
+                  selectedAnswer={answers[currentQuestion.id]}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : (
+                <MultipleChoiceQuestion
+                  question={currentQuestion}
+                  selectedAnswer={answers[currentQuestion.id]}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              )}
+            </div>
+
+            {/* Question Footer Actions: Flag toggle */}
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+              <button
+                type="button"
+                onClick={() => handleToggleFlag(currentIndex)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
+                  flaggedQuestions.has(currentIndex)
+                    ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-slate-200'
+                }`}
+              >
+                <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
+                <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
+              </button>
+
+              <span className="text-xs font-mono text-slate-500 font-bold">
+                Soal {currentIndex + 1} dari {totalQuestionsCount}
+              </span>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* 3. BOTTOM CONTROL BAR */}
-      <footer className="bg-white border-t border-slate-200/90 py-3 sm:py-4 px-3 sm:px-8 space-y-2.5 sticky bottom-0 z-30 shadow-xs">
+      {/* 3. BOTTOM CONTROL BAR (Fixed at bottom, shrink-0, zero scroll jump) */}
+      <footer className="bg-white border-t border-slate-200/90 py-2.5 sm:py-3 px-3 sm:px-8 shrink-0 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
         <div className="max-w-4xl mx-auto space-y-2.5">
           {/* Progress Track */}
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -751,9 +863,9 @@ export default function TestTakingPage() {
 
               <button
                 type="button"
-                onClick={handleSubmitTest}
+                onClick={handleFinalSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold text-xs transition-all shadow-md cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/20 cursor-pointer disabled:opacity-50"
               >
                 {submitting ? (
                   <>

@@ -64,7 +64,7 @@ allTestBanks.forEach((test, idx) => {
       }
     } else if (q.options && q.options.length > 0 && q.question_type !== 'paragraph_title_match') {
       const found = q.options.some((opt) => opt.trim() === q.correct_answer?.trim());
-      if (!found && q.question_type !== 'multiple_choice_multiple') {
+      if (!found) {
         console.warn(`  ⚠️ Option mismatch for ID ${q.id}: Answer "${q.correct_answer}" not in options.`);
         optionMismatchErrors++;
       }

@@ -16,6 +16,7 @@ import {
   ArrowRight,
   Shield,
   HelpCircle,
+  BookOpen,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { MarlintTest } from '@/lib/supabase/types';
@@ -114,10 +115,10 @@ export default function AdminTestsPage() {
   };
 
   return (
-    <div className="space-y-7 min-w-0 font-sans pb-12">
+    <div className="space-y-6 min-w-0 font-sans pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
@@ -132,7 +133,7 @@ export default function AdminTestsPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Atur nama paket, durasi waktu ujian, passing grade kelulusan, tarif akses, dan status aktif secara realtime.
+            Daftar paket evaluasi kompetensi Marlins Test. Atur durasi waktu, batas kelulusan, dan tarif akses secara realtime.
           </p>
         </div>
 
@@ -145,7 +146,7 @@ export default function AdminTestsPage() {
         </Link>
       </div>
 
-      {/* Tests Grid */}
+      {/* Tests Simple & Compact List */}
       {loading ? (
         <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
           <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
@@ -158,120 +159,90 @@ export default function AdminTestsPage() {
           Belum ada data paket ujian.
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-3.5">
           {tests.map((test) => {
-            const comp = test.question_composition || {
-              grammar: 10,
-              vocabulary: 10,
-              listening_comprehension: 10,
-              reading_comprehension: 10,
-              time_and_numbers: 10,
-              pronunciation: 10,
-            };
+            const comp = test.question_composition || {};
 
             return (
               <div
                 key={test.id}
-                className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-5 hover:border-slate-300 hover:shadow-xs transition-all flex flex-col justify-between"
+                className="bg-white p-4.5 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-xs transition-all"
               >
-                <div className="space-y-4">
-                  {/* Top Row: Package Tag, Access, Active & Edit */}
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-sky-50 text-[#0369A1] font-black text-xs border border-sky-200 shadow-2xs">
-                        Paket #{test.test_number}
-                      </span>
-                      {test.is_free ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-black border border-emerald-200">
-                          GRATIS
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-black border border-orange-200">
-                          {formatPriceIDR(test.price)}
-                        </span>
-                      )}
-                    </div>
+                {/* Left: Package Info & Metadata */}
+                <div className="space-y-2 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-3 py-0.5 rounded-full bg-sky-50 text-[#0369A1] font-black text-xs border border-sky-200 shadow-2xs">
+                      Paket #{test.test_number}
+                    </span>
 
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-                          test.is_active
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-200 text-slate-600'
-                        }`}
-                      >
-                        {test.is_active ? 'AKTIF' : 'NONAKTIF'}
+                    {test.is_free ? (
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-black border border-emerald-200">
+                        GRATIS
                       </span>
+                    ) : (
+                      <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-black border border-orange-200">
+                        {formatPriceIDR(test.price)}
+                      </span>
+                    )}
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(test)}
-                        className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200 transition-all cursor-pointer shadow-2xs"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                        <span>Edit</span>
-                      </button>
-                    </div>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                        test.is_active
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-slate-200 text-slate-600'
+                      }`}
+                    >
+                      {test.is_active ? 'AKTIF' : 'NONAKTIF'}
+                    </span>
                   </div>
 
                   {/* Title & Description */}
-                  <div className="space-y-1">
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-slate-950 leading-snug">
+                  <div>
+                    <h3 className="font-heading text-base sm:text-lg font-bold text-slate-950">
                       {test.test_name.replace('Marlint', 'Marlins')}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
-                      {test.description || 'Evaluasi standar kompetensi Bahasa Inggris Maritim IMO STCW untuk perwira dan rating kapal.'}
+                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                      {test.description || 'Evaluasi standar kompetensi Bahasa Inggris Maritim IMO STCW.'}
                     </p>
                   </div>
 
-                  {/* Specs Row */}
-                  <div className="grid grid-cols-3 gap-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                    <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Durasi</span>
-                      <span className="font-mono text-sm font-black text-slate-950 mt-0.5 block">{test.duration} mnt</span>
-                    </div>
-                    <div className="border-x border-slate-200/80 px-1">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Total Soal</span>
-                      <span className="font-mono text-sm font-black text-[#0284C7] mt-0.5 block">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Passing</span>
-                      <span className="font-mono text-sm font-black text-emerald-600 mt-0.5 block">{test.passing_grade}%</span>
-                    </div>
-                  </div>
-
-                  {/* Question Composition */}
-                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                    <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
-                      Komposisi Modul Kategori:
+                  {/* Inline Stats Chips */}
+                  <div className="flex items-center gap-2 flex-wrap text-xs text-slate-600 font-medium pt-1">
+                    <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{test.duration} Menit</span>
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {Object.entries(comp).map(([cat, count]) => {
-                        const info = getCategoryInfo(cat);
-                        return (
-                          <div
-                            key={cat}
-                            className={`p-2 rounded-xl border flex items-center justify-between text-xs ${info.bg} ${info.border}`}
-                          >
-                            <span className={`font-bold text-[11px] ${info.color}`}>{info.name}</span>
-                            <span className="font-mono font-black text-slate-900 text-xs">{count}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+
+                    <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
+                      <BookOpen className="w-3.5 h-3.5 text-[#0284C7]" />
+                      <span>{test.total_questions >= 60 ? test.total_questions : 60} Butir Soal</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
+                      <Award className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Passing {test.passing_grade}%</span>
+                    </span>
                   </div>
                 </div>
 
-                {/* Footer Link */}
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-                  <span>Akses: <strong className="text-slate-800 font-bold">{test.is_free ? 'Gratis (Semua Siswa)' : formatPriceIDR(test.price)}</strong></span>
+                {/* Right: Action Buttons */}
+                <div className="flex items-center gap-2.5 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 justify-end">
                   <Link
                     href={`/admin/questions`}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
                   >
-                    <span>Bank Soal Paket Ini</span>
+                    <span>Bank Soal</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEdit(test)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>Edit Konfigurasi</span>
+                  </button>
                 </div>
               </div>
             );

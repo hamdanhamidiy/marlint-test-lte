@@ -183,38 +183,6 @@ export default function AdminTokensPage() {
         </button>
       </div>
 
-      {/* KPI Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Batch Diterbitkan</span>
-            <span className="font-mono text-2xl font-black text-slate-950 block">{totalIssued}</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center border border-orange-100 shadow-2xs">
-            <KeyRound className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Token Aktif Tersedia</span>
-            <span className="font-mono text-2xl font-black text-[#0284C7] block">{totalActiveTokens}</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center border border-sky-100 shadow-2xs">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Sesi Terklaim</span>
-            <span className="font-mono text-2xl font-black text-emerald-700 block">{totalUsedSessions}</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100 shadow-2xs">
-            <TrendingUp className="w-5 h-5" />
-          </div>
-        </div>
-      </div>
 
       {/* Filter & Search Bar */}
       <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">

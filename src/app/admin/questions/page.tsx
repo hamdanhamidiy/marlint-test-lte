@@ -14,11 +14,15 @@ import {
   AlertTriangle,
   FileQuestion,
   Image as ImageIcon,
-  SlidersHorizontal,
-  ArrowRight,
+  Copy,
+  ChevronLeft,
+  ChevronRight,
   Shield,
   Layers,
   Sparkles,
+  ToggleLeft,
+  ToggleRight,
+  Filter,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Question, QuestionCategory, QuestionType } from '@/lib/supabase/types';
@@ -39,6 +43,10 @@ export default function AdminQuestionsPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedTestNum, setSelectedTestNum] = useState<string>('all');
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Modals
   const [previewQuestion, setPreviewQuestion] = useState<Question | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | null>(null);
@@ -58,6 +66,7 @@ export default function AdminQuestionsPage() {
     audio_url: '',
     explanation: '',
     points: 10,
+    is_active: true,
   });
 
   const loadQuestions = async () => {
@@ -91,19 +100,21 @@ export default function AdminQuestionsPage() {
 
   useEffect(() => {
     loadQuestions();
+    setCurrentPage(1);
   }, [selectedCategory, selectedType, selectedTestNum]);
 
   const handleOpenCreate = () => {
     setFormData({
       category: 'grammar',
       question_type: 'multiple_choice',
-      marlint_test_number: 1,
+      marlint_test_number: selectedTestNum !== 'all' ? Number(selectedTestNum) : 1,
       question_text: '',
       optionsRaw: 'Option A\nOption B\nOption C\nOption D',
       correct_answer: 'Option A',
       audio_url: '',
       explanation: '',
       points: 10,
+      is_active: true,
     });
     setFormError(null);
     setModalMode('create');
@@ -121,9 +132,45 @@ export default function AdminQuestionsPage() {
       audio_url: q.audio_url || '',
       explanation: q.explanation || '',
       points: q.points || 10,
+      is_active: q.is_active !== false,
     });
     setFormError(null);
     setModalMode('edit');
+  };
+
+  const handleDuplicateQuestion = (q: Question) => {
+    setFormData({
+      category: q.category,
+      question_type: q.question_type,
+      marlint_test_number: q.marlint_test_number || 1,
+      question_text: `${q.question_text} (Salinan)`,
+      optionsRaw: Array.isArray(q.options) ? q.options.join('\n') : '',
+      correct_answer: q.correct_answer || '',
+      audio_url: q.audio_url || '',
+      explanation: q.explanation || '',
+      points: q.points || 10,
+      is_active: true,
+    });
+    setFormError(null);
+    setModalMode('create');
+  };
+
+  const handleToggleActive = async (q: Question) => {
+    try {
+      const nextStatus = !q.is_active;
+      const { error } = await supabase
+        .from('questions')
+        .update({ is_active: nextStatus })
+        .eq('id', q.id);
+
+      if (!error) {
+        setQuestions((prev) =>
+          prev.map((item) => (item.id === q.id ? { ...item, is_active: nextStatus } : item))
+        );
+      }
+    } catch (err) {
+      console.error('Toggle active error:', err);
+    }
   };
 
   const handleSaveQuestion = async (e: React.FormEvent) => {
@@ -147,7 +194,7 @@ export default function AdminQuestionsPage() {
         audio_url: formData.audio_url.trim() || null,
         explanation: formData.explanation.trim() || null,
         points: Number(formData.points) || 10,
-        is_active: true,
+        is_active: formData.is_active,
       };
 
       if (modalMode === 'create') {
@@ -191,6 +238,12 @@ export default function AdminQuestionsPage() {
     (q.explanation && q.explanation.toLowerCase().includes(search.toLowerCase()))
   );
 
+  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+  const paginatedQuestions = filteredQuestions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const formatQuestionTypeName = (type: string) => {
     const map: Record<string, string> = {
       multiple_choice: 'Multiple Choice',
@@ -206,9 +259,9 @@ export default function AdminQuestionsPage() {
   };
 
   return (
-    <div className="space-y-6 min-w-0 font-sans">
-      {/* Top Header & Quick Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+    <div className="space-y-7 min-w-0 font-sans pb-12">
+      {/* Top Header & Add Action */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
             <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
@@ -221,7 +274,7 @@ export default function AdminQuestionsPage() {
             Kelola Bank Soal Maritim
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{questions.length}</strong> butir pertanyaan aktif. Tambah, edit, review interaktif, dan konfigurasi paket ujian secara realtime.
+            Total <strong className="text-slate-900 font-bold">{questions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
           </p>
         </div>
 
@@ -235,35 +288,47 @@ export default function AdminQuestionsPage() {
         </button>
       </div>
 
-      {/* Modern Responsive Search & Filter Bar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
+      {/* Quick Test Package Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {[
+          { label: 'Semua Paket', val: 'all', count: questions.length },
+          { label: 'Paket #1', val: '1', count: questions.filter((q) => q.marlint_test_number === 1).length },
+          { label: 'Paket #2', val: '2', count: questions.filter((q) => q.marlint_test_number === 2).length },
+          { label: 'Paket #3', val: '3', count: questions.filter((q) => q.marlint_test_number === 3).length },
+        ].map((tab) => (
+          <button
+            key={tab.val}
+            type="button"
+            onClick={() => setSelectedTestNum(tab.val)}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              selectedTestNum === tab.val
+                ? 'bg-[#0284C7] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-slate-950 border border-slate-200/90 hover:bg-slate-50'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] ${
+              selectedTestNum === tab.val ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+            }`}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Modern Clean Filter Bar */}
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
           {/* Search Input */}
-          <div className="relative lg:col-span-5">
+          <div className="relative lg:col-span-6">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Cari kata kunci soal, opsi, atau kunci jawaban..."
+              placeholder="Cari kata kunci soal, kunci jawaban, atau opsi..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/20 font-medium transition-all"
             />
-          </div>
-
-          {/* Test Package Filter */}
-          <div className="lg:col-span-2">
-            <select
-              value={selectedTestNum}
-              onChange={(e) => setSelectedTestNum(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
-            >
-              <option value="all">Semua Paket Tes</option>
-              <option value="1">Paket #1 (Marlins Test 1)</option>
-              <option value="2">Paket #2 (Marlins Test 2)</option>
-              <option value="3">Paket #3 (Marlins Test 3)</option>
-              <option value="4">Paket #4</option>
-              <option value="5">Paket #5</option>
-            </select>
           </div>
 
           {/* Category Filter */}
@@ -284,13 +349,13 @@ export default function AdminQuestionsPage() {
           </div>
 
           {/* Question Type Filter */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
               className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
             >
-              <option value="all">Semua Tipe</option>
+              <option value="all">Semua Tipe Soal</option>
               <option value="multiple_choice">Multiple Choice</option>
               <option value="gap_fill">Gap Fill</option>
               <option value="sentence_reorder">Sentence Reorder</option>
@@ -302,9 +367,12 @@ export default function AdminQuestionsPage() {
           </div>
         </div>
 
-        {/* Filter Summary Counter */}
-        <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium pt-1 px-1 border-t border-slate-100">
-          <span>Menampilkan <strong className="text-slate-900 font-bold">{filteredQuestions.length}</strong> butir soal</span>
+        {/* Filter Meta & Counter */}
+        <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-2 px-1 border-t border-slate-100">
+          <span>
+            Menampilkan <strong className="text-slate-900 font-bold">{paginatedQuestions.length}</strong> dari{' '}
+            <strong className="text-slate-900 font-bold">{filteredQuestions.length}</strong> butir soal terfilter
+          </span>
           {(search || selectedCategory !== 'all' || selectedType !== 'all' || selectedTestNum !== 'all') && (
             <button
               onClick={() => {
@@ -313,15 +381,15 @@ export default function AdminQuestionsPage() {
                 setSelectedType('all');
                 setSelectedTestNum('all');
               }}
-              className="text-[#0284C7] hover:text-[#0369A1] font-bold cursor-pointer"
+              className="text-[#0284C7] hover:text-[#0369A1] font-bold cursor-pointer transition-colors"
             >
-              Reset Filter
+              Reset Semua Filter
             </button>
           )}
         </div>
       </div>
 
-      {/* Questions Cards List */}
+      {/* Questions Cards List with Generous Gap */}
       {loading ? (
         <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
           <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
@@ -342,21 +410,24 @@ export default function AdminQuestionsPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filteredQuestions.map((q) => {
+        <div className="space-y-4">
+          {paginatedQuestions.map((q) => {
             const catInfo = getCategoryInfo(q.category);
 
             return (
               <div
                 key={q.id}
-                className="bg-white p-4.5 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-xs transition-all group"
+                className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-200 ease-out space-y-3.5 hover:shadow-sm ${
+                  q.is_active === false
+                    ? 'border-slate-200 bg-slate-50/60 opacity-60'
+                    : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-slate-300'
+                }`}
               >
-                {/* Left: Info & Prompt */}
-                <div className="space-y-2 flex-1 min-w-0">
-                  {/* Badges Row */}
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                {/* Row 1: Badges & Status */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
+                      className={`px-3 py-1 rounded-full text-[10px] font-extrabold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
                     >
                       {catInfo.name}
                     </span>
@@ -373,59 +444,118 @@ export default function AdminQuestionsPage() {
 
                     {q.audio_url && (
                       <span className="flex items-center gap-1 text-[10px] text-[#C2410C] font-extrabold bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                        <Headphones className="w-3 h-3 text-[#EA580C]" /> Audio
+                        <Headphones className="w-3 h-3 text-[#EA580C]" /> Audio VHF
                       </span>
                     )}
                   </div>
 
-                  {/* Question Text */}
-                  <p className="text-sm sm:text-base font-bold text-slate-950 leading-snug break-words">
-                    {q.question_text}
-                  </p>
+                  {/* Active Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleActive(q)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                      q.is_active !== false
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-slate-200 text-slate-600'
+                    }`}
+                    title="Klik untuk mengubah status aktif/nonaktif"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${q.is_active !== false ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                    <span>{q.is_active !== false ? 'Aktif' : 'Nonaktif'}</span>
+                  </button>
+                </div>
 
-                  {/* Answer Key */}
+                {/* Row 2: Question Prompt */}
+                <div className="space-y-1">
+                  <h3 className="font-heading text-base sm:text-lg font-bold text-slate-950 leading-relaxed break-words">
+                    {q.question_text}
+                  </h3>
+                </div>
+
+                {/* Row 3: Answer Key & Action Buttons with Generous Gap */}
+                <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <span>Kunci:</span>
-                    <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/80 text-[11px] truncate max-w-md">
+                    <span className="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Kunci:</span>
+                    <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/90 text-xs truncate max-w-lg">
                       {q.correct_answer || '-'}
                     </span>
                   </div>
-                </div>
 
-                {/* Right: Actions (Preview, Edit, Delete) */}
-                <div className="flex items-center gap-2 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewQuestion(q)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200/80 transition-all cursor-pointer shadow-2xs"
-                    title="Interactive Preview"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Preview</span>
-                  </button>
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 justify-end shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewQuestion(q)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200 transition-all cursor-pointer shadow-2xs"
+                      title="Interactive Preview"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Preview</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEdit(q)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all cursor-pointer shadow-2xs"
-                    title="Edit Soal"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    <span>Edit</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDuplicateQuestion(q)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
+                      title="Duplikasi Butir Soal"
+                    >
+                      <Copy className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="hidden md:inline">Salin</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmId(q.id)}
-                    className="p-2 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all cursor-pointer shadow-2xs"
-                    title="Hapus Soal"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(q)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all cursor-pointer shadow-2xs"
+                      title="Edit Soal"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmId(q.id)}
+                      className="p-2 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all cursor-pointer shadow-2xs"
+                      title="Hapus Soal"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-200/80 text-xs font-bold text-slate-600">
+          <button
+            type="button"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Sebelumnya</span>
+          </button>
+
+          <span className="text-slate-500">
+            Halaman <strong className="text-slate-900">{currentPage}</strong> dari{' '}
+            <strong className="text-slate-900">{totalPages}</strong>
+          </span>
+
+          <button
+            type="button"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+          >
+            <span>Berikutnya</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 

@@ -42,6 +42,7 @@ import {
   MARLINS_TEST_7_STANDARD_QUESTIONS,
   MARLINS_TEST_8_STANDARD_QUESTIONS,
   MARLINS_TEST_9_STANDARD_QUESTIONS,
+  MARLINS_TEST_10_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
@@ -59,6 +60,12 @@ interface AttemptData {
 
 function getTestInfo(testNum: number) {
   switch (testNum) {
+    case 10:
+      return {
+        test_number: 10,
+        test_name: 'Marlins Test 10 - Master & Chief Engineer Executive Capstone',
+        questions: MARLINS_TEST_10_STANDARD_QUESTIONS,
+      };
     case 9:
       return {
         test_number: 9,
@@ -154,7 +161,8 @@ export default function TestTakingPage() {
       try {
         setLoading(true);
         let parsedTestNum = 1;
-        if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
+        if (attemptId.includes('test-10') || attemptId.includes('test10')) parsedTestNum = 10;
+        else if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
         else if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
         else if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
         else if (attemptId.includes('test-6') || attemptId.includes('test6')) parsedTestNum = 6;

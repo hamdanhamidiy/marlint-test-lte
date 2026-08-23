@@ -32,6 +32,7 @@ import {
   MARLINS_TEST_7_STANDARD_QUESTIONS,
   MARLINS_TEST_8_STANDARD_QUESTIONS,
   MARLINS_TEST_9_STANDARD_QUESTIONS,
+  MARLINS_TEST_10_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 const TOTAL_STANDARD_QUESTIONS_COUNT =
@@ -43,7 +44,8 @@ const TOTAL_STANDARD_QUESTIONS_COUNT =
   MARLINS_TEST_6_STANDARD_QUESTIONS.length +
   MARLINS_TEST_7_STANDARD_QUESTIONS.length +
   MARLINS_TEST_8_STANDARD_QUESTIONS.length +
-  MARLINS_TEST_9_STANDARD_QUESTIONS.length;
+  MARLINS_TEST_9_STANDARD_QUESTIONS.length +
+  MARLINS_TEST_10_STANDARD_QUESTIONS.length;
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -100,11 +102,11 @@ export default function AdminDashboardPage() {
           .from('marlint_tests')
           .select('*')
           .order('test_number', { ascending: true })
-          .limit(9);
+          .limit(10);
 
         if (testsData) {
           const adjusted = testsData.map((t) => {
-            if (t.test_number <= 9) {
+            if (t.test_number <= 10) {
               return { ...t, total_questions: 60 };
             }
             return t;

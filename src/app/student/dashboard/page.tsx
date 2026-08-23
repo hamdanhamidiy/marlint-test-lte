@@ -167,52 +167,55 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
 
-        {/* Modern Maritime Executive Hero Greeting Card with Blue, Dark Orange & Black Accents */}
-        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[26px] bg-gradient-to-br from-white via-sky-50/30 to-orange-50/20 border border-slate-200/90 px-5 py-4 sm:px-6 sm:py-5 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-2.5 sm:space-y-3">
-          
-          {/* Subtle Ambient Glow (Blue & Warm Orange) */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-sky-400/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-orange-400/10 rounded-full blur-xl pointer-events-none" />
-
-          {/* Top Row: Pill Badge */}
-          <div className="flex items-center justify-between gap-2 flex-wrap relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/95 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+        {/* Executive Maritime Header (Clean, Formal & Professional) */}
+        <div className="space-y-3 pb-4 border-b border-slate-200/80">
+          {/* Top Status & Specs Row */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900">Platform Resmi</span>
+              <span className="font-bold text-slate-900 uppercase tracking-wide">Platform Standar Resmi IMO STCW & SMCP</span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
+              <span className="text-slate-500 font-medium">Maritime English Evaluation</span>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-4 text-xs font-medium text-slate-500">
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#0284C7]" />
+                <strong className="text-slate-900 font-bold">60 Mnt</strong> / Sesi
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="flex items-center gap-1.5">
+                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C]" />
+                <strong className="text-slate-900 font-bold">60 Soal</strong> Terstandar
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="flex items-center gap-1.5">
+                <Award className="w-3.5 h-3.5 text-emerald-600" />
+                Passing <strong className="text-emerald-700 font-bold">70%</strong>
+              </span>
             </div>
           </div>
 
-          {/* Main Greeting Heading */}
-          <div className="space-y-1 relative z-10">
-            <h1 className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-black text-slate-950 tracking-tight leading-snug">
-              Halo, <span className="inline-block px-3 py-0.5 rounded-2xl bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] shadow-2xs font-extrabold">{greetingName}</span>!<span className="animate-wave inline-block text-2xl sm:text-3xl ml-1.5">👋</span>
+          {/* Main Greeting & Subtitle */}
+          <div className="space-y-1">
+            <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-snug">
+              Halo, {greetingName}! <span className="animate-wave inline-block text-2xl sm:text-3xl ml-1">👋</span>
             </h1>
 
-            {/* Dynamic Typewriter Subtitle with Cursor */}
-            <div className="min-h-[26px] sm:min-h-[28px] flex items-center">
-              <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl">
+            {/* Dynamic Typewriter Subtitle with Dark Orange Cursor */}
+            <div className="min-h-[26px] flex items-center">
+              <p className="text-sm text-slate-600 font-medium leading-relaxed max-w-3xl">
                 <span>{currentText}</span>
-                <span className="animate-cursor font-bold text-[#EA580C] text-sm sm:text-base ml-0.5">|</span>
+                <span className="animate-cursor font-bold text-[#EA580C] text-sm ml-0.5">|</span>
               </p>
             </div>
           </div>
 
-          {/* Quick Metrics Badges (Harmonious Blue, Dark Orange & Black) */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2 border-t border-slate-200/50 text-xs font-bold text-slate-700 relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
-              <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
-              <span>60 Mnt Waktu Ujian</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
-              <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
-              <span>60 Butir Soal Terstandar</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.2 rounded-xl bg-slate-950 text-white shadow-2xs">
-              <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>Passing 70% Standar Perwira</span>
-            </div>
+          {/* Mobile Metrics (Visible on small screens) */}
+          <div className="flex sm:hidden items-center gap-2 flex-wrap pt-1 text-[11px] font-bold">
+            <span className="px-2.5 py-1 rounded-lg bg-sky-50 text-[#0369A1] border border-sky-200">60 Mnt Ujian</span>
+            <span className="px-2.5 py-1 rounded-lg bg-orange-50 text-[#C2410C] border border-orange-200">60 Soal</span>
+            <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-white">Passing 70%</span>
           </div>
         </div>
 

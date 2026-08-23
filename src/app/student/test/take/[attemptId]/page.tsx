@@ -41,6 +41,7 @@ import {
   MARLINS_TEST_6_STANDARD_QUESTIONS,
   MARLINS_TEST_7_STANDARD_QUESTIONS,
   MARLINS_TEST_8_STANDARD_QUESTIONS,
+  MARLINS_TEST_9_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
@@ -58,6 +59,12 @@ interface AttemptData {
 
 function getTestInfo(testNum: number) {
   switch (testNum) {
+    case 9:
+      return {
+        test_number: 9,
+        test_name: 'Marlins Test 9 - Autonomous Ships (MASS), Modern GMDSS & BRM Forensics',
+        questions: MARLINS_TEST_9_STANDARD_QUESTIONS,
+      };
     case 8:
       return {
         test_number: 8,
@@ -147,7 +154,8 @@ export default function TestTakingPage() {
       try {
         setLoading(true);
         let parsedTestNum = 1;
-        if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
+        if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
+        else if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
         else if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
         else if (attemptId.includes('test-6') || attemptId.includes('test6')) parsedTestNum = 6;
         else if (attemptId.includes('test-5') || attemptId.includes('test5')) parsedTestNum = 5;

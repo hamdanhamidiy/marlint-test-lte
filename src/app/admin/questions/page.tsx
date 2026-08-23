@@ -43,6 +43,7 @@ import {
   MARLINS_TEST_6_STANDARD_QUESTIONS,
   MARLINS_TEST_7_STANDARD_QUESTIONS,
   MARLINS_TEST_8_STANDARD_QUESTIONS,
+  MARLINS_TEST_9_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 const STANDARD_QUESTIONS_BANK: Question[] = [
@@ -54,6 +55,7 @@ const STANDARD_QUESTIONS_BANK: Question[] = [
   ...MARLINS_TEST_6_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 6 })),
   ...MARLINS_TEST_7_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 7 })),
   ...MARLINS_TEST_8_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 8 })),
+  ...MARLINS_TEST_9_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 9 })),
 ];
 
 export default function AdminQuestionsPage() {
@@ -348,6 +350,7 @@ export default function AdminQuestionsPage() {
           { label: 'Paket #6', val: '6', count: allQuestions.filter((q) => q.marlint_test_number === 6).length },
           { label: 'Paket #7', val: '7', count: allQuestions.filter((q) => q.marlint_test_number === 7).length },
           { label: 'Paket #8', val: '8', count: allQuestions.filter((q) => q.marlint_test_number === 8).length },
+          { label: 'Paket #9', val: '9', count: allQuestions.filter((q) => q.marlint_test_number === 9).length },
         ].map((tab) => (
           <button
             key={tab.val}

@@ -52,7 +52,7 @@ export default function AdminTestsPage() {
 
       if (data) {
         const adjusted = data.map((t) => {
-          if (t.test_number <= 3) {
+          if (t.test_number <= 4) {
             return { ...t, total_questions: 60 };
           }
           return t;

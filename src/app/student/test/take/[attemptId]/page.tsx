@@ -36,6 +36,7 @@ import {
   MARLINS_60_STANDARD_QUESTIONS,
   MARLINS_TEST_2_STANDARD_QUESTIONS,
   MARLINS_TEST_3_STANDARD_QUESTIONS,
+  MARLINS_TEST_4_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
 interface AttemptData {
@@ -53,6 +54,12 @@ interface AttemptData {
 
 function getTestInfo(testNum: number) {
   switch (testNum) {
+    case 4:
+      return {
+        test_number: 4,
+        test_name: 'Marlins Test 4 - Tanker Operations & Advanced Marine Management',
+        questions: MARLINS_TEST_4_STANDARD_QUESTIONS,
+      };
     case 3:
       return {
         test_number: 3,
@@ -112,7 +119,8 @@ export default function TestTakingPage() {
       try {
         setLoading(true);
         let parsedTestNum = 1;
-        if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
+        if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;
+        else if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 
         const info = getTestInfo(parsedTestNum);

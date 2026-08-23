@@ -108,13 +108,15 @@ export default function RightStatsPanel({
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-100 space-y-3">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-          <span>Skor Asesmen Kompetensi</span>
-          <span className="text-[#4F46E5] font-extrabold">{scoreAverage}% Rata-rata</span>
+      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/70 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-bold text-slate-700 tracking-tight">Kompetensi Maritim</span>
+          <span className="text-xs text-[#4F46E5] font-extrabold px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-100/80">
+            {scoreAverage}% Rata-rata
+          </span>
         </div>
 
-        <div className="relative h-24 flex items-end justify-between px-2 pt-3">
+        <div className="relative h-24 flex items-end justify-between px-2 pt-2">
           {/* Vertical rounded bars */}
           <div className="w-full flex items-end justify-around h-full z-10">
             {chartBars.map((bar, idx) => (
@@ -133,7 +135,7 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium px-1 pt-1 border-t border-slate-200/60">
+        <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-1 pt-1 border-t border-slate-200/60">
           <span>Grammar</span>
           <span>Listen</span>
           <span>Vocab</span>

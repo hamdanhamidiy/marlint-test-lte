@@ -13,8 +13,10 @@ import {
   Sparkles,
   Award,
   Clock,
+  CheckCircle2,
+  Play,
+  Layers,
   Compass,
-  CheckCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -46,14 +48,12 @@ export default function StudentDashboardPage() {
     let timer: NodeJS.Timeout;
 
     if (!isDeleting && currentText === currentPhrase) {
-      // Pause when full text is typed
-      timer = setTimeout(() => setIsDeleting(true), 2600);
+      timer = setTimeout(() => setIsDeleting(true), 2800);
     } else if (isDeleting && currentText === '') {
-      // Move to next phrase
       setIsDeleting(false);
       setPhraseIndex((prev) => (prev + 1) % TYPEWRITER_PHRASES.length);
     } else {
-      const speed = isDeleting ? 20 : 38;
+      const speed = isDeleting ? 18 : 35;
       timer = setTimeout(() => {
         setCurrentText(
           isDeleting
@@ -167,167 +167,171 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-6 sm:space-y-7 min-w-0">
         
-        {/* Modern Stratify/Hormn-Inspired Executive Hero Greeting Card */}
-        <div className="relative overflow-hidden rounded-[22px] sm:rounded-[24px] bg-gradient-to-br from-white via-indigo-50/25 to-slate-50 border border-slate-200/80 px-4 py-3.5 sm:px-6 sm:py-4.5 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-2 sm:space-y-2.5">
-          
-          {/* Subtle Ambient Glow */}
-          <div className="absolute -top-12 -right-12 w-44 h-44 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-cyan-400/10 rounded-full blur-xl pointer-events-none" />
-
-          {/* Top Row: Pill Badge */}
-          <div className="flex items-center justify-between gap-2 flex-wrap relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/90 border border-slate-200/80 backdrop-blur-xs text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-bold text-slate-900">Platform Resmi</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-500 font-medium">Standar IMO STCW & SMCP</span>
+        {/* Executive Header Greeting (Clean, Human, Professional) */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200/80">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Standar Resmi IMO STCW & SMCP • Marlins English
+              </span>
             </div>
-          </div>
-
-          {/* Main Greeting Heading */}
-          <div className="space-y-0.5 relative z-10">
-            <h1 className="font-heading text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 tracking-tight leading-snug">
-              Halo, <span className="inline-block px-2.5 py-0.5 rounded-xl bg-[#EEF2FF] text-[#4F46E5] border border-indigo-100/90 shadow-2xs font-extrabold">{greetingName}</span>!<span className="animate-wave inline-block text-xl sm:text-2xl ml-1.5">👋</span>
+            <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Halo, {greetingName}! <span className="animate-wave inline-block ml-1">👋</span>
             </h1>
-
-            {/* Dynamic Typewriter Subtitle with Cursor */}
-            <div className="min-h-[20px] sm:min-h-[22px] flex items-center">
-              <p className="text-xs sm:text-[13px] text-slate-600 font-medium leading-relaxed max-w-2xl">
+            <div className="min-h-[22px] flex items-center">
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium">
                 <span>{currentText}</span>
-                <span className="animate-cursor font-bold text-[#4F46E5] text-xs sm:text-sm ml-0.5">|</span>
+                <span className="animate-cursor font-bold text-[#4F46E5] ml-0.5">|</span>
               </p>
             </div>
           </div>
 
-          {/* Quick Metrics Badges */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap pt-2 border-t border-slate-200/50 text-[11px] font-bold text-slate-600 relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
-              <Clock className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span>60 Mnt Waktu Ujian</span>
+          {/* Quick Header CTA */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Link
+              href="/student/test/1"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] shadow-sm shadow-indigo-500/15 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Play className="w-3.5 h-3.5 fill-white" />
+              <span>Mulai Marlins Test 1</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Featured Spotlight Card: Marlins Test 1 (Primary Assessment) */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0B192C] via-[#1E293B] to-[#1E1B4B] text-white p-6 sm:p-7 shadow-lg shadow-slate-900/10 border border-slate-800">
+          {/* Ambient Background Accents */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-xl">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-xs">
+                  Akses Terbuka (Gratis)
+                </span>
+                <span className="text-xs text-slate-300 font-semibold">•</span>
+                <span className="text-xs text-slate-300 font-semibold">Paket Asesmen Utama #1</span>
+              </div>
+
+              <div>
+                <h2 className="font-heading text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Marlins English Test 1 — Standard Evaluation
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed mt-1">
+                  Uji komprehensif 60 butir soal: Grammar, Listening Audio, Drag & Drop Label, Kosakata Maritim, dan Waktu/Angka standar perwira kapal.
+                </p>
+              </div>
+
+              {/* Spec Pills */}
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap pt-1 text-xs font-semibold text-slate-200">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/10 backdrop-blur-xs">
+                  <Clock className="w-3.5 h-3.5 text-cyan-300" />
+                  <span>60 Menit</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/10 backdrop-blur-xs">
+                  <Layers className="w-3.5 h-3.5 text-cyan-300" />
+                  <span>60 Butir Soal</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/10 backdrop-blur-xs">
+                  <Award className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Passing Grade 70%</span>
+                </div>
+              </div>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
-              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span>60 Butir Soal Terstandar</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 border border-slate-200/80 shadow-2xs">
-              <Award className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Passing 70% Standar Perwira</span>
+
+            <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 justify-center">
+              <Link
+                href="/student/test/1"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-xs font-bold text-slate-900 bg-white hover:bg-slate-100 shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Mulai Ujian Sekarang</span>
+                <ArrowRight className="w-4 h-4 text-[#4F46E5]" />
+              </Link>
+              <p className="text-[11px] text-slate-400 text-center font-medium">
+                Hasil & Sertifikat Kelulusan Instan
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}
+        {/* Paket Ujian Marlins Lanjutan (Paket 2 & Paket 3) */}
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <span>Paket Ujian Marlins</span>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-[#4F46E5] border border-indigo-100">
-                  Ready
-                </span>
+            <div>
+              <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                Paket Ujian Lanjutan
               </h2>
-              <p className="text-xs text-slate-400 font-normal truncate sm:whitespace-normal">
-                Pilihan paket asesmen kompetensi maritim standar perwira & rating kapal
+              <p className="text-xs text-slate-400 font-normal">
+                Tingkatkan kompetensi ke jenjang komunikasi maritim dan operasional tingkat lanjut
               </p>
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#4F46E5] hover:text-[#4338CA] transition-colors shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#4F46E5] hover:text-[#4338CA] transition-colors shrink-0"
             >
-              <span>Lihat Semua</span>
+              <span>Lihat Semua Paket</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {loading ? (
-              <div className="col-span-full p-12 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto animate-pulse">
-                  <FileCheck2 className="w-4 h-4" />
-                </div>
-                <p className="font-semibold text-slate-700">Memuat paket ujian resmi...</p>
+              <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-2xl text-slate-400 text-xs shadow-xs">
+                Memuat paket ujian...
               </div>
             ) : (
-              tests.slice(0, 3).map((test) => {
+              tests.slice(1, 3).map((test) => {
                 const hasAccess = test.is_free || entitlements.has(test.test_number);
-                const isTest1 = test.test_number === 1;
 
                 return (
                   <div
                     key={test.id}
-                    className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
-                      isTest1
-                        ? 'border-indigo-200/90 shadow-[0_4px_20px_rgba(79,70,229,0.06)] hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1.5'
-                        : 'border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-300 hover:-translate-y-1'
-                    }`}
+                    className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between h-full group"
                   >
-                    {/* Top Tag & Access Indicator */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
-                            isTest1 ? 'bg-indigo-50 text-[#4F46E5]' : 'bg-slate-100 text-slate-700'
-                          }`}>
-                            Paket #{test.test_number}
-                          </span>
-                          <span className="text-[10px] font-semibold text-slate-400">
-                            IMO STCW
-                          </span>
-                        </div>
-
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-extrabold">
+                          Paket #{test.test_number}
+                        </span>
                         {hasAccess ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200/80 shrink-0 shadow-2xs">
-                            <Unlock className="w-3 h-3 text-emerald-600" />
-                            <span>{test.is_free ? 'Gratis' : 'Akses Terbuka'}</span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                            <Unlock className="w-3 h-3" />
+                            <span>Akses Terbuka</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold border border-slate-200 shrink-0">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
                             <Lock className="w-3 h-3 text-slate-400" />
                             <span>{formatPriceIDR(test.price)}</span>
                           </span>
                         )}
                       </div>
 
-                      {/* Title & Description */}
-                      <div className="space-y-1">
-                        <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors leading-snug line-clamp-1">
+                      <div>
+                        <h3 className="font-heading text-sm font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors leading-snug">
                           {test.test_name}
                         </h3>
-                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[2.25rem]">
-                          {test.description || 'Evaluasi standar kompetensi Bahasa Inggris Maritim IMO STCW untuk perwira dan rating kapal.'}
+                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mt-1">
+                          {test.description || 'Evaluasi standar kompetensi Bahasa Inggris Maritim IMO STCW.'}
                         </p>
                       </div>
                     </div>
 
-                    {/* Details Row (Specs) & CTA Button */}
-                    <div className="pt-4 mt-4 border-t border-slate-100 space-y-4">
-                      {/* Inline specs with clean typography */}
-                      <div className="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Durasi</span>
-                          <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.duration} mnt</span>
-                        </div>
-                        <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
-                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>
-                          <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
-                        </div>
-                        <div className="flex flex-col items-center justify-center">
-                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Passing</span>
-                          <span className="text-xs font-extrabold text-emerald-600 mt-0.5">{test.passing_grade}%</span>
-                        </div>
+                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                      <div className="text-[11px] font-semibold text-slate-500">
+                        <span>{test.duration} mnt</span> • <span>60 soal</span> • <span className="text-emerald-600 font-bold">{test.passing_grade}% pass</span>
                       </div>
-
-                      {/* Action Button */}
                       <Link
                         href={`/student/test/${test.test_number}`}
-                        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs group-hover:shadow-md ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                           hasAccess
-                            ? 'bg-[#4F46E5] hover:bg-[#4338CA] text-white shadow-indigo-500/15 group-hover:scale-[1.01] active:scale-[0.99]'
-                            : 'bg-slate-900 hover:bg-slate-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
+                            ? 'bg-indigo-50 text-[#4F46E5] hover:bg-indigo-100'
+                            : 'bg-slate-900 text-white hover:bg-slate-800'
                         }`}
                       >
-                        <span>{hasAccess ? 'Mulai Ujian Sekarang' : 'Buka Akses Ujian'}</span>
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        <span>{hasAccess ? 'Mulai' : 'Buka Akses'}</span>
+                        <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
                   </div>
@@ -338,11 +342,11 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Riwayat Hasil & Modul Pembelajaran */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 space-y-4 shadow-2xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">
-                Riwayat Hasil & Modul Pembelajaran
+              <h2 className="font-heading text-base font-bold text-slate-900">
+                Riwayat Evaluasi & Materi Terverifikasi
               </h2>
               <p className="text-xs text-slate-400">Hasil evaluasi tes dan materi referensi maritim Anda</p>
             </div>
@@ -354,14 +358,14 @@ export default function StudentDashboardPage() {
             </Link>
           </div>
 
-          {/* Desktop Table View (md+ screens) */}
+          {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
                   <th className="pb-3 font-semibold">Ujian / Materi</th>
-                  <th className="pb-3 font-semibold">Kategori</th>
-                  <th className="pb-3 font-semibold">Status / Nilai</th>
+                  <th className="pb-3 font-semibold">Standar</th>
+                  <th className="pb-3 font-semibold">Hasil / Status</th>
                   <th className="pb-3 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
@@ -369,9 +373,9 @@ export default function StudentDashboardPage() {
                 {recentResults.length > 0 ? (
                   recentResults.map((res) => (
                     <tr key={res.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-4 pr-4">
+                      <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0">
                             <FileCheck2 className="w-4 h-4" />
                           </div>
                           <div>
@@ -380,16 +384,16 @@ export default function StudentDashboardPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 pr-4">
-                        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
-                          STANDAR CEFR
+                      <td className="py-3.5 pr-4">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
+                          CEFR B1/B2
                         </span>
                       </td>
-                      <td className="py-4 pr-4">
+                      <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-bold text-[#4F46E5] text-xs">{res.score}%</span>
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                            className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               res.is_passed
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                 : 'bg-slate-100 text-slate-600'
@@ -399,13 +403,13 @@ export default function StudentDashboardPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="py-4 text-right">
+                      <td className="py-3.5 text-right">
                         <Link
                           href={`/student/test/result/${res.attempt_id || res.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors"
                           title="Lihat Rincian Hasil"
                         >
-                          <ArrowUpRight className="w-4 h-4" />
+                          <ArrowUpRight className="w-3.5 h-3.5" />
                         </Link>
                       </td>
                     </tr>
@@ -413,9 +417,9 @@ export default function StudentDashboardPage() {
                 ) : articles.length > 0 ? (
                   articles.map((art) => (
                     <tr key={art.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-4 pr-4">
+                      <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-2xl bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                          <div className="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold text-xs shrink-0">
                             <BookOpen className="w-4 h-4" />
                           </div>
                           <div>
@@ -424,21 +428,21 @@ export default function StudentDashboardPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 pr-4">
-                        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#ECFEFF] text-[#06B6D4] uppercase tracking-wider">
+                      <td className="py-3.5 pr-4">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFEFF] text-[#06B6D4] uppercase tracking-wider">
                           {art.category || 'IMO SMCP'}
                         </span>
                       </td>
-                      <td className="py-4 pr-4 text-slate-600 font-medium">
+                      <td className="py-3.5 pr-4 text-slate-600 font-medium text-xs">
                         Materi Referensi Siap Baca
                       </td>
-                      <td className="py-4 text-right">
+                      <td className="py-3.5 text-right">
                         <Link
                           href={`/student/articles/${art.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors"
                           title="Baca Materi"
                         >
-                          <ArrowUpRight className="w-4 h-4" />
+                          <ArrowUpRight className="w-3.5 h-3.5" />
                         </Link>
                       </td>
                     </tr>
@@ -446,9 +450,9 @@ export default function StudentDashboardPage() {
                 ) : (
                   defaultSampleRows.map((row) => (
                     <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-4 pr-4">
+                      <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0">
                             <FileCheck2 className="w-4 h-4" />
                           </div>
                           <div>
@@ -457,23 +461,23 @@ export default function StudentDashboardPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 pr-4">
-                        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
+                      <td className="py-3.5 pr-4">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
                           {row.type}
                         </span>
                       </td>
-                      <td className="py-4 pr-4">
+                      <td className="py-3.5 pr-4">
                         <span className="font-medium text-slate-700 text-xs">
                           {row.statusText}
                         </span>
                       </td>
-                      <td className="py-4 text-right">
+                      <td className="py-3.5 text-right">
                         <Link
                           href={row.href}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 hover:border-[#4F46E5] text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50/50 transition-colors"
                           title="Buka"
                         >
-                          <ArrowUpRight className="w-4 h-4" />
+                          <ArrowUpRight className="w-3.5 h-3.5" />
                         </Link>
                       </td>
                     </tr>
@@ -493,8 +497,8 @@ export default function StudentDashboardPage() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0">
-                        <FileCheck2 className="w-4 h-4" />
+                      <div className="w-7 h-7 rounded-lg bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0">
+                        <FileCheck2 className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold text-slate-900 text-xs leading-snug truncate">{res.test_name}</p>
@@ -505,24 +509,13 @@ export default function StudentDashboardPage() {
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
-                        STANDAR CEFR
-                      </span>
-                      <span
-                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
-                          res.is_passed
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
-                        {res.is_passed ? 'LULUS' : 'REMEDIAL'}
-                      </span>
-                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      {res.is_passed ? 'LULUS' : 'REMEDIAL'}
+                    </span>
 
                     <Link
                       href={`/student/test/result/${res.attempt_id || res.id}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5] hover:text-[#4338CA] shrink-0"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5]"
                     >
                       <span>Lihat Hasil</span>
                       <ArrowRight className="w-3 h-3" />
@@ -536,25 +529,11 @@ export default function StudentDashboardPage() {
                   key={row.id}
                   className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 space-y-2.5 shadow-2xs"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0">
-                        <FileCheck2 className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-xs leading-snug truncate">{row.title}</p>
-                        <p className="text-[10px] text-slate-400">{row.date}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#EEF0FF] text-[#4F46E5] uppercase tracking-wider">
-                      {row.type}
-                    </span>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-bold text-slate-900 text-xs leading-snug truncate">{row.title}</p>
                     <Link
                       href={row.href}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5] hover:text-[#4338CA] shrink-0"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4F46E5]"
                     >
                       <span>Buka</span>
                       <ArrowRight className="w-3 h-3" />

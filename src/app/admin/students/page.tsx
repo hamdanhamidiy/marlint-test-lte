@@ -18,6 +18,10 @@ import {
   Mail,
   Briefcase,
   Globe,
+  Shield,
+  Layers,
+  ArrowRight,
+  Filter,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { UserProfile } from '@/lib/supabase/types';
@@ -27,6 +31,7 @@ export default function AdminStudentsPage() {
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'admin'>('all');
 
   // Student Detail / Access Modal
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
@@ -157,14 +162,21 @@ export default function AdminStudentsPage() {
     }
   };
 
-  const filteredStudents = students.filter((s) =>
-    s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    (s.email && s.email.toLowerCase().includes(search.toLowerCase())) ||
-    (s.job_title && s.job_title.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredStudents = students.filter((s) => {
+    if (roleFilter !== 'all' && s.role !== roleFilter) return false;
+
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      s.full_name?.toLowerCase().includes(q) ||
+      (s.email && s.email.toLowerCase().includes(q)) ||
+      (s.job_title && s.job_title.toLowerCase().includes(q)) ||
+      (s.nationality && s.nationality.toLowerCase().includes(q))
+    );
+  });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7 min-w-0 font-sans pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div className="space-y-3">
@@ -185,40 +197,107 @@ export default function AdminStudentsPage() {
             Kelola direktori siswa, akses hak ujian (*entitlements*), dan tinjau riwayat evaluasi kompetensi secara realtime.
           </p>
         </div>
+      </div>
 
-        <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+      {/* Modern Filter & Search Bar */}
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            placeholder="Cari nama, email, jabatan..."
+            placeholder="Cari nama kandidat, email, jabatan, atau kebangsaan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-500 font-medium"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
           />
+        </div>
+
+        {/* Role Filter Tabs */}
+        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setRoleFilter('all')}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === 'all'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+            }`}
+          >
+            Semua ({students.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter('student')}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === 'student'
+                ? 'bg-[#0284C7] text-white shadow-xs'
+                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+            }`}
+          >
+            Siswa / Taruna ({students.filter((s) => s.role === 'student').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter('admin')}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === 'admin'
+                ? 'bg-[#EA580C] text-white shadow-xs'
+                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+            }`}
+          >
+            Admin ({students.filter((s) => s.role === 'admin').length})
+          </button>
         </div>
       </div>
 
-      {/* Students List */}
+      {/* Students List Cards */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200 rounded-3xl text-slate-500 text-sm shadow-sm">
-          Memuat data siswa dari database...
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
+          <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
+            <Users className="w-4 h-4" />
+          </div>
+          <p className="font-semibold text-slate-700">Memuat data siswa dari database...</p>
         </div>
       ) : filteredStudents.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200 rounded-3xl text-slate-500 text-sm shadow-sm">
-          Tidak ada data siswa yang cocok dengan pencarian.
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
+            <Users className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-heading font-bold text-slate-900 text-base">Tidak Ada Data Siswa</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              {search || roleFilter !== 'all'
+                ? 'Tidak ada siswa yang sesuai dengan filter pencarian.'
+                : 'Belum ada akun siswa yang terdaftar di database.'}
+            </p>
+          </div>
+          {(search || roleFilter !== 'all') && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch('');
+                setRoleFilter('all');
+              }}
+              className="text-xs font-bold text-[#0284C7] hover:underline cursor-pointer"
+            >
+              Reset Filter Pencarian
+            </button>
+          )}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {filteredStudents.map((st) => {
             const badge = getLevelBadge(st.level_code || 'A1');
 
             return (
               <div
                 key={st.id}
-                className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-sm transition-all"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-xs transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-700 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+                {/* Left: Avatar & Candidate Information */}
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#0F172A] text-white font-heading font-black text-base flex items-center justify-center shrink-0 shadow-md shadow-sky-500/10 overflow-hidden">
                     {st.photo_url ? (
                       <img src={st.photo_url} alt={st.full_name} className="w-full h-full object-cover" />
                     ) : (
@@ -226,38 +305,50 @@ export default function AdminStudentsPage() {
                     )}
                   </div>
 
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-heading text-sm font-bold text-slate-900">
-                        {st.full_name || 'Tanpa Nama'}
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-heading text-base font-bold text-slate-950 truncate">
+                        {st.full_name || 'Kandidat Pelaut'}
                       </h3>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-100 text-slate-700 font-bold">
-                        {st.role}
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                        st.role === 'admin'
+                          ? 'bg-orange-50 text-[#C2410C] border border-orange-200'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}>
+                        {st.role || 'Student'}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-500 font-medium">
-                      {st.email} • {st.job_title || 'Seafarer'} • {st.nationality || 'Indonesia'}
+                    <p className="text-xs text-slate-500 font-medium truncate flex items-center gap-1.5 flex-wrap">
+                      <span>{st.email}</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="text-slate-700 font-semibold">{st.job_title || 'Seafarer'}</span>
+                      <span className="text-slate-300">•</span>
+                      <span>{st.nationality || 'Indonesia'}</span>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                  <span className={`px-2.5 py-1 rounded-xl text-xs font-bold ${badge.badgeBg} ${badge.badgeText} border ${badge.badgeBorder}`}>
-                    Level {st.level_code || 'A1'}
-                  </span>
+                {/* Right: Badges & Action */}
+                <div className="flex items-center gap-3 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 justify-between md:justify-end">
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-extrabold ${badge.badgeBg} ${badge.badgeText} border ${badge.badgeBorder}`}>
+                      Level {st.level_code || 'A1'}
+                    </span>
 
-                  <span className="font-mono text-xs font-black text-amber-600 flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    {st.total_points || 0} XP
-                  </span>
+                    <span className="font-mono text-xs font-black text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/80 flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      {st.total_points || 0} XP
+                    </span>
+                  </div>
 
                   <button
                     type="button"
                     onClick={() => handleOpenStudentDetail(st)}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-xs cursor-pointer"
                   >
-                    Kelola Akses
+                    <span>Kelola Akses</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -268,57 +359,57 @@ export default function AdminStudentsPage() {
 
       {/* Student Detail & Entitlements Modal */}
       {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-200/90 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
               <div>
-                <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider block">
-                  Student Management
+                <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
+                  Candidate Access Control
                 </span>
-                <h3 className="font-heading text-lg font-bold text-slate-900">
+                <h3 className="font-heading text-lg font-bold text-slate-950">
                   {selectedStudent.full_name || 'Detail Siswa'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedStudent(null)}
-                className="p-1.5 rounded-xl bg-slate-100 text-slate-400 hover:text-slate-900"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Profile Overview Card */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
               <div>
-                <span className="text-[10px] text-slate-400 font-semibold uppercase block">Email</span>
-                <span className="font-bold text-slate-800 truncate block">{selectedStudent.email || '-'}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Email</span>
+                <span className="font-bold text-slate-900 truncate block mt-0.5">{selectedStudent.email || '-'}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-semibold uppercase block">Jabatan</span>
-                <span className="font-bold text-slate-800">{selectedStudent.job_title || 'Pelaut'}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Jabatan</span>
+                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'Pelaut'}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-semibold uppercase block">Level CEFR</span>
-                <span className="font-bold text-indigo-700">Level {selectedStudent.level_code || 'A1'}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Level CEFR</span>
+                <span className="font-black text-[#0284C7] block mt-0.5">Level {selectedStudent.level_code || 'A1'}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-semibold uppercase block">Akumulasi XP</span>
-                <span className="font-bold text-amber-600">{selectedStudent.total_points || 0} XP</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Akumulasi XP</span>
+                <span className="font-black text-amber-600 block mt-0.5">{selectedStudent.total_points || 0} XP</span>
               </div>
             </div>
 
             {/* Test Entitlements Management (Grant/Revoke Access) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-heading text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-purple-600" />
+                <h4 className="font-heading text-sm font-bold text-slate-950 flex items-center gap-2">
+                  <KeyRound className="w-4 h-4 text-[#EA580C]" />
                   <span>Hak Akses Paket Ujian Marlins</span>
                 </h4>
-                <span className="text-[11px] text-slate-500 font-medium">Klik untuk buka/kunci akses</span>
+                <span className="text-[11px] text-slate-500 font-medium">Klik untuk buka / kunci akses ujian</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[1, 2, 3, 4, 5, 6].map((num) => {
                   const isFree = num === 1;
                   const hasAccess = isFree || studentEntitlements.includes(num);
@@ -326,21 +417,21 @@ export default function AdminStudentsPage() {
                   return (
                     <div
                       key={num}
-                      className={`p-3 rounded-2xl border flex items-center justify-between transition-all ${
+                      className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all ${
                         hasAccess
-                          ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900'
+                          ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
                           : 'bg-slate-50 border-slate-200 text-slate-700'
                       }`}
                     >
                       <div className="space-y-0.5">
-                        <span className="text-xs font-extrabold block">Marlins Test #{num}</span>
+                        <span className="text-xs font-black block">Marlins Test #{num}</span>
                         <span className="text-[10px] text-slate-500 font-medium">
-                          {isFree ? 'Gratis Standard' : hasAccess ? 'Akses Manual Aktif' : 'Terkunci'}
+                          {isFree ? 'Gratis Standard' : hasAccess ? 'Akses Terbuka' : 'Terkunci'}
                         </span>
                       </div>
 
                       {isFree ? (
-                        <span className="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
                           Default Terbuka
                         </span>
                       ) : (
@@ -348,14 +439,14 @@ export default function AdminStudentsPage() {
                           type="button"
                           disabled={updatingAccess}
                           onClick={() => handleToggleTestAccess(num)}
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                             hasAccess
                               ? 'bg-rose-100 hover:bg-rose-200 text-rose-700'
-                              : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
+                              : 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-xs'
                           }`}
                         >
                           {hasAccess ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-                          <span>{hasAccess ? 'Kunci Akses' : 'Buka Akses'}</span>
+                          <span>{hasAccess ? 'Kunci' : 'Buka Akses'}</span>
                         </button>
                       )}
                     </div>
@@ -366,8 +457,8 @@ export default function AdminStudentsPage() {
 
             {/* Test Attempts History */}
             <div className="space-y-3 pt-3 border-t border-slate-100">
-              <h4 className="font-heading text-sm font-bold text-slate-900 flex items-center gap-2">
-                <FileCheck2 className="w-4 h-4 text-blue-600" />
+              <h4 className="font-heading text-sm font-bold text-slate-950 flex items-center gap-2">
+                <FileCheck2 className="w-4 h-4 text-[#0284C7]" />
                 <span>Riwayat Sesi Ujian Siswa</span>
               </h4>
 
@@ -382,21 +473,21 @@ export default function AdminStudentsPage() {
                   {studentAttempts.map((att) => (
                     <div
                       key={att.id}
-                      className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
+                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
                     >
                       <div>
                         <p className="font-bold text-slate-900">
                           {att.marlint_tests?.test_name || `Marlins Test #${att.test_number}`}
                         </p>
-                        <p className="text-[10px] text-slate-500">
-                          Skor: <strong className="text-emerald-700">{att.score ?? '-'}%</strong> • Status: {att.status} • {formatDateIndo(att.created_at)}
+                        <p className="text-[10px] text-slate-500 mt-0.5">
+                          Skor: <strong className="text-emerald-700 font-bold">{att.score ?? '-'}%</strong> • Status: <span className="font-bold">{att.status}</span> • {formatDateIndo(att.created_at)}
                         </p>
                       </div>
 
                       <button
                         type="button"
                         onClick={() => handleResetAttempts(att.test_number)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-bold border border-amber-200 transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-50 hover:bg-orange-100 text-[#C2410C] text-[10px] font-bold border border-orange-200 transition-all cursor-pointer"
                         title="Reset sesi ujian ini"
                       >
                         <RotateCcw className="w-3 h-3" />
@@ -407,7 +498,6 @@ export default function AdminStudentsPage() {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       )}

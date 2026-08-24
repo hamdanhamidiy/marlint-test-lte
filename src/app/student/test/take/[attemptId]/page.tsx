@@ -688,9 +688,6 @@ export default function TestTakingPage() {
               <h1 className="text-xs sm:text-base font-bold text-slate-900 truncate" title={attempt.test_name}>
                 {attempt.test_name || 'Marlint Test 1'}
               </h1>
-              <p className="text-[10px] sm:text-xs text-slate-500 font-medium hidden xs:block sm:block truncate">
-                Soal <strong className="text-[#0284C7] font-bold">{currentIndex + 1}</strong> dari {totalQuestionsCount} • Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong>
-              </p>
             </div>
           </div>
 

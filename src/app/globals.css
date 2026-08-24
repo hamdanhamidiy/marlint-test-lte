@@ -96,14 +96,19 @@
   animation: float-slow 4s ease-in-out infinite;
 }
 
-/* Print Specific Certificate Styling */
+/* Print Specific Certificate Styling & Anti-Print Exam Protection */
 @media print {
   body {
     background: #ffffff !important;
     color: #000000 !important;
   }
-  .no-print {
+  .no-print,
+  .exam-secure-mode,
+  header,
+  footer,
+  main {
     display: none !important;
+    visibility: hidden !important;
   }
   .print-only {
     display: block !important;
@@ -115,5 +120,14 @@
     border: none !important;
     width: 100% !important;
   }
+}
+
+/* Exam Secure Test Shield */
+.exam-secure-mode {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
 }
 

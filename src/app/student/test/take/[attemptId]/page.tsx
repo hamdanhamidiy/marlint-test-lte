@@ -12,6 +12,9 @@ import {
   AlertCircle,
   Clock,
   ShieldCheck,
+  ShieldAlert,
+  EyeOff,
+  Lock,
   HelpCircle,
   LogOut,
   AlertTriangle,
@@ -99,19 +102,19 @@ function getTestInfo(testNum: number) {
     case 4:
       return {
         test_number: 4,
-        test_name: 'Marlins Test 4 - Tanker Operations & Advanced Marine Management',
+        test_name: 'Marlins Test 4 - Tanker Operations & IMDG Cargo Handling',
         questions: MARLINS_TEST_4_STANDARD_QUESTIONS,
       };
     case 3:
       return {
         test_number: 3,
-        test_name: 'Marlins Test 3 - Bridge Watchkeeping & Engineering Operations',
+        test_name: 'Marlins Test 3 - Bridge Watchkeeping & COLREGs',
         questions: MARLINS_TEST_3_STANDARD_QUESTIONS,
       };
     case 2:
       return {
         test_number: 2,
-        test_name: 'Marlins Test 2 - Elementary Maritime Communication (Deck & Engine)',
+        test_name: 'Marlins Test 2 - Deck & Engine Operations',
         questions: MARLINS_TEST_2_STANDARD_QUESTIONS,
       };
     case 1:
@@ -145,6 +148,19 @@ export default function TestTakingPage() {
   const [navigatorModalOpen, setNavigatorModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Anti-Screenshot & Exam Proctoring Privacy State
+  const [isWindowBlurred, setIsWindowBlurred] = useState(false);
+  const [securityWarning, setSecurityWarning] = useState<string | null>(null);
+  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerSecurityWarning = useCallback((msg: string) => {
+    setSecurityWarning(msg);
+    if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+    warningTimeoutRef.current = setTimeout(() => {
+      setSecurityWarning(null);
+    }, 3500);
+  }, []);
+
   // Elapsed stopwatch timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
@@ -154,6 +170,92 @@ export default function TestTakingPage() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Anti-Screenshot & Screen Capture Protection Listeners
+  useEffect(() => {
+    const handleBlur = () => {
+      setIsWindowBlurred(true);
+    };
+
+    const handleFocus = () => {
+      setIsWindowBlurred(false);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setIsWindowBlurred(true);
+      } else {
+        setIsWindowBlurred(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 1. PrintScreen key
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        e.preventDefault();
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+        triggerSecurityWarning('🔒 Tangkapan layar (Screenshot) dinonaktifkan demi integritas ujian Marlins.');
+        return false;
+      }
+
+      // 2. Windows Snipping Tool (Win + Shift + S) or Ctrl + Shift + S
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        triggerSecurityWarning('🔒 Aplikasi pemotong layar (Snipping Tool) tidak diizinkan.');
+        return false;
+      }
+
+      // 3. Mac Screenshot shortcuts (Cmd + Shift + 3 / 4 / 5)
+      if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
+        e.preventDefault();
+        triggerSecurityWarning('🔒 Tangkapan layar di Mac dinonaktifkan demi keamanan ujian.');
+        return false;
+      }
+
+      // 4. Print shortcut (Ctrl + P or Cmd + P)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        triggerSecurityWarning('🔒 Fitur cetak halaman dinonaktifkan selama ujian berlangsung.');
+        return false;
+      }
+
+      // 5. Developer Tools shortcut (F12, Ctrl + Shift + I/J/C)
+      if (
+        e.key === 'F12' ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(e.key)) ||
+        ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U'))
+      ) {
+        e.preventDefault();
+        triggerSecurityWarning('🔒 Inspeksi elemen pengembang (DevTools) dinonaktifkan.');
+        return false;
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+    };
+  }, [triggerSecurityWarning]);
 
   // Load Attempt Data with 60 questions fallback
   useEffect(() => {
@@ -465,7 +567,25 @@ export default function TestTakingPage() {
   };
 
   return (
-    <div className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation">
+    <div
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+      onCopy={(e) => {
+        e.preventDefault();
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+      }}
+      className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode"
+    >
+      {/* SECURITY FLOATING WARNING BANNER */}
+      {securityWarning && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold shadow-2xl animate-bounce border border-rose-400">
+          <ShieldAlert className="w-4 h-4 shrink-0 text-white" />
+          <span>{securityWarning}</span>
+        </div>
+      )}
+
       {/* 1. TOP HEADER (Fixed at top, zero scroll movement) */}
       <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-3 sm:px-6 py-2 sm:py-2.5 z-30 shadow-2xs">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-2">
@@ -526,61 +646,97 @@ export default function TestTakingPage() {
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT AREA (Only this middle section scrolls independently with smooth momentum) */}
-      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-4 overscroll-contain">
-        <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4 pb-3">
-          {/* Category Header & Instruction Card */}
-          <div className="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-1.5">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
+      {/* 2. MAIN CONTENT AREA (Only this middle section scrolls independently) */}
+      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-4 overscroll-contain relative">
+        {/* Anti-Cheat Privacy Blur Shield for Tab switching or Snipping Tool */}
+        {isWindowBlurred && (
+          <div className="absolute inset-0 z-40 bg-slate-900/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mb-3">
+              <ShieldAlert className="w-7 h-7" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1">
+              Mode Perlindungan Layar Aktif
+            </h3>
+            <p className="text-xs text-slate-300 max-w-sm leading-relaxed mb-4">
+              Layar soal disembunyikan secara otomatis saat jendela tidak aktif atau saat membuka aplikasi pemotong layar demi integritas ujian Marlins.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsWindowBlurred(false)}
+              className="px-5 py-2 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+            >
+              Klik Disini untuk Melanjutkan Ujian
+            </button>
+          </div>
+        )}
+
+        {/* Security Watermark Background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-[0.03] flex items-center justify-center rotate-[-25deg] z-0">
+          <p className="text-2xl sm:text-4xl font-black text-slate-900 tracking-widest uppercase text-center leading-loose">
+            MARLINS SECURE TEST • OFFICIAL STCW 2010 • CONFIDENTIAL • {attemptId.slice(0, 8)}
+          </p>
+        </div>
+
+        {/* Unified Assessment Card */}
+        <div className="max-w-3xl mx-auto relative z-10 bg-white rounded-2xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between">
+          {/* Card Top Bar: Category & Status Indicator */}
+          <div className="px-4 sm:px-6 py-3 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>{categoryInfo.name}</span>
               </span>
-
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
-                <span>•</span>
-                <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
-              </div>
+              <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
+              <span className="text-xs text-slate-600 font-medium hidden sm:inline">
+                {getInstructionText(currentQuestion)}
+              </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+            <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
+              <span>•</span>
+              <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
+            </div>
+          </div>
+
+          {/* Mobile Instruction Subtitle */}
+          <div className="px-4 pt-2.5 sm:hidden">
+            <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
               {getInstructionText(currentQuestion)}
             </p>
           </div>
 
-          {/* Question Canvas Card */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-4 sm:space-y-5">
-            {/* Question Prompt & Visuals */}
-            <div className="space-y-3 sm:space-y-3.5">
-              {/* Audio Listening player if audio question */}
-              {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
-                <AudioListeningQuestion
-                  audioUrl={currentQuestion.audio_url || undefined}
-                  pronunciationText={currentQuestion.pronunciation_text || currentQuestion.question_text || undefined}
+          {/* Card Body: Question Content, Audio, Image & Options */}
+          <div className="p-4 sm:p-6 space-y-3.5 sm:space-y-4">
+            {/* Audio Listening player if audio question */}
+            {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
+              <AudioListeningQuestion
+                audioUrl={currentQuestion.audio_url || undefined}
+                pronunciationText={currentQuestion.pronunciation_text || currentQuestion.question_text || undefined}
+              />
+            )}
+
+            {/* Question Text */}
+            {currentQuestion.question_type !== 'paragraph_title_match' && (
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-950 leading-relaxed text-left break-words">
+                {currentQuestion.question_text}
+              </h2>
+            )}
+
+            {/* Optional Image */}
+            {currentQuestion.image_url && (
+              <div className="flex justify-center p-2 sm:p-3 rounded-xl bg-slate-50 border border-slate-100/90">
+                <img
+                  src={currentQuestion.image_url}
+                  alt="Question Visual"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="max-h-40 sm:max-h-52 object-contain rounded-lg shadow-2xs pointer-events-none select-none"
                 />
-              )}
-
-              {/* Question Text */}
-              {currentQuestion.question_type !== 'paragraph_title_match' && (
-                <h2 className="text-sm sm:text-lg font-bold text-slate-950 leading-relaxed text-left break-words">
-                  {currentQuestion.question_text}
-                </h2>
-              )}
-
-              {/* Optional Image */}
-              {currentQuestion.image_url && (
-                <div className="flex justify-center p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <img
-                    src={currentQuestion.image_url}
-                    alt="Question Visual"
-                    className="max-h-44 sm:max-h-56 object-contain rounded-xl shadow-2xs"
-                  />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Interactive Question Input Renderer */}
             <div className="pt-0.5">
@@ -622,26 +778,26 @@ export default function TestTakingPage() {
                 />
               )}
             </div>
+          </div>
 
-            {/* Question Footer Actions: Flag toggle */}
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <button
-                type="button"
-                onClick={() => handleToggleFlag(currentIndex)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
-                  flaggedQuestions.has(currentIndex)
-                    ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-slate-200'
-                }`}
-              >
-                <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
-                <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
-              </button>
+          {/* Card Bottom: Flag Button & Question Position */}
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs">
+            <button
+              type="button"
+              onClick={() => handleToggleFlag(currentIndex)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
+                flaggedQuestions.has(currentIndex)
+                  ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-white border border-slate-200'
+              }`}
+            >
+              <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
+              <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
+            </button>
 
-              <span className="text-xs font-mono text-slate-500 font-bold">
-                Soal {currentIndex + 1} dari {totalQuestionsCount}
-              </span>
-            </div>
+            <span className="text-xs font-mono text-slate-500 font-bold">
+              Soal {currentIndex + 1} dari {totalQuestionsCount}
+            </span>
           </div>
         </div>
       </main>

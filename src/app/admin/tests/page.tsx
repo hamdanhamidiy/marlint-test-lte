@@ -585,7 +585,7 @@ export default function AdminTestsPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Daftar lengkap paket evaluasi kompetensi Marlins Test. Buat paket baru, atur durasi waktu, batas kelulusan, dan tarif harga secara realtime.
+            Daftar lengkap paket evaluasi kompetensi Marlins Test. Buat paket baru, atur butir soal, batas kelulusan, dan tarif harga secara realtime.
           </p>
         </div>
 
@@ -787,8 +787,8 @@ export default function AdminTestsPage() {
                   {/* Inline Stats Chips */}
                   <div className="flex items-center gap-2 flex-wrap text-xs text-slate-600 font-medium pt-1">
                     <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{test.duration} Menit</span>
+                      <Clock className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Stopwatch Waktu</span>
                     </span>
 
                     <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
@@ -863,7 +863,7 @@ export default function AdminTestsPage() {
                 <p className="text-xs text-slate-500 font-medium">
                   {modalMode === 'create'
                     ? 'Buat paket ujian baru standar maritim internasional IMO.'
-                    : 'Perbarui parameter durasi, kelulusan, dan tarif paket.'}
+                    : 'Perbarui parameter butir soal, kelulusan, dan tarif paket.'}
                 </p>
               </div>
               <button
@@ -916,19 +916,6 @@ export default function AdminTestsPage() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">Durasi (Menit):</label>
-                  <input
-                    type="number"
-                    min={10}
-                    max={180}
-                    required
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono font-bold outline-none focus:bg-white focus:border-[#0284C7]"
-                  />
-                </div>
-
-                <div className="space-y-1">
                   <label className="block text-xs font-bold text-slate-700">Total Butir Soal:</label>
                   <input
                     type="number"
@@ -952,6 +939,22 @@ export default function AdminTestsPage() {
                     onChange={(e) => setFormData({ ...formData, passing_grade: Number(e.target.value) })}
                     className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono font-bold outline-none focus:bg-white focus:border-[#0284C7]"
                   />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Tingkat Kesulitan:</label>
+                  <select
+                    value={formData.difficulty_level}
+                    onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value })}
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7]"
+                  >
+                    <option value="Foundation">Foundation</option>
+                    <option value="Elementary">Elementary</option>
+                    <option value="Pre-Intermediate">Pre-Intermediate</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Capstone">Capstone</option>
+                  </select>
                 </div>
               </div>
 

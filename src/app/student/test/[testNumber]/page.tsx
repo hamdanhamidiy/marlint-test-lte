@@ -229,8 +229,8 @@ export default function TestOverviewPage() {
             {/* 3 Metric Pills */}
             <div className="grid grid-cols-3 gap-2 shrink-0">
               <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
-                <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Durasi</span>
-                <span className="text-xs font-bold text-[#5046E5]">{test.duration} mnt</span>
+                <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Waktu</span>
+                <span className="text-xs font-bold text-amber-600">Stopwatch</span>
               </div>
               <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
                 <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Soal</span>
@@ -301,7 +301,7 @@ export default function TestOverviewPage() {
           <ul className="space-y-2 text-xs text-slate-600 font-normal leading-relaxed">
             <li className="flex items-start gap-2">
               <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-              <span>Waktu ujian ({test.duration} menit) akan langsung berjalan setelah menekan tombol mulai.</span>
+              <span>Stopwatch pencatat waktu pengerjaan akan langsung berjalan setelah Anda menekan tombol mulai ujian.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
@@ -309,7 +309,7 @@ export default function TestOverviewPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-              <span>Jawaban tersimpan otomatis secara realtime dan ujian otomatis tersubmit jika waktu habis.</span>
+              <span>Jawaban tersimpan otomatis secara realtime dan Anda dapat mengirim lembar ujian kapan saja setelah selesai menjawab seluruh soal.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="w-4 h-4 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
@@ -339,7 +339,7 @@ export default function TestOverviewPage() {
         {/* Action Button Bar */}
         <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-500 font-normal">
-            Estimasi waktu pengerjaan: {test.duration} Menit • Hasil instan realtime
+            Sistem Stopwatch Pencatat Waktu Pengerjaan • Hasil instan realtime
           </p>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">

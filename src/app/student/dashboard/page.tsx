@@ -186,7 +186,7 @@ export default function StudentDashboardPage() {
             <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-slate-700">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
                 <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
-                <span>60 Mnt</span>
+                <span>Stopwatch</span>
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
                 <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
@@ -319,8 +319,8 @@ export default function StudentDashboardPage() {
                       {/* Inline specs with clean typography */}
                       <div className="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Durasi</span>
-                          <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.duration} mnt</span>
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
+                          <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
                         </div>
                         <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
                           <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>

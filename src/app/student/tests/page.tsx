@@ -250,8 +250,8 @@ export default function StudentTestsPage() {
                   {/* Inline specs with clean typography */}
                   <div className="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
                     <div className="flex flex-col items-center justify-center">
-                      <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Durasi</span>
-                      <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.duration} mnt</span>
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
+                      <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
                     </div>
                     <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
                       <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>

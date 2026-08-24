@@ -251,8 +251,8 @@ export default function LandingPage() {
 
                   <div className="pt-3 border-t border-slate-100 space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-600 font-medium">
-                      <span>{test.duration} Menit</span>
-                      <span>{test.total_questions} Soal</span>
+                      <span>Stopwatch Waktu</span>
+                      <span>{test.total_questions || 60} Soal</span>
                       <span>Pass: <strong className="text-emerald-600 font-bold">{test.passing_grade}%</strong></span>
                     </div>
 

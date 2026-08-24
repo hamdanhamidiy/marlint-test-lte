@@ -149,16 +149,23 @@ export default function TestTakingPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Anti-Screenshot & Exam Proctoring Privacy State
-  const [isWindowBlurred, setIsWindowBlurred] = useState(false);
+  const [isBlackout, setIsBlackout] = useState(false);
   const [securityWarning, setSecurityWarning] = useState<string | null>(null);
   const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const blackoutTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const triggerSecurityWarning = useCallback((msg: string) => {
     setSecurityWarning(msg);
+    setIsBlackout(true);
+    if (blackoutTimeoutRef.current) clearTimeout(blackoutTimeoutRef.current);
+    blackoutTimeoutRef.current = setTimeout(() => {
+      setIsBlackout(false);
+    }, 4000);
+
     if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
     warningTimeoutRef.current = setTimeout(() => {
       setSecurityWarning(null);
-    }, 3500);
+    }, 4000);
   }, []);
 
   // Elapsed stopwatch timer state
@@ -171,26 +178,31 @@ export default function TestTakingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Anti-Screenshot & Screen Capture Protection Listeners
+  // Anti-Screenshot & Screen Capture Protection Listeners (Instant Blackout)
   useEffect(() => {
     const handleBlur = () => {
-      setIsWindowBlurred(true);
+      // Instantly blackout when window loses focus (e.g. Snipping Tool or external screenshot app opens)
+      setIsBlackout(true);
+      try {
+        navigator.clipboard.writeText('');
+      } catch (err) {}
     };
 
     const handleFocus = () => {
-      setIsWindowBlurred(false);
+      // Window regained focus
     };
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        setIsWindowBlurred(true);
-      } else {
-        setIsWindowBlurred(false);
+        setIsBlackout(true);
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
       }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 1. PrintScreen key
+      // 1. PrintScreen key (or PrtScn keycode 44)
       if (e.key === 'PrintScreen' || e.keyCode === 44) {
         e.preventDefault();
         try {
@@ -214,14 +226,22 @@ export default function TestTakingPage() {
         return false;
       }
 
-      // 4. Print shortcut (Ctrl + P or Cmd + P)
+      // 4. Windows Key / Alt Key detection during active exam
+      if (e.key === 'Meta' || (e.altKey && e.key === 'PrintScreen')) {
+        setIsBlackout(true);
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+      }
+
+      // 5. Print shortcut (Ctrl + P or Cmd + P)
       if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault();
         triggerSecurityWarning('🔒 Fitur cetak halaman dinonaktifkan selama ujian berlangsung.');
         return false;
       }
 
-      // 5. Developer Tools shortcut (F12, Ctrl + Shift + I/J/C)
+      // 6. Developer Tools shortcut (F12, Ctrl + Shift + I/J/C)
       if (
         e.key === 'F12' ||
         ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(e.key)) ||
@@ -235,6 +255,7 @@ export default function TestTakingPage() {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        setIsBlackout(true);
         try {
           navigator.clipboard.writeText('');
         } catch (err) {}
@@ -254,6 +275,7 @@ export default function TestTakingPage() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+      if (blackoutTimeoutRef.current) clearTimeout(blackoutTimeoutRef.current);
     };
   }, [triggerSecurityWarning]);
 
@@ -578,6 +600,39 @@ export default function TestTakingPage() {
       }}
       className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode"
     >
+      {/* 100% SOLID BLACK SCREEN (ANTI-SCREENSHOT & SNIPPING TOOL BLACKOUT SHIELD) */}
+      {isBlackout && (
+        <div
+          onClick={() => setIsBlackout(false)}
+          className="fixed inset-0 z-[9999999] bg-[#000000] text-white flex flex-col items-center justify-center p-6 text-center select-none cursor-pointer"
+          style={{ backgroundColor: '#000000' }}
+        >
+          <div className="space-y-4 max-w-md p-8 rounded-3xl bg-neutral-950/95 border border-neutral-800 text-white shadow-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-7 h-7" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-base font-bold text-white tracking-wide">
+                Layar Ujian Diamankan (Anti-Screenshot)
+              </h3>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                Layar otomatis berubah menjadi blank hitam saat terdeteksi upaya tangkapan layar, pemotong layar, atau saat jendela tidak aktif demi integritas ujian Marlins.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsBlackout(false);
+              }}
+              className="px-6 py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-lg shadow-sky-500/25 cursor-pointer"
+            >
+              Klik Disini untuk Membuka Layar Soal
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* SECURITY FLOATING WARNING BANNER */}
       {securityWarning && (
         <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold shadow-2xl animate-bounce border border-rose-400">
@@ -648,27 +703,6 @@ export default function TestTakingPage() {
 
       {/* 2. MAIN CONTENT AREA (Only this middle section scrolls independently) */}
       <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-4 overscroll-contain relative">
-        {/* Anti-Cheat Privacy Blur Shield for Tab switching or Snipping Tool */}
-        {isWindowBlurred && (
-          <div className="absolute inset-0 z-40 bg-slate-900/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mb-3">
-              <ShieldAlert className="w-7 h-7" />
-            </div>
-            <h3 className="text-base font-bold text-white mb-1">
-              Mode Perlindungan Layar Aktif
-            </h3>
-            <p className="text-xs text-slate-300 max-w-sm leading-relaxed mb-4">
-              Layar soal disembunyikan secara otomatis saat jendela tidak aktif atau saat membuka aplikasi pemotong layar demi integritas ujian Marlins.
-            </p>
-            <button
-              type="button"
-              onClick={() => setIsWindowBlurred(false)}
-              className="px-5 py-2 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
-            >
-              Klik Disini untuk Melanjutkan Ujian
-            </button>
-          </div>
-        )}
 
         {/* Security Watermark Background */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-[0.03] flex items-center justify-center rotate-[-25deg] z-0">

@@ -178,10 +178,10 @@ export default function TestTakingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Anti-Screenshot & Screen Capture Protection Listeners (Instant Blackout)
+  // Anti-Screenshot & Screen Capture Protection Listeners (Desktop + Mobile Multi-Touch + Blur Blackout)
   useEffect(() => {
     const handleBlur = () => {
-      // Instantly blackout when window loses focus (e.g. Snipping Tool or external screenshot app opens)
+      // Instantly blackout when window loses focus (e.g. Snipping Tool, floating apps, or OS screenshot overlays)
       setIsBlackout(true);
       try {
         navigator.clipboard.writeText('');
@@ -194,6 +194,36 @@ export default function TestTakingPage() {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
+        setIsBlackout(true);
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+      }
+    };
+
+    const handlePageHide = () => {
+      // Mobile browser minimizing / overlay activation
+      setIsBlackout(true);
+      try {
+        navigator.clipboard.writeText('');
+      } catch (err) {}
+    };
+
+    // Mobile Multi-Touch Gesture Detection (Block 3-finger swipe screenshot common on Android / MIUI / ColorOS)
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length >= 3) {
+        e.preventDefault();
+        setIsBlackout(true);
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+        triggerSecurityWarning('🔒 Gesture tangkapan layar 3-jari dinonaktifkan.');
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches.length >= 3) {
+        e.preventDefault();
         setIsBlackout(true);
         try {
           navigator.clipboard.writeText('');
@@ -264,16 +294,22 @@ export default function TestTakingPage() {
 
     window.addEventListener('blur', handleBlur);
     window.addEventListener('focus', handleFocus);
+    window.addEventListener('pagehide', handlePageHide);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
       window.removeEventListener('blur', handleBlur);
       window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pagehide', handlePageHide);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
       if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
       if (blackoutTimeoutRef.current) clearTimeout(blackoutTimeoutRef.current);
     };
@@ -641,28 +677,28 @@ export default function TestTakingPage() {
         </div>
       )}
 
-      {/* 1. TOP HEADER (Fixed at top, zero scroll movement) */}
-      <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-3 sm:px-6 py-2 sm:py-2.5 z-30 shadow-2xs">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2">
+      {/* 1. TOP HEADER (Fixed at top, zero scroll movement, larger & more spacious) */}
+      <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-3.5 sm:px-8 py-3 sm:py-3.5 z-30 shadow-xs">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2.5 sm:gap-4">
           {/* Left: Test Branding & Title */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1">
-            <Logo size="sm" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
-            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0 flex-1">
+            <Logo size="md" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
+            <div className="h-6 w-px bg-slate-200 hidden sm:block" />
             <div className="min-w-0 flex-1">
-              <h1 className="text-xs sm:text-sm font-bold text-slate-900 truncate" title={attempt.test_name}>
+              <h1 className="text-xs sm:text-base font-bold text-slate-900 truncate" title={attempt.test_name}>
                 {attempt.test_name || 'Marlint Test 1'}
               </h1>
-              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden xs:block sm:block truncate">
+              <p className="text-[10px] sm:text-xs text-slate-500 font-medium hidden xs:block sm:block truncate">
                 Soal <strong className="text-[#0284C7] font-bold">{currentIndex + 1}</strong> dari {totalQuestionsCount} • Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong>
               </p>
             </div>
           </div>
 
-          {/* Right: Stopwatch Timer, Question Grid Button, Help, Exit */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Right: Stopwatch Timer, Question Grid Button, Help, Exit (Larger & Spacious Gap) */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Real-time Stopwatch Timer */}
-            <div className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full bg-slate-950 text-white font-mono text-[11px] sm:text-xs font-bold shadow-2xs shrink-0">
-              <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full bg-slate-950 text-white font-mono text-xs sm:text-sm font-bold shadow-2xs shrink-0">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
             </div>
 
@@ -670,10 +706,10 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="inline-flex items-center justify-center gap-1 h-8 px-2 sm:px-2.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] text-xs font-bold transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-10 px-3 sm:px-4 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] text-xs sm:text-sm font-bold transition-all cursor-pointer shrink-0 shadow-2xs"
               title="Daftar & Pilih Soal"
             >
-              <Grid className="w-3.5 h-3.5 shrink-0" />
+              <Grid className="w-4 h-4 shrink-0" />
               <span className="hidden sm:inline">Daftar Soal</span>
             </button>
 
@@ -681,20 +717,20 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setHelpModalOpen(true)}
-              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs transition-colors cursor-pointer shrink-0"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs sm:text-sm transition-colors cursor-pointer shrink-0 shadow-2xs"
               title="Panduan Pengerjaan"
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </button>
 
             {/* Exit Button */}
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="h-8 px-2 sm:px-2.5 rounded-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+              className="h-9 sm:h-10 px-3 sm:px-4 rounded-full text-xs sm:text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 shadow-2xs"
               title="Keluar dari Ujian"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
@@ -702,7 +738,7 @@ export default function TestTakingPage() {
       </header>
 
       {/* 2. MAIN CONTENT AREA (Only this middle section scrolls independently) */}
-      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-4 overscroll-contain relative">
+      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3.5 sm:px-8 py-3.5 sm:py-5 overscroll-contain relative">
 
         {/* Security Watermark Background */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-[0.03] flex items-center justify-center rotate-[-25deg] z-0">
@@ -836,11 +872,11 @@ export default function TestTakingPage() {
         </div>
       </main>
 
-      {/* 3. BOTTOM CONTROL BAR (Fixed at bottom, shrink-0, zero scroll jump) */}
-      <footer className="shrink-0 w-full bg-white border-t border-slate-200/90 px-3 sm:px-6 pt-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
-        <div className="max-w-3xl mx-auto space-y-2">
+      {/* 3. BOTTOM CONTROL BAR (Fixed at bottom, shrink-0, zero scroll jump, larger & touch friendly) */}
+      <footer className="shrink-0 w-full bg-white border-t border-slate-200/90 px-3.5 sm:px-8 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+        <div className="max-w-4xl mx-auto space-y-2.5">
           {/* Progress Track */}
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
@@ -848,32 +884,32 @@ export default function TestTakingPage() {
           </div>
 
           {/* Controls Row */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-3">
             {/* Back Button */}
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-1 h-9 px-3.5 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 sm:px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               <span className="hidden xs:inline sm:inline">Sebelumnya</span>
             </button>
 
             {/* Question Counter Indicator */}
-            <span className="text-xs font-bold text-slate-600 font-mono text-center">
+            <span className="text-xs sm:text-sm font-bold text-slate-700 font-mono text-center">
               {currentIndex + 1} / {totalQuestionsCount} Soal
             </span>
 
             {/* Next / Submit Buttons */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => setSubmitModalOpen(true)}
-                className="inline-flex items-center justify-center gap-1 h-9 px-3 sm:px-4 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-xs transition-all cursor-pointer shrink-0"
+                className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 sm:px-5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-xs sm:text-sm transition-all cursor-pointer shrink-0 shadow-2xs"
                 title="Kirim Lembar Jawaban"
               >
-                <Send className="w-3.5 h-3.5 text-emerald-600" />
+                <Send className="w-4 h-4 text-emerald-600" />
                 <span className="hidden sm:inline">Kirim</span>
               </button>
 
@@ -881,19 +917,19 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-1.5 h-9 px-4 sm:px-6 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Berikutnya</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 h-9 px-4 sm:px-6 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Selesaikan Ujian</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 </button>
               )}
             </div>

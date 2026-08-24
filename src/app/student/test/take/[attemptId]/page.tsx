@@ -168,15 +168,47 @@ export default function TestTakingPage() {
     }, 4000);
   }, []);
 
-  // Elapsed stopwatch timer state
+  // Helper to get or persist initial attempt start timestamp
+  const getOrSetStartTime = useCallback((attemptId: string, serverStartedAt?: string | null): number => {
+    if (typeof window === 'undefined') return Date.now();
+    const storageKey = `marlins_attempt_start_${attemptId}`;
+    const stored = localStorage.getItem(storageKey);
+    if (stored) {
+      const parsed = Number(stored);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    if (serverStartedAt) {
+      const serverTime = new Date(serverStartedAt).getTime();
+      if (!isNaN(serverTime) && serverTime > 0) {
+        localStorage.setItem(storageKey, String(serverTime));
+        return serverTime;
+      }
+    }
+    const now = Date.now();
+    localStorage.setItem(storageKey, String(now));
+    return now;
+  }, []);
+
+  // Elapsed stopwatch timer state (Persisted & Synced with Absolute Timestamp)
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setElapsedSeconds((prev) => prev + 1);
-    }, 1000);
+    if (!attemptId) return;
+
+    const calculateElapsed = () => {
+      const startTimestamp = getOrSetStartTime(attemptId, attempt?.started_at);
+      const now = Date.now();
+      const elapsed = Math.max(0, Math.floor((now - startTimestamp) / 1000));
+      setElapsedSeconds(elapsed);
+      try {
+        localStorage.setItem(`marlins_attempt_elapsed_${attemptId}`, String(elapsed));
+      } catch (err) {}
+    };
+
+    calculateElapsed();
+    const timer = setInterval(calculateElapsed, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [attemptId, attempt?.started_at, getOrSetStartTime]);
 
   // Anti-Screenshot & Screen Capture Protection Listeners (Desktop + Mobile Multi-Touch + Blur Blackout)
   useEffect(() => {
@@ -320,6 +352,18 @@ export default function TestTakingPage() {
     async function loadAttempt() {
       try {
         setLoading(true);
+
+        // Restore previously saved answers from localStorage if any
+        try {
+          const savedAnswers = localStorage.getItem(`marlins_attempt_answers_${attemptId}`);
+          if (savedAnswers) {
+            const parsed = JSON.parse(savedAnswers);
+            if (parsed && typeof parsed === 'object') {
+              setAnswers(parsed);
+            }
+          }
+        } catch (err) {}
+
         let parsedTestNum = 1;
         if (attemptId.includes('test-10') || attemptId.includes('test10')) parsedTestNum = 10;
         else if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
@@ -338,11 +382,12 @@ export default function TestTakingPage() {
         });
 
         if (error || !data) {
+          const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
           setAttempt({
             attempt_id: attemptId,
             test_number: info.test_number,
             test_name: info.test_name,
-            started_at: new Date().toISOString(),
+            started_at: startTimeIso,
             expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
             duration_minutes: 60,
             total_questions: info.questions.length,
@@ -366,6 +411,11 @@ export default function TestTakingPage() {
             ? data.questions
             : resolvedInfo.questions;
 
+        // Ensure start time is synced with server data.started_at
+        if (data.started_at) {
+          getOrSetStartTime(attemptId, data.started_at);
+        }
+
         setAttempt({
           ...data,
           test_number: resolvedInfo.test_number,
@@ -386,12 +436,13 @@ export default function TestTakingPage() {
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 
         const info = getTestInfo(parsedTestNum);
+        const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
 
         setAttempt({
           attempt_id: attemptId,
           test_number: info.test_number,
           test_name: info.test_name,
-          started_at: new Date().toISOString(),
+          started_at: startTimeIso,
           expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
           duration_minutes: 60,
           total_questions: info.questions.length,
@@ -407,13 +458,19 @@ export default function TestTakingPage() {
     if (attemptId) {
       loadAttempt();
     }
-  }, [attemptId, router]);
+  }, [attemptId, router, getOrSetStartTime]);
 
   const handleAnswer = (questionId: string, answerValue: any) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: answerValue,
-    }));
+    setAnswers((prev) => {
+      const updated = {
+        ...prev,
+        [questionId]: answerValue,
+      };
+      try {
+        localStorage.setItem(`marlins_attempt_answers_${attemptId}`, JSON.stringify(updated));
+      } catch (err) {}
+      return updated;
+    });
   };
 
   const handleToggleFlag = (index: number) => {

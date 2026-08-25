@@ -197,77 +197,83 @@ export default function TestOverviewPage() {
     }
   };
 
+  const formattedTestName = test.test_name ? test.test_name.replace(/Marlint/gi, 'Marlins') : `Marlins Test ${test.test_number}`;
+
   return (
-    <div className="max-w-3xl mx-auto space-y-5">
+    <div className="max-w-3xl mx-auto space-y-5 font-sans pb-12">
       {/* Top Navigation Link */}
       <div className="flex items-center justify-between">
         <Link
           href="/student/tests"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-[#5046E5] transition-colors group"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#0284C7] transition-colors group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
           <span>Kembali ke Katalog Ujian</span>
         </Link>
 
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold text-slate-600 shadow-2xs">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/90 text-[11px] font-bold text-slate-700 shadow-2xs">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
           <span>Standar STCW 2010</span>
         </div>
       </div>
 
       {/* Main Card Container */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden divide-y divide-slate-100">
+      <div className="bg-white rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden divide-y divide-slate-100 relative">
+        
+        {/* Top Ambient Line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+
         {/* Header Section */}
-        <div className="p-5 sm:p-6 space-y-4">
+        <div className="p-6 sm:p-7 space-y-4 pt-7">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2 min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-md bg-indigo-50 text-[#5046E5] text-[11px] font-bold border border-indigo-100">
-                  Marlins #{test.test_number}
+                <span className="px-2.5 py-0.5 rounded-full bg-[#D8EEFD] text-[#0369A1] text-[11px] font-extrabold">
+                  Paket #{test.test_number}
                 </span>
 
                 {test.is_free ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
-                    <Unlock className="w-3 h-3" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-2xs">
+                    <Unlock className="w-3 h-3 text-emerald-600" />
                     <span>Akses Gratis</span>
                   </span>
                 ) : hasEntitlement ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
-                    <Unlock className="w-3 h-3" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-2xs">
+                    <Unlock className="w-3 h-3 text-emerald-600" />
                     <span>Sudah Diaktivasi</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200">
-                    <Lock className="w-3 h-3 text-slate-400" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shadow-2xs">
+                    <Lock className="w-3 h-3 text-[#EA580C]" />
                     <span>{formatPriceIDR(test.price)}</span>
                   </span>
                 )}
               </div>
 
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-snug">
-                {test.test_name}
+              <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                {formattedTestName}
               </h1>
             </div>
 
             {/* 3 Metric Pills */}
             <div className="grid grid-cols-3 gap-2 shrink-0">
-              <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
+              <div className="px-3 py-2 rounded-2xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
                 <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Waktu</span>
-                <span className="text-xs font-bold text-amber-600">Stopwatch</span>
+                <span className="text-xs font-extrabold text-amber-600">Stopwatch</span>
               </div>
-              <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
+              <div className="px-3 py-2 rounded-2xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
                 <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Soal</span>
-                <span className="text-xs font-bold text-slate-900">{displayTotalQuestions} butir</span>
+                <span className="text-xs font-extrabold text-slate-900">{displayTotalQuestions} butir</span>
               </div>
-              <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
+              <div className="px-3 py-2 rounded-2xl bg-slate-50 border border-slate-100 text-center min-w-[70px]">
                 <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-tight">Passing</span>
-                <span className="text-xs font-bold text-emerald-600">{test.passing_grade}%</span>
+                <span className="text-xs font-extrabold text-emerald-600">{test.passing_grade}%</span>
               </div>
             </div>
           </div>
 
           <div className="pt-1">
-            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+            <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               {test.description || 'Evaluasi standar kompetensi Bahasa Inggris Maritim IMO STCW untuk menguji pemahaman tata bahasa, kosakata kapal, angka & waktu maritim, instruksi keselamatan, serta simulasi percakapan radio VHF.'}
             </p>
           </div>

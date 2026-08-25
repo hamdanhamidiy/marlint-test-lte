@@ -28,17 +28,17 @@ export default function RightStatsPanel({
   const currentPoints = profile?.total_points || 540;
   const levelCode = profile?.level_code || 'B1+';
 
-  // Competency score bars for maritime English skills in harmonious colors
+  // Competency score bars for maritime English skills in solid black & maritime blue
   const chartBars = [
-    { height: 75, label: 'Grammar', value: '75%', color: 'bg-[#BAE6FD] hover:bg-[#7DD3FC]' },
-    { height: 85, label: 'Listen', value: '85%', color: 'bg-[#93C5FD] hover:bg-[#60A5FA]' },
-    { height: 60, label: 'Vocab', value: '60%', color: 'bg-[#FED7AA] hover:bg-[#FDBA74]' },
-    { height: 90, isHighlight: true, label: 'SMCP', value: '90%', color: 'bg-gradient-to-t from-[#0284C7] to-[#38BDF8] shadow-sm shadow-sky-500/20' },
-    { height: 70, label: 'Read', value: '70%', color: 'bg-[#BAE6FD] hover:bg-[#7DD3FC]' },
+    { height: 75, label: 'Grammar', value: '75%', color: 'bg-slate-300 hover:bg-slate-400' },
+    { height: 85, label: 'Listen', value: '85%', color: 'bg-slate-800 hover:bg-black' },
+    { height: 60, label: 'Vocab', value: '60%', color: 'bg-slate-300 hover:bg-slate-400' },
+    { height: 90, isHighlight: true, label: 'SMCP', value: '90%', color: 'bg-[#0284C7] hover:bg-[#0369A1] shadow-sm shadow-sky-500/30' },
+    { height: 70, label: 'Read', value: '70%', color: 'bg-slate-300 hover:bg-slate-400' },
   ];
 
   return (
-    <aside className="w-full lg:w-80 bg-white rounded-[26px] p-4.5 sm:p-5 border border-slate-200/90 space-y-4 select-none shrink-0 shadow-2xs">
+    <aside className="w-full lg:w-80 bg-white rounded-[26px] p-5 border border-slate-200/90 space-y-4 select-none shrink-0 shadow-2xs">
       {/* User Profile Card Summary */}
       <div className="flex items-center gap-3 pb-3.5 border-b border-slate-100">
         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] p-0.5 shadow-xs flex items-center justify-center shrink-0">
@@ -73,16 +73,16 @@ export default function RightStatsPanel({
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
+      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 space-y-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-bold text-slate-800 tracking-tight">Kompetensi Maritim</span>
+          <span className="text-xs font-bold text-slate-900 tracking-tight">Kompetensi Maritim</span>
           <span className="text-xs text-[#C2410C] font-bold px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 shadow-2xs">
             {scoreAverage}% Rata-rata
           </span>
         </div>
 
-        {/* Dynamic Visual Bar Chart with Clean Gradients */}
-        <div className="h-22 flex items-end justify-between px-1.5 pt-1.5">
+        {/* Dynamic Visual Bar Chart with Fixed Height Container */}
+        <div className="h-24 flex items-end justify-between px-1.5 pt-2">
           <div className="w-full flex items-end justify-around h-full gap-2">
             {chartBars.map((bar, idx) => (
               <div
@@ -106,12 +106,12 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1.5 border-t border-slate-200/60">
-          <span className="text-center flex-1">Grammar</span>
-          <span className="text-center flex-1">Listen</span>
-          <span className="text-center flex-1">Vocab</span>
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-2 border-t border-slate-200/60">
+          <span className="text-center flex-1 font-medium text-slate-700">Grammar</span>
+          <span className="text-center flex-1 font-bold text-slate-900">Listen</span>
+          <span className="text-center flex-1 font-medium text-slate-700">Vocab</span>
           <span className="text-center flex-1 font-bold text-[#0284C7]">SMCP</span>
-          <span className="text-center flex-1">Read</span>
+          <span className="text-center flex-1 font-medium text-slate-700">Read</span>
         </div>
       </div>
 
@@ -147,7 +147,7 @@ export default function RightStatsPanel({
           </div>
 
           <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 text-xs">
-            <span className="text-slate-500 text-[11px]">Jenjang Bahasa:</span>
+            <span className="text-slate-600 text-[11px] font-medium">Jenjang Bahasa:</span>
             <span className="font-bold text-[#0284C7]">Level {levelCode} Operational</span>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function RightStatsPanel({
         <div className="space-y-2 pt-0.5">
           <Link
             href="/student/level"
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full border border-slate-200/90 hover:bg-sky-50/50 hover:border-[#0284C7] transition-all text-xs font-bold text-slate-800 shadow-2xs group"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full border border-slate-200/90 hover:bg-sky-50/50 hover:border-[#0284C7] transition-all text-xs font-bold text-slate-900 shadow-2xs group"
           >
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#0284C7]" />
@@ -167,7 +167,7 @@ export default function RightStatsPanel({
 
           <Link
             href="/student/articles"
-            className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-white bg-black hover:bg-neutral-800 transition-all shadow-xs hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Buka Modul Materi IMO SMCP</span>
           </Link>

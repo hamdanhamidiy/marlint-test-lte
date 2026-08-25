@@ -73,11 +73,11 @@ export default function RightStatsPanel({
   ];
 
   return (
-    <aside className="w-full lg:w-80 bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 space-y-5 select-none shrink-0 shadow-2xs">
+    <aside className="w-full lg:w-80 bg-white rounded-3xl p-4.5 sm:p-5 border border-slate-200/80 space-y-4 select-none shrink-0 shadow-2xs">
       {/* User Profile Card Summary */}
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-        <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-100 to-indigo-100 p-0.5 shadow-xs flex items-center justify-center shrink-0">
-          <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center text-lg overflow-hidden">
+      <div className="flex items-center gap-3 pb-3.5 border-b border-slate-100">
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-100 to-indigo-100 p-0.5 shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center text-base overflow-hidden">
             {profile?.photo_url ? (
               <img
                 src={profile.photo_url}
@@ -108,21 +108,21 @@ export default function RightStatsPanel({
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/70 space-y-3">
+      <div className="bg-[#F8FAFC] rounded-2xl p-3.5 border border-slate-200/70 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-slate-700 tracking-tight">Kompetensi Maritim</span>
-          <span className="text-xs text-[#C2410C] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200">
+          <span className="text-xs text-[#C2410C] font-bold px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200">
             {scoreAverage}% Rata-rata
           </span>
         </div>
 
-        <div className="relative h-24 flex items-end justify-between px-2 pt-2">
+        <div className="relative h-20 flex items-end justify-between px-2 pt-1">
           {/* Vertical rounded bars */}
           <div className="w-full flex items-end justify-around h-full z-10">
             {chartBars.map((bar, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-1.5 h-full justify-end" title={`${bar.label}: ${bar.height}%`}>
+              <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end" title={`${bar.label}: ${bar.height}%`}>
                 <div
-                  className={`w-6 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer ${
+                  className={`w-5.5 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer ${
                     bar.isHighlight
                       ? 'bg-gradient-to-t from-[#0284C7] to-[#38BDF8] shadow-xs'
                       : 'bg-[#BAE6FD] hover:bg-[#7DD3FC]'
@@ -135,7 +135,7 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1.5 border-t border-slate-200/60">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1 border-t border-slate-200/60">
           <span>Grammar</span>
           <span>Listen</span>
           <span>Vocab</span>
@@ -145,7 +145,7 @@ export default function RightStatsPanel({
       </div>
 
       {/* Maritime Examiners & Mentors Section */}
-      <div className="space-y-3.5 pt-0.5">
+      <div className="space-y-2.5 pt-0.5">
         <div className="flex items-center justify-between">
           <h3 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider">
             Instruktur Maritim
@@ -158,17 +158,17 @@ export default function RightStatsPanel({
           </Link>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {maritimeMentors.map((mentor) => {
             const isFollowed = followedMentors.has(mentor.name);
             return (
               <div
                 key={mentor.id}
-                className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between p-1.5 rounded-2xl hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div
-                    className={`w-8 h-8 rounded-full ${mentor.bgColor} flex items-center justify-center text-sm shadow-xs shrink-0 relative`}
+                    className={`w-7.5 h-7.5 rounded-full ${mentor.bgColor} flex items-center justify-center text-xs shadow-xs shrink-0 relative`}
                   >
                     {mentor.avatar}
                   </div>

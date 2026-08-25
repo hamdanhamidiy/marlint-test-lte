@@ -80,12 +80,12 @@ export default function StudentLayout({
         {/* Main Workspace Area (TopHeader + Children) */}
         <div className="flex-1 flex flex-col bg-[#F9FAFC] min-w-0 overflow-y-auto">
           {/* Top Header */}
-          <div className="p-3.5 sm:p-6 pb-2 sm:pb-3 border-b border-slate-100 bg-[#F9FAFC]/95 backdrop-blur-xs sticky top-0 z-20">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-slate-100 bg-[#F9FAFC]/95 backdrop-blur-xs sticky top-0 z-20">
             <TopHeader onOpenMobileMenu={() => setMobileMenuOpen(true)} />
           </div>
 
           {/* Page Content */}
-          <main className="flex-1 p-3.5 sm:p-6 lg:p-7">
+          <main className="flex-1 p-3.5 sm:p-5 lg:p-5">
             {children}
           </main>
         </div>

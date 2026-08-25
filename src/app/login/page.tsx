@@ -8,20 +8,21 @@ import {
   Lock,
   ArrowRight,
   AlertCircle,
-  UserCheck,
-  Shield,
-  Sparkles,
-  GraduationCap,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import Logo from '@/components/brand/Logo';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, signInAsDemo } = useAuth();
+  const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -49,173 +50,105 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickLogin = async (role: 'student' | 'instructor' | 'super_admin') => {
-    setLoading(true);
-    await signInAsDemo(role);
-    if (role === 'instructor' || role === 'super_admin') {
-      router.push('/admin/dashboard');
-    } else {
-      router.push('/student/dashboard');
-    }
-  };
-
-  const fillCredentials = (e: string, p: string) => {
-    setEmail(e);
-    setPassword(p);
-  };
-
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-between p-4 sm:p-6 lg:p-8 font-sans">
+    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col justify-between p-4 sm:p-6 lg:p-8 font-sans selection:bg-sky-500 selection:text-white">
       {/* Top Header */}
-      <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
         <Logo size="md" showSubtitle={true} subtitleText="Maritime English Platform" href="/" />
 
         <Link
           href="/"
-          className="text-xs font-semibold text-slate-500 hover:text-[#5046E5] transition-colors"
+          className="group inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-black transition-colors"
         >
-          ← Kembali ke Beranda
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+          <span>Kembali ke Beranda</span>
         </Link>
       </div>
 
       {/* Main Login Card */}
-      <div className="max-w-md w-full mx-auto my-6">
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-          <div className="text-center space-y-1.5">
-            <h1 className="font-heading text-xl sm:text-2xl font-bold text-slate-900">
-              Masuk ke Portal Marlins
+      <div className="max-w-[420px] w-full mx-auto my-auto py-8">
+        <div className="bg-white p-7 sm:p-9 rounded-[28px] border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 relative overflow-hidden">
+          
+          {/* Subtle Top Accent Line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-950 opacity-90" />
+
+          {/* Heading */}
+          <div className="text-center space-y-1.5 pt-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/70 text-slate-600 text-[11px] font-semibold mb-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
+              <span>Portal Resmi Marlins</span>
+            </div>
+            <h1 className="font-heading text-2xl sm:text-[26px] font-extrabold text-slate-950 tracking-tight leading-snug">
+              Masuk ke Akun Anda
             </h1>
-            <p className="text-xs text-slate-500 font-normal">
-              Akses akun resmi Siswa Pelaut, Instruktur Maritim, atau Super Administrator.
+            <p className="text-xs text-slate-500 font-normal leading-relaxed">
+              Akses simulasi ujian Marlins, bank materi SMCP, dan sertifikat resmi Anda.
             </p>
           </div>
 
-          {/* Quick Access Account Selector */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Pilih Role Akun Resmi (1-Click):</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('student')}
-                disabled={loading}
-                className="flex flex-col items-center justify-center gap-1 p-3 rounded-2xl text-xs font-semibold bg-indigo-50/80 text-[#5046E5] border border-indigo-100 hover:bg-indigo-100/80 transition-colors text-center cursor-pointer shadow-2xs"
-              >
-                <UserCheck className="w-4 h-4 text-[#5046E5]" />
-                <span>Siswa Pelaut</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('instructor')}
-                disabled={loading}
-                className="flex flex-col items-center justify-center gap-1 p-3 rounded-2xl text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors text-center cursor-pointer shadow-2xs"
-              >
-                <GraduationCap className="w-4 h-4 text-amber-600" />
-                <span>Instruktur</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('super_admin')}
-                disabled={loading}
-                className="flex flex-col items-center justify-center gap-1 p-3 rounded-2xl text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-colors text-center cursor-pointer shadow-2xs"
-              >
-                <Shield className="w-4 h-4 text-purple-600" />
-                <span>Super Admin</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-slate-100"></div>
-            <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">atau login manual</span>
-            <div className="flex-grow border-t border-slate-100"></div>
-          </div>
-
           {errorMessage && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2.5 font-medium">
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2.5 font-medium animate-shake">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{errorMessage}</span>
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">Alamat Email:</label>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700">Alamat Email</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
-                  placeholder="siswa@marlinstest.com"
+                  placeholder="nama@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#5046E5]"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-[#0284C7] transition-all font-normal"
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-semibold text-slate-700">Kata Sandi:</label>
+                <label className="block text-xs font-bold text-slate-700">Kata Sandi</label>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
-                  placeholder="Password123!"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#5046E5]"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-[#0284C7] transition-all font-normal"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-900 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+              className="w-full py-3 rounded-full font-semibold text-xs text-white bg-black hover:bg-neutral-800 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] mt-2"
             >
-              <span>{loading ? 'Memproses...' : 'Masuk Sekarang'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{loading ? 'Memverifikasi...' : 'Masuk ke Portal'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
 
-          {/* Preset Credentials Hint Box */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
-            <p className="font-bold text-slate-800 text-[10px] uppercase tracking-wider">Kredensial Akun Resmi:</p>
-            <div className="space-y-1.5 text-xs">
-              <div
-                onClick={() => fillCredentials('siswa@marlinstest.com', 'Password123!')}
-                className="cursor-pointer hover:text-[#5046E5] p-1.5 rounded-lg hover:bg-indigo-50 transition-colors flex justify-between items-center"
-              >
-                <span>👨‍✈️ <strong>Siswa:</strong> siswa@marlinstest.com</span>
-                <span className="font-mono text-slate-400 text-[11px]">Password123!</span>
-              </div>
-              <div
-                onClick={() => fillCredentials('instruktur@marlinstest.com', 'Password123!')}
-                className="cursor-pointer hover:text-amber-700 p-1.5 rounded-lg hover:bg-amber-50 transition-colors flex justify-between items-center"
-              >
-                <span>👨‍🏫 <strong>Instruktur:</strong> instruktur@marlinstest.com</span>
-                <span className="font-mono text-slate-400 text-[11px]">Password123!</span>
-              </div>
-              <div
-                onClick={() => fillCredentials('superadmin@marlinstest.com', 'Password123!')}
-                className="cursor-pointer hover:text-purple-700 p-1.5 rounded-lg hover:bg-purple-50 transition-colors flex justify-between items-center"
-              >
-                <span>⚡ <strong>Super Admin:</strong> superadmin@marlinstest.com</span>
-                <span className="font-mono text-slate-400 text-[11px]">Password123!</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+          {/* Bottom Switch Link */}
+          <div className="text-center pt-3 border-t border-slate-100 text-xs text-slate-500 font-normal">
             Belum memiliki akun pelaut?{' '}
-            <Link href="/register" className="font-bold text-[#5046E5] hover:underline">
+            <Link href="/register" className="font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors">
               Daftar Akun Baru
             </Link>
           </div>
@@ -223,8 +156,8 @@ export default function LoginPage() {
       </div>
 
       {/* Footer info */}
-      <div className="text-center text-xs text-slate-400">
-        Standard IMO SMCP Maritime English Testing Platform • Multi-Role RBAC System
+      <div className="text-center text-xs text-slate-400 font-normal py-2">
+        Platform Asesmen Resmi Standar Internasional IMO STCW & SMCP
       </div>
     </div>
   );

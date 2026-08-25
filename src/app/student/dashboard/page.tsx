@@ -182,47 +182,47 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-4 sm:space-y-4.5 min-w-0">
 
-        {/* Modern Clean Executive Maritime Hero Card */}
-        <div className="bg-white rounded-[28px] border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4 relative overflow-hidden">
+        {/* Modern Clean Executive Maritime Hero Card - Fully Mobile Responsive */}
+        <div className="bg-white rounded-[22px] sm:rounded-[28px] border border-slate-200/90 p-4 sm:p-6 lg:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-3.5 sm:space-y-4 relative overflow-hidden">
           
           {/* Top Ambient Signature Gradient Line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
 
           {/* Top Row: Official Status & Quick Metric Badges */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 flex-wrap">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] sm:text-xs font-semibold text-slate-700">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
               <span className="font-bold text-slate-900">Platform Resmi</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
+              <span className="hidden sm:inline text-slate-300">•</span>
+              <span className="hidden sm:inline text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
             </div>
 
             {/* Quick Metrics Strip */}
-            <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-slate-700">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
-                <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-[10px] sm:text-xs font-bold text-slate-700">
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
+                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#0284C7] shrink-0" />
                 <span>Stopwatch</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
-                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
+                <FileCheck2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#EA580C] shrink-0" />
                 <span>60 Soal</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-950 text-white shadow-xs">
-                <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full bg-slate-950 text-white shadow-xs">
+                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0" />
                 <span>Passing 70%</span>
               </div>
             </div>
           </div>
 
           {/* Center Row: Main Greeting & Typewriter Subtitle */}
-          <div className="space-y-1.5 pt-1">
-            <h1 className="font-heading text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight leading-tight">
-              Halo, {greetingName}! <span className="animate-wave inline-block text-2xl sm:text-[28px] ml-1">👋</span>
+          <div className="space-y-1 sm:space-y-1.5 pt-0.5 sm:pt-1">
+            <h1 className="font-heading text-xl sm:text-2xl lg:text-[28px] font-extrabold text-slate-950 tracking-tight leading-tight">
+              Halo, {greetingName}! <span className="animate-wave inline-block text-xl sm:text-2xl lg:text-[28px] ml-1">👋</span>
             </h1>
 
-            {/* Dynamic Typewriter Subtitle with plenty of room */}
-            <div className="min-h-[28px] flex items-center">
-              <p className="text-[13px] sm:text-sm text-slate-600 font-medium leading-relaxed max-w-3xl">
+            {/* Dynamic Typewriter Subtitle with adaptive height on mobile multi-line */}
+            <div className="min-h-[40px] sm:min-h-[28px] flex items-center">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-3xl">
                 <span>{currentText}</span>
                 <span className="animate-cursor font-bold text-[#EA580C] text-sm ml-0.5">|</span>
               </p>

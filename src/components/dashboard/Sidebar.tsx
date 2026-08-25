@@ -96,25 +96,23 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                   key={item.name}
                   href={item.href}
                   onClick={onCloseMobile}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-full text-[13px] transition-all duration-150 ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-full text-[13px] transition-all duration-200 ${
                     isActive
-                      ? 'bg-black text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                      ? 'bg-[#0F172A] text-white font-bold shadow-sm shadow-slate-900/10'
+                      : 'text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={`w-4 h-4 ${
-                        isActive ? 'text-white' : 'text-slate-400'
+                        isActive ? 'text-[#38BDF8]' : 'text-slate-400'
                       }`}
                     />
                     <span>{item.name}</span>
                   </div>
 
                   {item.badge && (
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs ${
-                      isActive ? 'bg-neutral-800 text-white' : 'bg-black text-white'
-                    }`}>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#EA580C] text-white shadow-xs">
                       {item.badge}
                     </span>
                   )}
@@ -133,17 +131,17 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         <Link
           href="/student/redeem"
           onClick={onCloseMobile}
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-black hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-[#EA580C] hover:bg-orange-50/70 transition-colors"
         >
-          <KeyRound className="w-4 h-4 text-slate-500" />
+          <KeyRound className="w-4 h-4 text-[#EA580C]" />
           <span>Aktivasi Token</span>
         </Link>
         <Link
           href="/student/profile"
           onClick={onCloseMobile}
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-black hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 transition-colors"
         >
-          <User className="w-4 h-4 text-slate-500" />
+          <User className="w-4 h-4 text-[#0284C7]" />
           <span>Profil Pelaut</span>
         </Link>
         <button

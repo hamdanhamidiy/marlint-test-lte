@@ -28,20 +28,20 @@ export default function RightStatsPanel({
   const currentPoints = profile?.total_points || 540;
   const levelCode = profile?.level_code || 'B1+';
 
-  // Competency score bars for maritime English skills in sleek dark monochrome
+  // Competency score bars for maritime English skills in harmonious colors
   const chartBars = [
-    { height: 75, label: 'Grammar', value: '75%' },
-    { height: 85, label: 'Listen', value: '85%' },
-    { height: 60, label: 'Vocab', value: '60%' },
-    { height: 90, isHighlight: true, label: 'SMCP', value: '90%' },
-    { height: 70, label: 'Read', value: '70%' },
+    { height: 75, label: 'Grammar', value: '75%', color: 'bg-[#BAE6FD] hover:bg-[#7DD3FC]' },
+    { height: 85, label: 'Listen', value: '85%', color: 'bg-[#93C5FD] hover:bg-[#60A5FA]' },
+    { height: 60, label: 'Vocab', value: '60%', color: 'bg-[#FED7AA] hover:bg-[#FDBA74]' },
+    { height: 90, isHighlight: true, label: 'SMCP', value: '90%', color: 'bg-gradient-to-t from-[#0284C7] to-[#38BDF8] shadow-sm shadow-sky-500/20' },
+    { height: 70, label: 'Read', value: '70%', color: 'bg-[#BAE6FD] hover:bg-[#7DD3FC]' },
   ];
 
   return (
     <aside className="w-full lg:w-80 bg-white rounded-[28px] p-5 sm:p-6 border border-slate-200/90 space-y-5 select-none shrink-0 shadow-2xs">
       {/* User Profile Card Summary */}
       <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-        <div className="w-11 h-11 rounded-full bg-black p-0.5 shadow-xs flex items-center justify-center shrink-0">
+        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] p-0.5 shadow-xs flex items-center justify-center shrink-0">
           <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-base overflow-hidden">
             {profile?.photo_url ? (
               <img
@@ -60,14 +60,14 @@ export default function RightStatsPanel({
             <h3 className="font-heading text-sm font-bold text-slate-900 truncate leading-snug">
               {displayName}
             </h3>
-            <span className="text-slate-400 text-xs">⚓</span>
+            <span className="text-amber-500 text-xs">⚓</span>
           </div>
           <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
-            Level {levelCode} • <span className="text-slate-900 font-bold">{currentPoints} XP</span>
+            Level {levelCode} • <span className="text-[#EA580C] font-bold">{currentPoints} XP</span>
           </p>
         </div>
 
-        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[10px] font-bold border border-slate-200 shrink-0">
+        <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] text-[10px] font-bold border border-sky-200 shrink-0">
           {levelCode}
         </span>
       </div>
@@ -75,13 +75,13 @@ export default function RightStatsPanel({
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
       <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 space-y-3.5">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-bold text-slate-900 tracking-tight">Kompetensi Maritim</span>
-          <span className="text-xs text-slate-900 font-bold px-2.5 py-0.5 rounded-full bg-slate-200/80 border border-slate-300/80">
+          <span className="text-xs font-bold text-slate-800 tracking-tight">Kompetensi Maritim</span>
+          <span className="text-xs text-[#C2410C] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200 shadow-2xs">
             {scoreAverage}% Rata-rata
           </span>
         </div>
 
-        {/* Dynamic Visual Bar Chart with Clean Dark / Slate Bars */}
+        {/* Dynamic Visual Bar Chart with Clean Gradients */}
         <div className="h-24 flex items-end justify-between px-1.5 pt-2">
           <div className="w-full flex items-end justify-around h-full gap-2">
             {chartBars.map((bar, idx) => (
@@ -91,17 +91,13 @@ export default function RightStatsPanel({
                 title={`${bar.label}: ${bar.value}`}
               >
                 {/* Tooltip on hover */}
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-5 text-[9px] font-bold font-mono bg-black text-white px-1.5 py-0.5 rounded-md pointer-events-none z-20">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-5 text-[9px] font-bold font-mono bg-slate-950 text-white px-1.5 py-0.5 rounded-md pointer-events-none z-20 shadow-xs">
                   {bar.value}
                 </span>
 
                 {/* Animated colored bar */}
                 <div
-                  className={`w-full max-w-[28px] rounded-t-lg transition-all duration-300 group-hover:scale-105 cursor-pointer shadow-2xs ${
-                    bar.isHighlight
-                      ? 'bg-black hover:bg-neutral-800'
-                      : 'bg-slate-300 hover:bg-slate-400'
-                  }`}
+                  className={`w-full max-w-[28px] rounded-t-lg transition-all duration-300 group-hover:scale-105 cursor-pointer shadow-2xs ${bar.color}`}
                   style={{ height: `${bar.height}%` }}
                 />
               </div>
@@ -110,11 +106,11 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-600 font-semibold px-1 pt-2 border-t border-slate-200/60">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-2 border-t border-slate-200/60">
           <span className="text-center flex-1">Grammar</span>
           <span className="text-center flex-1">Listen</span>
           <span className="text-center flex-1">Vocab</span>
-          <span className="text-center flex-1 font-bold text-black">SMCP</span>
+          <span className="text-center flex-1 font-bold text-[#0284C7]">SMCP</span>
           <span className="text-center flex-1">Read</span>
         </div>
       </div>
@@ -127,7 +123,7 @@ export default function RightStatsPanel({
           </h3>
           <Link
             href="/student/certificates"
-            className="text-[11px] font-bold text-slate-900 hover:underline"
+            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] hover:underline"
           >
             Lihat Sertifikat
           </Link>
@@ -137,7 +133,7 @@ export default function RightStatsPanel({
         <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center text-xs">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#EA580C] flex items-center justify-center text-xs">
                 <Award className="w-4 h-4" />
               </div>
               <div>
@@ -145,14 +141,14 @@ export default function RightStatsPanel({
                 <p className="text-[10px] text-slate-500">Perwira & Rating Kapal</p>
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded-md bg-slate-200 text-slate-800 text-[10px] font-bold">
+            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
               Passing 70%
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
             <span className="text-slate-500 text-[11px]">Jenjang Bahasa:</span>
-            <span className="font-bold text-black">Level {levelCode} Operational</span>
+            <span className="font-bold text-[#0284C7]">Level {levelCode} Operational</span>
           </div>
         </div>
 
@@ -160,18 +156,18 @@ export default function RightStatsPanel({
         <div className="space-y-2 pt-1">
           <Link
             href="/student/level"
-            className="w-full flex items-center justify-between px-4 py-3 rounded-full border border-slate-200/90 hover:bg-slate-50 hover:border-black transition-colors text-xs font-bold text-slate-800 shadow-2xs"
+            className="w-full flex items-center justify-between px-4 py-3 rounded-full border border-slate-200/90 hover:bg-sky-50/50 hover:border-[#0284C7] transition-all text-xs font-bold text-slate-800 shadow-2xs group"
           >
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-black" />
-              <span>Matriks Jenjang CEFR Maritim</span>
+              <TrendingUp className="w-4 h-4 text-[#0284C7]" />
+              <span className="group-hover:text-[#0284C7] transition-colors">Matriks Jenjang CEFR Maritim</span>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+            <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-all" />
           </Link>
 
           <Link
             href="/student/articles"
-            className="w-full flex items-center justify-center py-3 rounded-full text-xs font-bold text-white bg-black hover:bg-neutral-800 transition-all shadow-xs"
+            className="w-full flex items-center justify-center py-3 rounded-full text-xs font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Buka Modul Materi IMO SMCP</span>
           </Link>

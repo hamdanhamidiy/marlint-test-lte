@@ -185,13 +185,13 @@ export default function StudentDashboardPage() {
         {/* Modern Clean Executive Maritime Hero Card */}
         <div className="bg-white rounded-[28px] border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4 relative overflow-hidden">
           
-          {/* Subtle Top Ambient Dark Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-black opacity-90" />
+          {/* Top Ambient Signature Gradient Line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
 
           {/* Top Row: Official Status & Quick Metric Badges */}
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700">
-              <span className="w-2 h-2 rounded-full bg-black"></span>
+              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
               <span className="font-bold text-slate-900">Platform Resmi</span>
               <span className="text-slate-300">•</span>
               <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
@@ -199,15 +199,15 @@ export default function StudentDashboardPage() {
 
             {/* Quick Metrics Strip */}
             <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-slate-700">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 shadow-2xs">
-                <Clock className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
+                <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
                 <span>Stopwatch</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 shadow-2xs">
-                <FileCheck2 className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
+                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                 <span>60 Soal</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black text-white shadow-xs">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-950 text-white shadow-xs">
                 <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 <span>Passing 70%</span>
               </div>
@@ -224,7 +224,7 @@ export default function StudentDashboardPage() {
             <div className="min-h-[24px] flex items-center">
               <p className="text-[13px] sm:text-sm text-slate-600 font-medium leading-normal max-w-3xl">
                 <span>{currentText}</span>
-                <span className="animate-cursor font-bold text-black text-sm ml-0.5">|</span>
+                <span className="animate-cursor font-bold text-[#EA580C] text-sm ml-0.5">|</span>
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function StudentDashboardPage() {
             <div className="min-w-0">
               <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
                 <span>Paket Ujian Marlins</span>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200 shadow-2xs">
                   Ready
                 </span>
               </h2>
@@ -247,7 +247,7 @@ export default function StudentDashboardPage() {
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-slate-900 hover:text-black hover:underline transition-colors shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0 whitespace-nowrap"
             >
               <span>Lihat Semua</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -257,7 +257,7 @@ export default function StudentDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-5">
             {loading ? (
               <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
-                <div className="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center mx-auto animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
                   <FileCheck2 className="w-4 h-4" />
                 </div>
                 <p className="font-semibold text-slate-700">Memuat paket ujian resmi...</p>
@@ -270,13 +270,19 @@ export default function StudentDashboardPage() {
                 return (
                   <div
                     key={test.id}
-                    className="bg-white rounded-[26px] p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-black transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden"
+                    className={`bg-white rounded-[26px] p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
+                      isTest1
+                        ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.06)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
+                        : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-400 hover:-translate-y-0.5'
+                    }`}
                   >
                     {/* Top Tag & Access Indicator */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight bg-slate-100 text-slate-800">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
+                            isTest1 ? 'bg-[#D8EEFD] text-[#0369A1]' : 'bg-slate-100 text-slate-700'
+                          }`}>
                             Paket #{test.test_number}
                           </span>
                           <span className="text-[10px] font-semibold text-slate-400">
@@ -290,8 +296,8 @@ export default function StudentDashboardPage() {
                             <span>{test.is_free ? 'Gratis' : 'Akses Terbuka'}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-bold border border-slate-200 shrink-0">
-                            <Lock className="w-3 h-3 text-slate-500" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shrink-0 shadow-2xs">
+                            <Lock className="w-3 h-3 text-[#EA580C]" />
                             <span>{formatPriceIDR(test.price)}</span>
                           </span>
                         )}
@@ -299,7 +305,9 @@ export default function StudentDashboardPage() {
 
                       {/* Title & Description */}
                       <div className="space-y-1">
-                        <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-black transition-colors leading-snug line-clamp-1">
+                        <h3 className={`font-heading text-base font-bold text-slate-900 transition-colors leading-snug line-clamp-1 ${
+                          isTest1 ? 'group-hover:text-[#0284C7]' : 'group-hover:text-[#EA580C]'
+                        }`}>
                           {test.test_name}
                         </h3>
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[2rem]">
@@ -314,11 +322,11 @@ export default function StudentDashboardPage() {
                       <div className="grid grid-cols-3 gap-1.5 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
-                          <span className="text-xs font-extrabold text-slate-900 mt-0.5">Stopwatch</span>
+                          <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
                         </div>
                         <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
                           <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>
-                          <span className="text-xs font-extrabold text-slate-900 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
+                          <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
                         </div>
                         <div className="flex flex-col items-center justify-center">
                           <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Passing</span>
@@ -326,10 +334,14 @@ export default function StudentDashboardPage() {
                         </div>
                       </div>
 
-                      {/* Action Button: Solid Black Pill for all cards */}
+                      {/* Action Button: Primary Blue for Test 1, Deep Black for Test 2 & 3 */}
                       <Link
                         href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold text-white bg-black hover:bg-neutral-800 transition-all duration-200 cursor-pointer shadow-xs group-hover:scale-[1.01] active:scale-[0.99]"
+                        className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
+                          hasAccess
+                            ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20'
+                            : 'bg-black hover:bg-neutral-800 text-white shadow-slate-900/10'
+                        }`}
                       >
                         <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -353,7 +365,7 @@ export default function StudentDashboardPage() {
             </div>
             <Link
               href="/student/history"
-              className="text-xs font-bold text-slate-900 hover:text-black hover:underline shrink-0"
+              className="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
             >
               Lihat Semua
             </Link>
@@ -376,7 +388,7 @@ export default function StudentDashboardPage() {
                     <tr key={res.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-8 h-8 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <FileCheck2 className="w-4 h-4" />
                           </div>
                           <div>
@@ -386,13 +398,13 @@ export default function StudentDashboardPage() {
                         </div>
                       </td>
                       <td className="py-3.5 pr-4">
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wider">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D8EEFD] text-[#0369A1] uppercase tracking-wider">
                           STANDAR CEFR
                         </span>
                       </td>
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-slate-900 text-xs">{res.score}%</span>
+                          <span className="font-mono font-bold text-[#0284C7] text-xs">{res.score}%</span>
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
                               res.is_passed
@@ -407,7 +419,7 @@ export default function StudentDashboardPage() {
                       <td className="py-3.5 text-right">
                         <Link
                           href={`/student/test/result/${res.attempt_id || res.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-black text-slate-500 hover:text-black hover:bg-slate-100 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-[#0284C7] text-slate-400 hover:text-[#0284C7] hover:bg-sky-50 transition-colors shadow-2xs"
                           title="Lihat Rincian Hasil"
                         >
                           <ArrowUpRight className="w-4 h-4" />

@@ -73,9 +73,9 @@ export default function RightStatsPanel({
   ];
 
   return (
-    <aside className="w-full lg:w-80 bg-white rounded-3xl p-6 border border-slate-200/80 space-y-6 select-none shrink-0 shadow-2xs">
+    <aside className="w-full lg:w-80 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 space-y-6 select-none shrink-0 shadow-2xs">
       {/* User Profile Card Summary */}
-      <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
+      <div className="flex items-center gap-3.5 pb-5 border-b border-slate-100">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-100 to-indigo-100 p-0.5 shadow-xs flex items-center justify-center shrink-0">
           <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center text-xl overflow-hidden">
             {profile?.photo_url ? (
@@ -92,13 +92,13 @@ export default function RightStatsPanel({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-heading text-sm font-bold text-slate-900 truncate">
+            <h3 className="font-heading text-sm font-bold text-slate-900 truncate leading-snug">
               {displayName}
             </h3>
             <span className="text-amber-500 text-xs">⚓</span>
           </div>
-          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-            Level {profile?.level_code || 'B1+'} • <span className="text-[#C2410C] font-bold">{currentPoints} XP</span>
+          <p className="text-xs text-slate-500 font-normal truncate mt-1">
+            Level {profile?.level_code || 'B1+'} • <span className="text-[#C2410C] font-semibold">{currentPoints} XP</span>
           </p>
         </div>
 
@@ -108,10 +108,10 @@ export default function RightStatsPanel({
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 space-y-3">
+      <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-slate-200/70 space-y-4">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[11px] font-bold text-slate-700 tracking-tight">Kompetensi Maritim</span>
-          <span className="text-xs text-[#C2410C] font-extrabold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200">
+          <span className="text-xs font-bold text-slate-700 tracking-tight">Kompetensi Maritim</span>
+          <span className="text-xs text-[#C2410C] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200">
             {scoreAverage}% Rata-rata
           </span>
         </div>
@@ -135,7 +135,7 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1 border-t border-slate-200/70">
+        <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium px-1 pt-2 border-t border-slate-200/60">
           <span>Grammar</span>
           <span>Listen</span>
           <span>Vocab</span>
@@ -145,46 +145,46 @@ export default function RightStatsPanel({
       </div>
 
       {/* Maritime Examiners & Mentors Section */}
-      <div className="space-y-3.5 pt-1">
+      <div className="space-y-4 pt-1">
         <div className="flex items-center justify-between">
           <h3 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider">
             Instruktur Maritim
           </h3>
           <Link
             href="/student/articles"
-            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1]"
+            className="text-xs font-semibold text-[#0284C7] hover:text-[#0369A1]"
           >
             Lihat Semua
           </Link>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {maritimeMentors.map((mentor) => {
             const isFollowed = followedMentors.has(mentor.name);
             return (
               <div
                 key={mentor.id}
-                className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 transition-colors"
               >
-                <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                <div className="flex items-center gap-3 min-w-0 pr-2">
                   <div
-                    className={`w-8 h-8 rounded-full ${mentor.bgColor} flex items-center justify-center text-sm shadow-xs shrink-0 relative`}
+                    className={`w-9 h-9 rounded-full ${mentor.bgColor} flex items-center justify-center text-sm shadow-xs shrink-0 relative`}
                   >
                     {mentor.avatar}
                   </div>
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 space-y-0.5">
                     <p className="text-xs font-bold text-slate-900 truncate leading-snug">
                       {mentor.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 truncate">{mentor.role}</p>
+                    <p className="text-[11px] text-slate-400 truncate leading-normal">{mentor.role}</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => toggleFollow(mentor.name)}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold transition-all shrink-0 cursor-pointer ${
                     isFollowed
                       ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       : 'bg-white border border-slate-200 text-slate-700 hover:border-sky-400 hover:text-[#0284C7] shadow-2xs'
@@ -207,10 +207,10 @@ export default function RightStatsPanel({
           })}
         </div>
 
-        {/* See All Materials Button */}
+        {/* See All Materials Button (Antigravity Pill Style) */}
         <Link
           href="/student/articles"
-          className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-[#0284C7] bg-[#E0F2FE] hover:bg-[#BAE6FD] transition-colors shadow-2xs"
+          className="w-full flex items-center justify-center py-3 rounded-full text-xs font-semibold text-[#0284C7] bg-[#E0F2FE] hover:bg-[#BAE6FD] transition-colors shadow-2xs mt-2"
         >
           <span>Buka Semua Materi IMO SMCP</span>
         </Link>

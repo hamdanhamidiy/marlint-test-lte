@@ -95,43 +95,48 @@ export default function StudentArticlesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EEF0FF] text-[#5046E5] text-[11px] font-bold uppercase tracking-wider mb-2">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Pusat Pembelajaran Maritim</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/70 text-slate-700 text-xs font-semibold mb-2">
+            <span className="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse" />
+            <span className="font-bold text-slate-900">Pusat Pembelajaran Maritim</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Standar IMO SMCP</span>
           </div>
-          <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
             Materi & Referensi Bahasa Inggris Pelaut
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium">
+          <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed max-w-2xl">
             Perkaya perbendaharaan kosakata, tata bahasa, dan frasa navigasi kapal standar internasional IMO SMCP.
           </p>
         </div>
 
-        {/* Search */}
-        <div className="relative w-full sm:w-72">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Cari materi maritim..."
+            placeholder="Cari materi navigasi atau SMCP..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#5046E5]/20 focus:border-[#5046E5] transition-all shadow-2xs"
+            className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-slate-200/90 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-[#0284C7] transition-all shadow-2xs"
           />
         </div>
       </div>
 
       {/* Grid */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-100 rounded-3xl text-slate-400 text-xs shadow-2xs">
-          Memuat artikel pembelajaran...
+        <div className="p-16 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
+          <div className="w-7 h-7 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <p className="font-medium">Memuat modul pembelajaran...</p>
         </div>
       ) : filteredArticles.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-100 rounded-3xl text-slate-400 text-xs shadow-2xs">
-          Tidak ada artikel yang cocok dengan pencarian Anda.
+        <div className="p-16 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
+          <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
+          <p className="font-bold text-slate-800 text-sm">Tidak Ada Materi Ditemukan</p>
+          <p className="text-slate-400">Tidak ada artikel yang cocok dengan kata kunci pencarian Anda.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -139,30 +144,35 @@ export default function StudentArticlesPage() {
             <Link
               key={art.id}
               href={`/student/articles/${art.id}`}
-              className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-100 hover:border-indigo-200 shadow-2xs hover:shadow-md flex flex-col justify-between space-y-4 transition-all group"
+              className="bg-white p-6 sm:p-7 rounded-[26px] border border-slate-200/80 hover:border-sky-300 shadow-2xs hover:shadow-lg flex flex-col justify-between space-y-4 transition-all duration-200 group hover:-translate-y-1 relative overflow-hidden"
             >
               <div className="space-y-3">
-                <span className="px-3 py-1 rounded-full bg-indigo-50 text-[#5046E5] text-[11px] font-bold border border-indigo-100">
-                  {art.category || 'Maritime Studies'}
-                </span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-3 py-1 rounded-full bg-[#D8EEFD] text-[#0369A1] text-[11px] font-bold tracking-tight">
+                    {art.category || 'IMO SMCP'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                    Modul Mandiri
+                  </span>
+                </div>
 
-                <h2 className="font-heading text-base font-extrabold text-slate-900 group-hover:text-[#5046E5] transition-colors leading-snug">
+                <h2 className="font-heading text-base sm:text-lg font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors leading-snug">
                   {art.title}
                 </h2>
 
-                <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 font-normal">
+                <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 font-normal">
                   {art.summary || art.content}
                 </p>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#5046E5]" />
+                <span className="flex items-center gap-1.5 text-slate-400">
+                  <Clock className="w-3.5 h-3.5 text-[#0284C7]" />
                   <span>{art.read_time_minutes || 5} menit membaca</span>
                 </span>
 
-                <span className="font-bold text-[#5046E5] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Baca Materi <ArrowRight className="w-3.5 h-3.5" />
+                <span className="font-bold text-slate-900 group-hover:text-[#0284C7] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Baca Modul <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </Link>

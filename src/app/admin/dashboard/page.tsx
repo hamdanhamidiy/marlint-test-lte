@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDateIndo } from '@/lib/utils';
+import { useAuth } from '@/lib/context/AuthContext';
 import {
   MARLINS_60_STANDARD_QUESTIONS,
   MARLINS_TEST_2_STANDARD_QUESTIONS,
@@ -48,6 +49,7 @@ const TOTAL_STANDARD_QUESTIONS_COUNT =
   MARLINS_TEST_10_STANDARD_QUESTIONS.length;
 
 export default function AdminDashboardPage() {
+  const { profile, isSuperAdmin, isInstructor, canManageStudents } = useAuth();
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalQuestions: TOTAL_STANDARD_QUESTIONS_COUNT,
@@ -130,8 +132,18 @@ export default function AdminDashboardPage() {
         <div className="space-y-3">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900">Admin Control Center</span>
+              <span
+                className={`w-2 h-2 rounded-full animate-pulse ${
+                  isSuperAdmin ? 'bg-purple-600' : isInstructor ? 'bg-amber-500' : 'bg-[#EA580C]'
+                }`}
+              ></span>
+              <span className="font-bold text-slate-900">
+                {isSuperAdmin
+                  ? 'Super Admin Master Control'
+                  : isInstructor
+                  ? 'Portal Instruktur Penguji'
+                  : 'Admin Control Center'}
+              </span>
               <span className="text-slate-300">•</span>
               <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
             </div>
@@ -142,7 +154,9 @@ export default function AdminDashboardPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Pusat kendali evaluasi maritim, bank soal terstandar, registrasi perwira & siswa, dan sertifikasi digital.
+            {isInstructor
+              ? 'Pusat pengelolaan bank soal maritim terstandar, komposisi paket ujian 1–10, dan penerbitan token akses siswa.'
+              : 'Pusat kendali evaluasi maritim, bank soal terstandar, direktori siswa, dan sertifikasi digital.'}
           </p>
         </div>
 
@@ -165,6 +179,29 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Instructor Notice Banner */}
+      {isInstructor && (
+        <div className="p-4 rounded-3xl bg-amber-50/80 border border-amber-200/80 flex items-start sm:items-center justify-between gap-3 text-xs text-amber-900">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center shrink-0">
+              <Shield className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-bold text-amber-950">Mode Instruktur Aktif</p>
+              <p className="text-[11px] text-amber-800 font-medium">
+                Anda memiliki akses penuh untuk mengelola <strong>Bank Soal</strong>, <strong>Paket Ujian (1–10)</strong>, dan <strong>Token Akses</strong>. Manajemen data siswa dikelola oleh Super Admin.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/admin/questions"
+            className="shrink-0 px-3 py-1.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] transition-colors"
+          >
+            Kelola Soal →
+          </Link>
+        </div>
+      )}
+
       {/* 4 Metric KPI Cards in Ocean Blue, Dark Orange & Deep Black */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Students */}
@@ -181,13 +218,19 @@ export default function AdminDashboardPage() {
             <span className="font-mono text-2xl sm:text-3xl font-black text-slate-950 leading-tight">
               {stats.totalUsers}
             </span>
-            <Link
-              href="/admin/students"
-              className="text-[11px] text-[#0284C7] hover:text-[#0369A1] font-bold flex items-center gap-1 mt-0.5"
-            >
-              <span>Lihat Direktori Siswa</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
+            {canManageStudents ? (
+              <Link
+                href="/admin/students"
+                className="text-[11px] text-[#0284C7] hover:text-[#0369A1] font-bold flex items-center gap-1 mt-0.5"
+              >
+                <span>Lihat Direktori Siswa</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            ) : (
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                Khusus Super Admin
+              </p>
+            )}
           </div>
         </div>
 

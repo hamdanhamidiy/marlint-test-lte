@@ -18,11 +18,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;450;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="font-sans antialiased min-h-screen bg-[#F0F2F6] text-slate-900 selection:bg-[#5046E5] selection:text-white">
+      <body className="font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-[#EA580C] selection:text-white">
         <AuthProvider>
           {children}
         </AuthProvider>

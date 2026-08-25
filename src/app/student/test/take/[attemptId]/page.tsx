@@ -15,7 +15,6 @@ import {
   ShieldAlert,
   EyeOff,
   Lock,
-  HelpCircle,
   LogOut,
   AlertTriangle,
   Loader2,
@@ -26,7 +25,7 @@ import {
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
 import { Question } from '@/lib/supabase/types';
-import { getCategoryInfo, formatStopwatch } from '@/lib/utils';
+import { getCategoryInfo, formatStopwatch, randomizeTestQuestions } from '@/lib/utils';
 import Logo from '@/components/brand/Logo';
 import MultipleChoiceQuestion from '@/components/test-engine/MultipleChoiceQuestion';
 import GapFillQuestion from '@/components/test-engine/GapFillQuestion';
@@ -130,7 +129,7 @@ function getTestInfo(testNum: number) {
 export default function TestTakingPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const attemptId = params.attemptId as string;
 
   const [attempt, setAttempt] = useState<AttemptData | null>(null);
@@ -144,29 +143,8 @@ export default function TestTakingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [exitModalOpen, setExitModalOpen] = useState(false);
-  const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [navigatorModalOpen, setNavigatorModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Anti-Screenshot & Exam Proctoring Privacy State
-  const [isBlackout, setIsBlackout] = useState(false);
-  const [securityWarning, setSecurityWarning] = useState<string | null>(null);
-  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const blackoutTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const triggerSecurityWarning = useCallback((msg: string) => {
-    setSecurityWarning(msg);
-    setIsBlackout(true);
-    if (blackoutTimeoutRef.current) clearTimeout(blackoutTimeoutRef.current);
-    blackoutTimeoutRef.current = setTimeout(() => {
-      setIsBlackout(false);
-    }, 4000);
-
-    if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
-    warningTimeoutRef.current = setTimeout(() => {
-      setSecurityWarning(null);
-    }, 4000);
-  }, []);
 
   // Helper to get or persist initial attempt start timestamp
   const getOrSetStartTime = useCallback((attemptId: string, serverStartedAt?: string | null): number => {
@@ -210,143 +188,6 @@ export default function TestTakingPage() {
     return () => clearInterval(timer);
   }, [attemptId, attempt?.started_at, getOrSetStartTime]);
 
-  // Anti-Screenshot & Screen Capture Protection Listeners (Desktop + Mobile Multi-Touch + Blur Blackout)
-  useEffect(() => {
-    const handleBlur = () => {
-      // Instantly blackout when window loses focus (e.g. Snipping Tool, floating apps, or OS screenshot overlays)
-      setIsBlackout(true);
-      try {
-        navigator.clipboard.writeText('');
-      } catch (err) {}
-    };
-
-    const handleFocus = () => {
-      // Window regained focus
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        setIsBlackout(true);
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-      }
-    };
-
-    const handlePageHide = () => {
-      // Mobile browser minimizing / overlay activation
-      setIsBlackout(true);
-      try {
-        navigator.clipboard.writeText('');
-      } catch (err) {}
-    };
-
-    // Mobile Multi-Touch Gesture Detection (Block 3-finger swipe screenshot common on Android / MIUI / ColorOS)
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches && e.touches.length >= 3) {
-        e.preventDefault();
-        setIsBlackout(true);
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-        triggerSecurityWarning('🔒 Gesture tangkapan layar 3-jari dinonaktifkan.');
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches && e.touches.length >= 3) {
-        e.preventDefault();
-        setIsBlackout(true);
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-      }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // 1. PrintScreen key (or PrtScn keycode 44)
-      if (e.key === 'PrintScreen' || e.keyCode === 44) {
-        e.preventDefault();
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-        triggerSecurityWarning('🔒 Tangkapan layar (Screenshot) dinonaktifkan demi integritas ujian Marlins.');
-        return false;
-      }
-
-      // 2. Windows Snipping Tool (Win + Shift + S) or Ctrl + Shift + S
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 's' || e.key === 'S')) {
-        e.preventDefault();
-        triggerSecurityWarning('🔒 Aplikasi pemotong layar (Snipping Tool) tidak diizinkan.');
-        return false;
-      }
-
-      // 3. Mac Screenshot shortcuts (Cmd + Shift + 3 / 4 / 5)
-      if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
-        e.preventDefault();
-        triggerSecurityWarning('🔒 Tangkapan layar di Mac dinonaktifkan demi keamanan ujian.');
-        return false;
-      }
-
-      // 4. Windows Key / Alt Key detection during active exam
-      if (e.key === 'Meta' || (e.altKey && e.key === 'PrintScreen')) {
-        setIsBlackout(true);
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-      }
-
-      // 5. Print shortcut (Ctrl + P or Cmd + P)
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
-        e.preventDefault();
-        triggerSecurityWarning('🔒 Fitur cetak halaman dinonaktifkan selama ujian berlangsung.');
-        return false;
-      }
-
-      // 6. Developer Tools shortcut (F12, Ctrl + Shift + I/J/C)
-      if (
-        e.key === 'F12' ||
-        ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(e.key)) ||
-        ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U'))
-      ) {
-        e.preventDefault();
-        triggerSecurityWarning('🔒 Inspeksi elemen pengembang (DevTools) dinonaktifkan.');
-        return false;
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'PrintScreen' || e.keyCode === 44) {
-        setIsBlackout(true);
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-      }
-    };
-
-    window.addEventListener('blur', handleBlur);
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('pagehide', handlePageHide);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('touchstart', handleTouchStart, { passive: false });
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      window.removeEventListener('blur', handleBlur);
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('pagehide', handlePageHide);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
-      if (blackoutTimeoutRef.current) clearTimeout(blackoutTimeoutRef.current);
-    };
-  }, [triggerSecurityWarning]);
-
   // Load Attempt Data with 60 questions fallback
   useEffect(() => {
     async function loadAttempt() {
@@ -383,6 +224,26 @@ export default function TestTakingPage() {
 
         if (error || !data) {
           const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
+          const rawQuestions = info.questions;
+
+          let randomizedList: Question[] = [];
+          try {
+            const cached = localStorage.getItem(`marlins_attempt_questions_${attemptId}`);
+            if (cached) {
+              const parsed = JSON.parse(cached);
+              if (Array.isArray(parsed) && parsed.length >= 60) {
+                randomizedList = parsed;
+              }
+            }
+          } catch (e) {}
+
+          if (randomizedList.length === 0) {
+            randomizedList = randomizeTestQuestions(rawQuestions, attemptId);
+            try {
+              localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
+            } catch (e) {}
+          }
+
           setAttempt({
             attempt_id: attemptId,
             test_number: info.test_number,
@@ -390,10 +251,10 @@ export default function TestTakingPage() {
             started_at: startTimeIso,
             expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
             duration_minutes: 60,
-            total_questions: info.questions.length,
+            total_questions: randomizedList.length,
             passing_grade: 70,
             status: 'active',
-            questions: info.questions,
+            questions: randomizedList,
           });
           return;
         }
@@ -406,10 +267,28 @@ export default function TestTakingPage() {
         const effectiveTestNumber = data.test_number || parsedTestNum;
         const resolvedInfo = getTestInfo(effectiveTestNumber);
 
-        const questionsList =
+        const rawQuestionsList =
           data.questions && data.questions.length >= 60
             ? data.questions
             : resolvedInfo.questions;
+
+        let randomizedList: Question[] = [];
+        try {
+          const cached = localStorage.getItem(`marlins_attempt_questions_${attemptId}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length >= 60) {
+              randomizedList = parsed;
+            }
+          }
+        } catch (e) {}
+
+        if (randomizedList.length === 0) {
+          randomizedList = randomizeTestQuestions(rawQuestionsList, attemptId);
+          try {
+            localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
+          } catch (e) {}
+        }
 
         // Ensure start time is synced with server data.started_at
         if (data.started_at) {
@@ -420,8 +299,8 @@ export default function TestTakingPage() {
           ...data,
           test_number: resolvedInfo.test_number,
           test_name: resolvedInfo.test_name,
-          total_questions: questionsList.length,
-          questions: questionsList,
+          total_questions: randomizedList.length,
+          questions: randomizedList,
         } as AttemptData);
       } catch (err: any) {
         let parsedTestNum = 1;
@@ -438,6 +317,24 @@ export default function TestTakingPage() {
         const info = getTestInfo(parsedTestNum);
         const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
 
+        let randomizedList: Question[] = [];
+        try {
+          const cached = localStorage.getItem(`marlins_attempt_questions_${attemptId}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length >= 60) {
+              randomizedList = parsed;
+            }
+          }
+        } catch (e) {}
+
+        if (randomizedList.length === 0) {
+          randomizedList = randomizeTestQuestions(info.questions, attemptId);
+          try {
+            localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
+          } catch (e) {}
+        }
+
         setAttempt({
           attempt_id: attemptId,
           test_number: info.test_number,
@@ -445,10 +342,10 @@ export default function TestTakingPage() {
           started_at: startTimeIso,
           expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
           duration_minutes: 60,
-          total_questions: info.questions.length,
+          total_questions: randomizedList.length,
           passing_grade: 70,
           status: 'active',
-          questions: info.questions,
+          questions: randomizedList,
         });
       } finally {
         setLoading(false);
@@ -510,6 +407,22 @@ export default function TestTakingPage() {
         return;
       }
 
+      // Also persist review cache for server-evaluated attempts
+      try {
+        localStorage.setItem(
+          `marlins_review_${attemptId}`,
+          JSON.stringify({
+            attempt_id: attemptId,
+            test_number: attempt.test_number,
+            test_name: attempt.test_name,
+            questions: attempt.questions,
+            answers: answersRef.current,
+            flagged: Array.from(flaggedQuestions),
+            completed_at: new Date().toISOString(),
+          })
+        );
+      } catch (e) {}
+
       router.replace(`/student/test/result/${attemptId}`);
     } catch (err: any) {
       console.error('Error submitting test:', err);
@@ -524,12 +437,13 @@ export default function TestTakingPage() {
     }
   };
 
-  const evaluateAndSaveClientSide = (userAnswers: { question_id: string; answer_value: any }[]) => {
+  const evaluateAndSaveClientSide = async (userAnswers: { question_id: string; answer_value: any }[]) => {
     if (!attempt) return;
 
     const answerMap = new Map(userAnswers.map((a) => [a.question_id, a.answer_value]));
     let totalScore = 0;
     const categoryStats: Record<string, { total: number; correct: number }> = {};
+    const questionEvaluations: Record<string, boolean> = {};
 
     attempt.questions.forEach((q) => {
       const cat = q.category || 'general';
@@ -548,6 +462,19 @@ export default function TestTakingPage() {
             const keys = Object.keys(correctMatches);
             const matchesCount = keys.filter((k) => userAns[k] === correctMatches[k]).length;
             if (keys.length > 0 && matchesCount === keys.length) isCorrect = true;
+          }
+        } else if (q.question_type === 'sentence_reorder') {
+          const correctSent = String(q.correct_answer || q.question_data?.correct_sentence || '').trim().toLowerCase();
+          let userSent = '';
+          if (Array.isArray(userAns)) {
+            userSent = userAns.join(' ').trim().toLowerCase();
+          } else {
+            userSent = String(userAns || '').trim().toLowerCase();
+          }
+          const cleanCorrect = correctSent.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ');
+          const cleanUser = userSent.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ');
+          if (cleanCorrect === cleanUser && cleanCorrect !== '') {
+            isCorrect = true;
           }
         } else if (q.question_type === 'gap_fill') {
           if (typeof userAns === 'object') {
@@ -568,10 +495,27 @@ export default function TestTakingPage() {
             );
             if (dropZones.length > 0 && allMatched) isCorrect = true;
           }
+        } else if (q.question_type === 'image_choice') {
+          const optLabels = q.question_data?.option_labels || [];
+          const userStr = String(userAns).trim().toLowerCase();
+          const correctStr = String(q.correct_answer).trim().toLowerCase();
+
+          if (userStr === correctStr) {
+            isCorrect = true;
+          } else if (!isNaN(Number(userAns)) && optLabels[Number(userAns)]) {
+            if (optLabels[Number(userAns)].toLowerCase() === correctStr) isCorrect = true;
+          } else if (q.options) {
+            const matchingOptIdx = q.options.findIndex((opt) => opt.trim() === String(userAns).trim());
+            if (matchingOptIdx !== -1 && optLabels[matchingOptIdx]?.toLowerCase() === correctStr) {
+              isCorrect = true;
+            }
+          }
         } else if (String(userAns).trim().toLowerCase() === String(q.correct_answer).trim().toLowerCase()) {
           isCorrect = true;
         }
       }
+
+      questionEvaluations[q.id] = isCorrect;
 
       if (isCorrect) {
         totalScore += 1;
@@ -580,30 +524,194 @@ export default function TestTakingPage() {
     });
 
     const finalPercentage = Math.round((totalScore / Math.max(1, attempt.questions.length)) * 100);
+    const isPassed = finalPercentage >= (attempt.passing_grade || 70);
+    const levelCode =
+      finalPercentage >= 90
+        ? 'C2'
+        : finalPercentage >= 80
+        ? 'C1'
+        : finalPercentage >= 70
+        ? 'B2'
+        : finalPercentage >= 55
+        ? 'B1+'
+        : finalPercentage >= 40
+        ? 'B1'
+        : 'A2';
+
+    const categoryScoresObj: Record<string, { correct: number; total: number }> = {};
+    Object.entries(categoryStats).forEach(([cat, stat]) => {
+      categoryScoresObj[cat] = { correct: stat.correct, total: stat.total };
+    });
+
+    const studentUserId = user?.id || '00000000-0000-0000-0000-000000000001';
+    const pointsEarned = Math.max(50, Math.round(finalPercentage * 1.5));
+    const timeSpent = Math.max(60, Math.floor((Date.now() - getOrSetStartTime(attemptId)) / 1000));
+    const nowIso = new Date().toISOString();
 
     const clientResult = {
+      id: `res-${attemptId}`,
+      student_id: studentUserId,
       attempt_id: attemptId,
       test_number: attempt.test_number,
+      marlint_test_number: attempt.test_number,
       test_name: attempt.test_name,
+      score: finalPercentage,
       overall_score: finalPercentage,
       total_score: totalScore,
+      correct_answers: totalScore,
       total_questions: attempt.questions.length,
       passing_grade: attempt.passing_grade || 70,
-      is_passed: finalPercentage >= (attempt.passing_grade || 70),
-      category_scores: Object.entries(categoryStats).map(([cat, stat]) => ({
-        category: cat,
-        score: Math.round((stat.correct / Math.max(1, stat.total)) * 100),
-        correct: stat.correct,
-        total: stat.total,
-      })),
-      completed_at: new Date().toISOString(),
+      is_passed: isPassed,
+      level: levelCode,
+      category_scores: categoryScoresObj,
+      points_earned: pointsEarned,
+      time_spent_seconds: timeSpent,
+      start_time: new Date(getOrSetStartTime(attemptId)).toISOString(),
+      end_time: nowIso,
+      completed_at: nowIso,
+      created_at: nowIso,
       user_answers: userAnswers,
     };
 
+    // Synthesize certificate if passed
+    let generatedCertificate: any = null;
+    if (isPassed) {
+      const studentName = profile?.full_name || user?.user_metadata?.full_name || 'Budi Santoso';
+      const studentEmail = user?.email || 'siswa@marlinstest.com';
+      const certNumber = `MARLINS-${attempt.test_number}-${Date.now().toString().slice(-6)}`;
+      const verCode = `VER-${Date.now().toString().slice(-8)}`;
+
+      generatedCertificate = {
+        id: `cert-${attemptId}`,
+        certificate_number: certNumber,
+        user_id: studentUserId,
+        marlint_test_id: `test-${attempt.test_number}`,
+        result_id: clientResult.id,
+        student_name: studentName,
+        student_email: studentEmail,
+        test_name: attempt.test_name,
+        test_number: attempt.test_number,
+        score: finalPercentage,
+        grade: finalPercentage >= 85 ? 'Distinction' : 'Merit',
+        level: levelCode,
+        is_passed: true,
+        category_scores: categoryScoresObj,
+        total_questions: attempt.questions.length,
+        correct_answers: totalScore,
+        duration_minutes: attempt.duration_minutes || 60,
+        passing_grade: attempt.passing_grade || 70,
+        completion_date: nowIso,
+        is_valid: true,
+        verification_code: verCode,
+        issued_at: nowIso,
+      };
+    }
+
     try {
+      // 1. Save standard result keys to localStorage
       localStorage.setItem(`test_result_${attemptId}`, JSON.stringify(clientResult));
+      localStorage.setItem(`marlins_result_${attemptId}`, JSON.stringify(clientResult));
+
+      // 2. Save certificate if passed
+      if (generatedCertificate) {
+        localStorage.setItem(`marlins_cert_${attemptId}`, JSON.stringify(generatedCertificate));
+        localStorage.setItem(`marlins_cert_id_${generatedCertificate.id}`, JSON.stringify(generatedCertificate));
+      }
+
+      // 3. Save complete review payload
+      const reviewPayload = {
+        attempt_id: attemptId,
+        test_number: attempt.test_number,
+        test_name: attempt.test_name,
+        questions: attempt.questions,
+        answers: answersRef.current,
+        evaluations: questionEvaluations,
+        result: clientResult,
+        flagged: Array.from(flaggedQuestions),
+        completed_at: clientResult.completed_at,
+      };
+      localStorage.setItem(`marlins_review_${attemptId}`, JSON.stringify(reviewPayload));
+
+      // 4. Append to history list
+      const existingHistoryStr = localStorage.getItem('marlins_history_results');
+      let historyArr: any[] = [];
+      if (existingHistoryStr) {
+        try {
+          historyArr = JSON.parse(existingHistoryStr);
+          if (!Array.isArray(historyArr)) historyArr = [];
+        } catch (e) {
+          historyArr = [];
+        }
+      }
+      historyArr = historyArr.filter((item) => item.attempt_id !== attemptId && item.id !== clientResult.id);
+      historyArr.unshift(clientResult);
+      localStorage.setItem('marlins_history_results', JSON.stringify(historyArr));
     } catch (e) {
       console.warn('Failed to save result to localStorage:', e);
+    }
+
+    // 5. Asynchronous Dual Persistence to Supabase DB
+    try {
+      // Upsert to student_results table
+      await supabase.from('student_results').upsert({
+        id: clientResult.id,
+        student_id: studentUserId,
+        attempt_id: attemptId,
+        score: finalPercentage,
+        correct_answers: totalScore,
+        total_questions: attempt.questions.length,
+        level: levelCode,
+        category_scores: categoryScoresObj,
+        start_time: clientResult.start_time,
+        end_time: clientResult.end_time,
+        is_passed: isPassed,
+        test_name: attempt.test_name,
+        marlint_test_number: attempt.test_number,
+        test_mode: 'standard',
+        points_earned: pointsEarned,
+        time_spent_seconds: timeSpent,
+        created_at: nowIso,
+      });
+
+      // Update attempt in test_attempts table
+      await supabase
+        .from('test_attempts')
+        .update({
+          status: 'completed',
+          submitted_at: nowIso,
+          result_id: clientResult.id,
+        })
+        .eq('id', attemptId);
+
+      // If passed, upsert certificate
+      if (generatedCertificate) {
+        await supabase.from('certificates').upsert({
+          id: generatedCertificate.id,
+          certificate_number: generatedCertificate.certificate_number,
+          user_id: studentUserId,
+          marlint_test_id: `test-${attempt.test_number}`,
+          result_id: clientResult.id,
+          student_name: generatedCertificate.student_name,
+          student_email: generatedCertificate.student_email,
+          test_name: attempt.test_name,
+          test_number: attempt.test_number,
+          score: finalPercentage,
+          grade: generatedCertificate.grade,
+          level: levelCode,
+          is_passed: true,
+          category_scores: categoryScoresObj,
+          total_questions: attempt.questions.length,
+          correct_answers: totalScore,
+          duration_minutes: attempt.duration_minutes || 60,
+          passing_grade: attempt.passing_grade || 70,
+          completion_date: nowIso,
+          is_valid: true,
+          verification_code: generatedCertificate.verification_code,
+          issued_at: nowIso,
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Supabase DB background sync warning (offline mode active):', dbErr);
     }
 
     router.replace(`/student/test/result/${attemptId}`);
@@ -685,252 +793,182 @@ export default function TestTakingPage() {
     <div
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
-      onCopy={(e) => {
-        e.preventDefault();
-        try {
-          navigator.clipboard.writeText('');
-        } catch (err) {}
-      }}
+      onCopy={(e) => e.preventDefault()}
       className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode"
     >
-      {/* 100% SOLID BLACK SCREEN (ANTI-SCREENSHOT & SNIPPING TOOL BLACKOUT SHIELD) */}
-      {isBlackout && (
-        <div
-          onClick={() => setIsBlackout(false)}
-          className="fixed inset-0 z-[9999999] bg-[#000000] text-white flex flex-col items-center justify-center p-6 text-center select-none cursor-pointer"
-          style={{ backgroundColor: '#000000' }}
-        >
-          <div className="space-y-4 max-w-md p-8 rounded-3xl bg-neutral-950/95 border border-neutral-800 text-white shadow-2xl">
-            <div className="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mx-auto">
-              <ShieldAlert className="w-7 h-7" />
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="text-base font-bold text-white tracking-wide">
-                Layar Ujian Diamankan (Anti-Screenshot)
-              </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Layar otomatis berubah menjadi blank hitam saat terdeteksi upaya tangkapan layar, pemotong layar, atau saat jendela tidak aktif demi integritas ujian Marlins.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsBlackout(false);
-              }}
-              className="px-6 py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-lg shadow-sky-500/25 cursor-pointer"
-            >
-              Klik Disini untuk Membuka Layar Soal
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SECURITY FLOATING WARNING BANNER */}
-      {securityWarning && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold shadow-2xl animate-bounce border border-rose-400">
-          <ShieldAlert className="w-4 h-4 shrink-0 text-white" />
-          <span>{securityWarning}</span>
-        </div>
-      )}
-
-      {/* 1. TOP HEADER (Fixed at top, zero scroll movement, larger & more spacious) */}
-      <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-3.5 sm:px-8 py-3 sm:py-3.5 z-30 shadow-xs">
+      {/* 1. TOP HEADER (Simple, Clean, Modern) */}
+      <header className="shrink-0 w-full bg-white border-b border-slate-200/80 px-3.5 sm:px-6 py-2.5 z-30 shadow-2xs">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-2.5 sm:gap-4">
           {/* Left: Test Branding & Title */}
-          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0 flex-1">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
             <Logo size="md" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
-            <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
             <div className="min-w-0 flex-1">
-              <h1 className="text-xs sm:text-base font-bold text-slate-900 truncate" title={attempt.test_name}>
-                {attempt.test_name || 'Marlint Test 1'}
+              <h1 className="text-xs sm:text-sm font-bold text-slate-800 truncate" title={attempt.test_name}>
+                {attempt.test_name || 'Marlins Test 1'}
               </h1>
             </div>
           </div>
 
-          {/* Right: Stopwatch Timer, Question Grid Button, Help, Exit (Larger & Spacious Gap) */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Real-time Stopwatch Timer */}
-            <div className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full bg-slate-950 text-white font-mono text-xs sm:text-sm font-bold shadow-2xs shrink-0">
-              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+          {/* Right: Minimalist Timer, Daftar Soal, Keluar */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Simple Minimalist Timer */}
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-mono text-xs sm:text-sm font-semibold border border-slate-200/60 shadow-2xs">
+              <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
             </div>
 
-            {/* Question Navigator Grid Button */}
+            {/* Question Navigator Button (Icon Only) */}
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-10 px-3 sm:px-4 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] text-xs sm:text-sm font-bold transition-all cursor-pointer shrink-0 shadow-2xs"
-              title="Daftar & Pilih Soal"
+              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[#0284C7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+              title="Daftar Soal"
+              aria-label="Daftar Soal"
             >
-              <Grid className="w-4 h-4 shrink-0" />
-              <span className="hidden sm:inline">Daftar Soal</span>
-            </button>
-
-            {/* Help Button */}
-            <button
-              type="button"
-              onClick={() => setHelpModalOpen(true)}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs sm:text-sm transition-colors cursor-pointer shrink-0 shadow-2xs"
-              title="Panduan Pengerjaan"
-            >
-              <HelpCircle className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              <Grid className="w-4 h-4" />
             </button>
 
             {/* Exit Button */}
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="h-9 sm:h-10 px-3 sm:px-4 rounded-full text-xs sm:text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 shadow-2xs"
+              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full text-slate-500 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 border border-transparent hover:border-rose-200 flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
               title="Keluar dari Ujian"
+              aria-label="Keluar"
             >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Keluar</span>
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT AREA (Only this middle section scrolls independently) */}
-      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3.5 sm:px-8 py-3.5 sm:py-5 overscroll-contain relative">
-
-        {/* Security Watermark Background */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-[0.03] flex items-center justify-center rotate-[-25deg] z-0">
-          <p className="text-2xl sm:text-4xl font-black text-slate-900 tracking-widest uppercase text-center leading-loose">
-            MARLINS SECURE TEST • OFFICIAL STCW 2010 • CONFIDENTIAL • {attemptId.slice(0, 8)}
-          </p>
-        </div>
-
-        {/* Unified Assessment Card */}
-        <div className="max-w-3xl mx-auto relative z-10 bg-white rounded-2xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between">
-          {/* Card Top Bar: Category & Status Indicator */}
-          <div className="px-4 sm:px-6 py-3 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>{categoryInfo.name}</span>
-              </span>
-              <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
-              <span className="text-xs text-slate-600 font-medium hidden sm:inline">
-                {getInstructionText(currentQuestion)}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <span>Terjawab: <strong className="text-emerald-700 font-bold">{answeredCount}/{totalQuestionsCount}</strong></span>
-              <span>•</span>
-              <span className="font-mono font-bold text-slate-900">Soal {currentIndex + 1}/{totalQuestionsCount}</span>
-            </div>
-          </div>
-
-          {/* Mobile Instruction Subtitle */}
-          <div className="px-4 pt-2.5 sm:hidden">
-            <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-              {getInstructionText(currentQuestion)}
-            </p>
-          </div>
-
-          {/* Card Body: Question Content, Audio, Image & Options */}
-          <div className="p-4 sm:p-6 space-y-3.5 sm:space-y-4">
-            {/* Audio Listening player if audio question */}
-            {(currentQuestion.question_type === 'audio_listening' || currentQuestion.category === 'listening_comprehension') && (
-              <AudioListeningQuestion
-                audioUrl={currentQuestion.audio_url || undefined}
-                pronunciationText={currentQuestion.pronunciation_text || currentQuestion.question_text || undefined}
-              />
-            )}
-
-            {/* Question Text */}
-            {currentQuestion.question_type !== 'paragraph_title_match' && (
-              <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-950 leading-relaxed text-left break-words">
-                {currentQuestion.question_text}
-              </h2>
-            )}
-
-            {/* Optional Image */}
-            {currentQuestion.image_url && (
-              <div className="flex justify-center p-2 sm:p-3 rounded-xl bg-slate-50 border border-slate-100/90">
-                <img
-                  src={currentQuestion.image_url}
-                  alt="Question Visual"
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="max-h-40 sm:max-h-52 object-contain rounded-lg shadow-2xs pointer-events-none select-none"
-                />
+      {/* 2. MAIN CONTENT AREA */}
+      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3.5 sm:px-8 py-4 sm:py-6 overscroll-contain bg-[#F8FAFC]">
+        <div className="max-w-3xl mx-auto space-y-4">
+          {/* Main Question Assessment Card */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden">
+            {/* Card Top Bar: Category & Flag Toggle */}
+            <div className="px-5 sm:px-7 py-3.5 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>{categoryInfo.name}</span>
+                </span>
               </div>
-            )}
 
-            {/* Interactive Question Input Renderer */}
-            <div className="pt-0.5">
-              {currentQuestion.question_type === 'paragraph_title_match' ? (
-                <ParagraphTitleMatchQuestion
-                  question={currentQuestion}
-                  selectedAnswers={answers[currentQuestion.id] || {}}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+              {/* Flag Toggle Button */}
+              <button
+                type="button"
+                onClick={() => handleToggleFlag(currentIndex)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold transition-all cursor-pointer text-xs ${
+                  flaggedQuestions.has(currentIndex)
+                    ? 'bg-amber-50 text-[#C2410C] border border-amber-300 shadow-2xs'
+                    : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <Flag
+                  className={`w-3.5 h-3.5 ${
+                    flaggedQuestions.has(currentIndex)
+                      ? 'text-[#EA580C] fill-amber-500'
+                      : 'text-slate-400'
+                  }`}
                 />
-              ) : currentQuestion.question_type === 'gap_fill' ? (
-                <GapFillQuestion
-                  question={currentQuestion}
-                  selectedAnswers={answers[currentQuestion.id] || {}}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                />
-              ) : currentQuestion.question_type === 'sentence_reorder' ? (
-                <SentenceReorderQuestion
-                  question={currentQuestion}
-                  selectedOrder={answers[currentQuestion.id] || []}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                />
-              ) : currentQuestion.question_type === 'drag_drop_label' ? (
-                <DragDropLabelQuestion
-                  question={currentQuestion}
-                  selectedAnswers={answers[currentQuestion.id] || {}}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                />
-              ) : currentQuestion.question_type === 'image_choice' ? (
-                <ImageChoiceQuestion
-                  question={currentQuestion}
-                  selectedAnswer={answers[currentQuestion.id]}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                />
-              ) : (
-                <MultipleChoiceQuestion
-                  question={currentQuestion}
-                  selectedAnswer={answers[currentQuestion.id]}
-                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu' : 'Tandai Ragu'}</span>
+              </button>
+            </div>
+
+            {/* Card Body: Question Content, Audio, Image & Options */}
+            <div className="p-5 sm:p-7 space-y-4">
+              {/* Question Instruction Subtitle */}
+              <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                {getInstructionText(currentQuestion)}
+              </p>
+
+              {/* Audio Listening player if audio question */}
+              {(currentQuestion.question_type === 'audio_listening' ||
+                currentQuestion.category === 'listening_comprehension') && (
+                <AudioListeningQuestion
+                  audioUrl={currentQuestion.audio_url || undefined}
+                  pronunciationText={
+                    currentQuestion.pronunciation_text ||
+                    currentQuestion.question_text ||
+                    undefined
+                  }
                 />
               )}
+
+              {/* Question Text */}
+              {currentQuestion.question_type !== 'paragraph_title_match' && (
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed text-left break-words">
+                  {currentQuestion.question_text}
+                </h2>
+              )}
+
+              {/* Optional Image */}
+              {currentQuestion.image_url && (
+                <div className="flex justify-center p-3 rounded-2xl bg-slate-50 border border-slate-100/90">
+                  <img
+                    src={currentQuestion.image_url}
+                    alt="Question Visual"
+                    draggable={false}
+                    className="max-h-44 sm:max-h-56 object-contain rounded-xl shadow-2xs pointer-events-none select-none"
+                  />
+                </div>
+              )}
+
+              {/* Interactive Question Input Renderer */}
+              <div className="pt-1">
+                {currentQuestion.question_type === 'paragraph_title_match' ? (
+                  <ParagraphTitleMatchQuestion
+                    question={currentQuestion}
+                    selectedAnswers={answers[currentQuestion.id] || {}}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                ) : currentQuestion.question_type === 'gap_fill' ? (
+                  <GapFillQuestion
+                    question={currentQuestion}
+                    selectedAnswers={answers[currentQuestion.id] || {}}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                ) : currentQuestion.question_type === 'sentence_reorder' ? (
+                  <SentenceReorderQuestion
+                    question={currentQuestion}
+                    selectedOrder={answers[currentQuestion.id] || []}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                ) : currentQuestion.question_type === 'drag_drop_label' ? (
+                  <DragDropLabelQuestion
+                    question={currentQuestion}
+                    selectedAnswers={answers[currentQuestion.id] || {}}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                ) : currentQuestion.question_type === 'image_choice' ? (
+                  <ImageChoiceQuestion
+                    question={currentQuestion}
+                    selectedAnswer={answers[currentQuestion.id]}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                ) : (
+                  <MultipleChoiceQuestion
+                    question={currentQuestion}
+                    selectedAnswer={answers[currentQuestion.id]}
+                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Card Bottom: Flag Button & Question Position */}
-          <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs">
-            <button
-              type="button"
-              onClick={() => handleToggleFlag(currentIndex)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold transition-all cursor-pointer text-xs ${
-                flaggedQuestions.has(currentIndex)
-                  ? 'bg-orange-50 text-[#C2410C] border border-orange-300 shadow-2xs'
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-white border border-slate-200'
-              }`}
-            >
-              <Flag className="w-3.5 h-3.5 text-[#EA580C]" />
-              <span>{flaggedQuestions.has(currentIndex) ? 'Ditandai Ragu' : 'Tandai Ragu'}</span>
-            </button>
-
-            <span className="text-xs font-mono text-slate-500 font-bold">
-              Soal {currentIndex + 1} dari {totalQuestionsCount}
-            </span>
           </div>
         </div>
       </main>
 
-      {/* 3. BOTTOM CONTROL BAR (Fixed at bottom, shrink-0, zero scroll jump, larger & touch friendly) */}
-      <footer className="shrink-0 w-full bg-white border-t border-slate-200/90 px-3.5 sm:px-8 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+      {/* 3. BOTTOM CONTROL BAR */}
+      <footer className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 sm:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <div className="max-w-4xl mx-auto space-y-2.5">
           {/* Progress Track */}
-          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
@@ -944,29 +982,21 @@ export default function TestTakingPage() {
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 sm:px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
             >
-              <ChevronLeft className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-              <span className="hidden xs:inline sm:inline">Sebelumnya</span>
+              <ChevronLeft className="w-4 h-4" />
+              <span>Sebelumnya</span>
             </button>
 
             {/* Question Counter Indicator */}
-            <span className="text-xs sm:text-sm font-bold text-slate-700 font-mono text-center">
-              {currentIndex + 1} / {totalQuestionsCount} Soal
-            </span>
+            <div className="text-center font-mono">
+              <span className="text-xs sm:text-sm font-bold text-slate-800">
+                Soal {currentIndex + 1} / {totalQuestionsCount}
+              </span>
+            </div>
 
-            {/* Next / Submit Buttons */}
-            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => setSubmitModalOpen(true)}
-                className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 sm:px-5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-xs sm:text-sm transition-all cursor-pointer shrink-0 shadow-2xs"
-                title="Kirim Lembar Jawaban"
-              >
-                <Send className="w-4 h-4 text-emerald-600" />
-                <span className="hidden sm:inline">Kirim</span>
-              </button>
-
+            {/* Next or Finish Button */}
+            <div className="flex items-center gap-2 shrink-0">
               {currentIndex < totalQuestionsCount - 1 ? (
                 <button
                   type="button"
@@ -974,16 +1004,16 @@ export default function TestTakingPage() {
                   className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Berikutnya</span>
-                  <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
+                  <Send className="w-4 h-4" />
                   <span>Selesaikan Ujian</span>
-                  <ArrowRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 </button>
               )}
             </div>
@@ -1062,47 +1092,6 @@ export default function TestTakingPage() {
                 className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold text-xs"
               >
                 Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Help Instructions */}
-      {helpModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-6 max-w-md w-full space-y-3.5 shadow-2xl">
-            <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#4F46E5]" />
-                <h3 className="font-heading text-sm sm:text-base font-bold text-slate-900">
-                  Panduan Pengerjaan Soal
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setHelpModalOpen(false)}
-                className="p-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="text-xs text-slate-600 space-y-2 leading-relaxed font-normal">
-              <p>• <strong>Berikutnya / Sebelumnya</strong>: Berpindah antar butir soal 1 hingga 60.</p>
-              <p>• <strong>Daftar Soal</strong>: Menampilkan navigasi cepat untuk melihat soal yang belum dijawab atau ditandai ragu.</p>
-              <p>• <strong>Tandai Ragu</strong>: Menandai butir soal dengan warna kuning untuk ditinjau kembali.</p>
-              <p>• <strong>Stopwatch</strong>: Menghitung total durasi pengerjaan Anda tanpa batas waktu pemutusan.</p>
-              <p>• <strong>Kirim Jawaban</strong>: Mengakhiri ujian dan melihat hasil skor CEFR Anda.</p>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setHelpModalOpen(false)}
-                className="px-4 py-2 rounded-full bg-[#4F46E5] text-white font-bold text-xs cursor-pointer"
-              >
-                Mengerti
               </button>
             </div>
           </div>

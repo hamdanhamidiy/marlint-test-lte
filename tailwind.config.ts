@@ -38,11 +38,47 @@ const config: Config = {
           400: "#FBBF24",
           500: "#F59E0B",
           600: "#D97706",
+        },
+        surface: {
+          primary: "#08080c",
+          elevated: "#111118",
+          card: "#16161e",
+          border: "#1e1e28",
         }
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
-        heading: ["var(--font-heading)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        sans: [
+          "var(--font-sans)",
+          "Outfit",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif"
+        ],
+        heading: [
+          "var(--font-heading)",
+          "Outfit",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif"
+        ],
+        mono: [
+          "var(--font-mono)",
+          "JetBrains Mono",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "monospace"
+        ],
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
@@ -59,3 +95,4 @@ const config: Config = {
   plugins: [],
 };
 export default config;
+

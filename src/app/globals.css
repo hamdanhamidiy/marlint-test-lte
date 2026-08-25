@@ -4,52 +4,74 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     font-family: var(--font-sans);
     color: #0f172a;
-    background-color: #f0f2f6;
+    background-color: #ffffff;
     min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-    letter-spacing: -0.012em;
   }
 
   h1, h2, h3, h4, h5, h6, .font-heading {
     font-family: var(--font-heading);
     letter-spacing: -0.028em;
-    font-feature-settings: 'cv02', 'cv04', 'ss01';
+    line-height: 1.15;
+    font-weight: 700;
+    color: #000000;
+  }
+
+  h1 {
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+  }
+
+  h2 {
+    letter-spacing: -0.028em;
+    line-height: 1.15;
   }
 
   button, input, textarea, select {
     font-family: inherit;
+    letter-spacing: inherit;
   }
 }
 
-/* Subtle, professional grid pattern */
+/* Light clean subtle grid & dot patterns */
 .bg-grid-pattern {
-  background-color: #f8fafc;
-  background-size: 20px 20px;
+  background-color: #ffffff;
+  background-size: 24px 24px;
   background-image: 
-    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
 }
 
-/* Subtle Custom Scrollbar */
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Clean Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f8fafc;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -61,7 +83,79 @@
   background: #94a3b8;
 }
 
-/* Custom Micro-Animations */
+/* ===== ANIMATIONS ===== */
+
+/* Fade In Up — for scroll reveal */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in-up-delay-1 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.animate-fade-in-up-delay-3 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.animate-fade-in-up-delay-4 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* Scale In */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Gradient Shimmer for heading text */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-text {
+  background-size: 200% auto;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Subtle glow pulse for badges */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(234, 88, 12, 0.15); }
+  50% { box-shadow: 0 0 24px rgba(234, 88, 12, 0.35); }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Wave animation */
 @keyframes wave {
   0% { transform: rotate(0deg); }
   15% { transform: rotate(14deg); }
@@ -78,6 +172,7 @@
   animation: wave 2.2s infinite ease-in-out;
 }
 
+/* Cursor blink */
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -87,6 +182,7 @@
   animation: cursor-blink 0.85s infinite;
 }
 
+/* Float */
 @keyframes float-slow {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-4px); }
@@ -94,6 +190,12 @@
 
 .animate-float {
   animation: float-slow 4s ease-in-out infinite;
+}
+
+/* Dot grid background */
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Print Specific Certificate Styling & Anti-Print Exam Protection */
@@ -122,12 +224,18 @@
   }
 }
 
-/* Exam Secure Test Shield */
+/* Exam Secure Test Shield (Mobile HP & Desktop Anti-Screenshot / Anti-Copy) */
 .exam-secure-mode {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important;
   -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
+.exam-secure-mode img {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+  pointer-events: none !important;
+}

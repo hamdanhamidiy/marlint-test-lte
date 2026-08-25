@@ -47,6 +47,8 @@ import {
   MARLINS_TEST_10_STANDARD_QUESTIONS,
 } from '@/lib/marlinsQuestionBank';
 
+import { getRichQuestionExplanation } from '@/lib/questionExplanations';
+
 const STANDARD_QUESTIONS_BANK: Question[] = [
   ...MARLINS_60_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 1 })),
   ...MARLINS_TEST_2_STANDARD_QUESTIONS.map((q) => ({ ...q, marlint_test_number: 2 })),
@@ -90,6 +92,10 @@ export default function AdminQuestionsPage() {
     correct_answer: '',
     audio_url: '',
     explanation: '',
+    why_correct: '',
+    distractor_reasons_raw: '',
+    maritime_context: '',
+    rule_or_formula: '',
     points: 10,
     is_active: true,
   });
@@ -97,8 +103,6 @@ export default function AdminQuestionsPage() {
   const loadQuestions = async () => {
     try {
       setLoading(true);
-      // Clean sync: STANDARD_QUESTIONS_BANK provides the 180 official IMO questions
-      // Check local storage for any custom admin additions
       let customAdditions: Question[] = [];
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_custom_questions');
@@ -146,6 +150,10 @@ export default function AdminQuestionsPage() {
       correct_answer: '',
       audio_url: '',
       explanation: '',
+      why_correct: '',
+      distractor_reasons_raw: '',
+      maritime_context: '',
+      rule_or_formula: '',
       points: 10,
       is_active: true,
     });
@@ -156,6 +164,20 @@ export default function AdminQuestionsPage() {
 
   const handleOpenEdit = (q: Question) => {
     setEditingQuestion(q);
+    const rich = getRichQuestionExplanation(q);
+    const qData = q.question_data || {};
+
+    let distRaw = '';
+    if (qData.distractor_reasons) {
+      distRaw = Object.entries(qData.distractor_reasons)
+        .map(([opt, reason]) => `${opt} : ${reason}`)
+        .join('\n');
+    } else if (rich.distractors && rich.distractors.length > 0) {
+      distRaw = rich.distractors
+        .map((d) => `${d.option} : ${d.reason}`)
+        .join('\n');
+    }
+
     setFormData({
       category: q.category,
       question_type: q.question_type,
@@ -164,7 +186,11 @@ export default function AdminQuestionsPage() {
       optionsRaw: Array.isArray(q.options) ? q.options.join('\n') : '',
       correct_answer: typeof q.correct_answer === 'string' ? q.correct_answer : JSON.stringify(q.correct_answer),
       audio_url: q.audio_url || '',
-      explanation: q.explanation || '',
+      explanation: q.explanation || rich.summary || '',
+      why_correct: qData.why_correct || rich.whyCorrect || '',
+      distractor_reasons_raw: distRaw,
+      maritime_context: qData.maritime_context || rich.maritimeContext || '',
+      rule_or_formula: qData.rule_or_formula || rich.ruleOrFormula || '',
       points: q.points || 10,
       is_active: q.is_active !== false,
     });
@@ -215,6 +241,28 @@ export default function AdminQuestionsPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
+      const distractorMap: Record<string, string> = {};
+      if (formData.distractor_reasons_raw) {
+        formData.distractor_reasons_raw.split('\n').forEach((line) => {
+          const parts = line.split(':');
+          if (parts.length >= 2) {
+            const k = parts[0].trim();
+            const v = parts.slice(1).join(':').trim();
+            if (k && v) distractorMap[k] = v;
+          }
+        });
+      }
+
+      const existingData =
+        modalMode === 'edit' && editingQuestion?.question_data ? editingQuestion.question_data : {};
+      const updatedQuestionData = {
+        ...existingData,
+        why_correct: formData.why_correct.trim() || undefined,
+        distractor_reasons: Object.keys(distractorMap).length > 0 ? distractorMap : undefined,
+        maritime_context: formData.maritime_context.trim() || undefined,
+        rule_or_formula: formData.rule_or_formula.trim() || undefined,
+      };
+
       const payload: Question = {
         id: modalMode === 'edit' && editingQuestion?.id ? editingQuestion.id : `custom-q-${Date.now()}`,
         category: formData.category,
@@ -224,14 +272,14 @@ export default function AdminQuestionsPage() {
         options: parsedOptions.length > 0 ? parsedOptions : undefined,
         correct_answer: formData.correct_answer.trim(),
         audio_url: formData.audio_url.trim() || null,
-        image_url: null,
-        pronunciation_text: null,
-        level: 'A2',
-        question_data: {},
+        image_url: editingQuestion?.image_url || null,
+        pronunciation_text: editingQuestion?.pronunciation_text || null,
+        level: editingQuestion?.level || 'A2',
+        question_data: updatedQuestionData,
         explanation: formData.explanation.trim() || undefined,
         points: Number(formData.points) || 10,
         is_active: formData.is_active,
-        created_at: new Date().toISOString(),
+        created_at: editingQuestion?.created_at || new Date().toISOString(),
       };
 
       if (modalMode === 'create') {
@@ -776,14 +824,74 @@ export default function AdminQuestionsPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-700">Penjelasan / Pembahasan (Opsional):</label>
+                <label className="block text-xs font-bold text-slate-700">Ringkasan Pembahasan Singkat (Opsional):</label>
                 <textarea
                   rows={2}
                   value={formData.explanation}
                   onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
-                  placeholder="Penjelasan gramatikal atau referensi IMO SMCP..."
+                  placeholder="Ringkasan inti pembahasan..."
                   className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7]"
                 />
+              </div>
+
+              {/* Deep Explanation & Distractor Analysis Section */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-3.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <h4 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider">
+                    Pembahasan & Analisis Kesalahan Opsi (Sistem Review Ujian)
+                  </h4>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">1. Alasan Mengapa Kunci Jawaban Benar:</label>
+                  <textarea
+                    rows={2}
+                    value={formData.why_correct}
+                    onChange={(e) => setFormData({ ...formData, why_correct: e.target.value })}
+                    placeholder="Jelaskan alasan gramatikal / teknis mengapa opsi ini benar..."
+                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">
+                    2. Analisis Kenapa Opsi Lain Salah (1 Opsi per Baris, Format: <code className="text-[#0284C7]">Opsi : Alasan salah</code>):
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={formData.distractor_reasons_raw}
+                    onChange={(e) => setFormData({ ...formData, distractor_reasons_raw: e.target.value })}
+                    placeholder="Opsi B : Salah karena bentuk past tense tidak sesuai&#10;Opsi C : Salah karena subjek tunggal..."
+                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-mono text-[11px] outline-none focus:border-[#0284C7]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-bold text-slate-700">3. Kaidah / Rumus Singkat (Opsional):</label>
+                    <input
+                      type="text"
+                      value={formData.rule_or_formula}
+                      onChange={(e) => setFormData({ ...formData, rule_or_formula: e.target.value })}
+                      placeholder="Contoh: Subject + Verb-1 (s/es)"
+                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-xs font-bold text-slate-700">4. Konteks Maritim & Standar IMO (Opsional):</label>
+                    <input
+                      type="text"
+                      value={formData.maritime_context}
+                      onChange={(e) => setFormData({ ...formData, maritime_context: e.target.value })}
+                      placeholder="Contoh: Prosedur evakuasi SOLAS / Komunikasi radio VHF"
+                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                    />
+                  </div>
+                </div>
               </div>
 
               {formError && (
@@ -862,15 +970,52 @@ export default function AdminQuestionsPage() {
               )}
             </div>
 
-            {/* Answer details */}
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-1">
-              <p className="font-bold text-emerald-800">
-                Kunci Jawaban Resmi: {previewQuestion.correct_answer}
-              </p>
-              {previewQuestion.explanation && (
-                <p className="text-slate-700 font-medium">Penjelasan: {previewQuestion.explanation}</p>
-              )}
-            </div>
+            {/* Deep Explanation Details Preview */}
+            {(() => {
+              const rich = getRichQuestionExplanation(previewQuestion);
+              return (
+                <div className="p-5 rounded-2xl bg-sky-50/70 border border-sky-200/90 text-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-emerald-800">
+                      Kunci Jawaban Resmi: <strong>{previewQuestion.correct_answer}</strong>
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-sky-200/70 text-[#0369A1] font-mono text-[9px] font-bold">
+                      IMO SMCP
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="font-bold text-slate-800 text-[11px] uppercase tracking-wider">
+                      🎯 Mengapa Kunci Jawaban Benar:
+                    </p>
+                    <p className="text-slate-700 leading-relaxed font-medium bg-white/80 p-2.5 rounded-xl border border-sky-100">
+                      {rich.whyCorrect}
+                    </p>
+                  </div>
+
+                  {rich.distractors && rich.distractors.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <p className="font-bold text-rose-800 text-[11px] uppercase tracking-wider">
+                        ❌ Analisis Kenapa Opsi Lain Salah:
+                      </p>
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {rich.distractors.map((d, dIdx) => (
+                          <div key={dIdx} className="p-2 rounded-xl bg-rose-50/70 border border-rose-200/70 text-[11px]">
+                            <span className="font-bold text-rose-950">✗ Opsi "{d.option}":</span> {d.reason}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {rich.maritimeContext && (
+                    <p className="text-slate-600 text-[11px] italic pt-1 border-t border-sky-200/60">
+                      ⚓ Konteks Maritim: {rich.maritimeContext}
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}

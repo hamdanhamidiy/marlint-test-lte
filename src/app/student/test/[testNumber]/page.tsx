@@ -58,15 +58,32 @@ export default function TestOverviewPage() {
         setTest(data as MarlintTest);
 
         if (user) {
-          const { data: entData } = await supabase
-            .from('test_entitlements')
-            .select('id')
-            .eq('user_id', user.id)
-            .eq('test_number', testNumber)
-            .eq('is_active', true)
-            .maybeSingle();
+          let hasAccess = data.is_free;
+          try {
+            const { data: entData } = await supabase
+              .from('test_entitlements')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('test_number', testNumber)
+              .eq('is_active', true)
+              .maybeSingle();
 
-          setHasEntitlement(!!entData || data.is_free);
+            if (entData) hasAccess = true;
+          } catch (e) {}
+
+          if (typeof window !== 'undefined') {
+            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
+            if (localEnt) {
+              try {
+                const arr = JSON.parse(localEnt);
+                if (Array.isArray(arr) && arr.map(Number).includes(Number(testNumber))) {
+                  hasAccess = true;
+                }
+              } catch (e) {}
+            }
+          }
+
+          setHasEntitlement(hasAccess);
         }
       } catch (e: any) {
         setErrorMsg(e.message || 'Gagal memuat detail tes.');

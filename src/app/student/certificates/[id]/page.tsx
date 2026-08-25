@@ -27,13 +27,41 @@ export default function SingleCertificatePage() {
           .eq('id', certId)
           .maybeSingle();
 
-        if (error || !data) {
-          setErrorMsg('Sertifikat tidak ditemukan atau tidak valid.');
+        if (data) {
+          setCertificate(data as Certificate);
           return;
         }
 
-        setCertificate(data as Certificate);
+        // Fallback to local storage
+        const localStr =
+          typeof window !== 'undefined'
+            ? localStorage.getItem(`marlins_cert_id_${certId}`) ||
+              localStorage.getItem(`marlins_cert_${certId}`) ||
+              localStorage.getItem(`marlins_cert_${certId.replace('cert-', '')}`)
+            : null;
+
+        if (localStr) {
+          try {
+            setCertificate(JSON.parse(localStr) as Certificate);
+            return;
+          } catch (e) {}
+        }
+
+        setErrorMsg('Sertifikat tidak ditemukan atau tidak valid.');
       } catch (err: any) {
+        // Fallback check on catch
+        const localStr =
+          typeof window !== 'undefined'
+            ? localStorage.getItem(`marlins_cert_id_${certId}`) ||
+              localStorage.getItem(`marlins_cert_${certId}`)
+            : null;
+
+        if (localStr) {
+          try {
+            setCertificate(JSON.parse(localStr) as Certificate);
+            return;
+          } catch (e) {}
+        }
         setErrorMsg(err.message || 'Gagal memuat sertifikat.');
       } finally {
         setLoading(false);

@@ -11,16 +11,19 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, profile } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
       if (!user) {
         router.push('/login');
+      } else if (profile && !isAdmin) {
+        // Regular students cannot access the admin/instructor portal
+        router.push('/student/dashboard');
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, profile, isAdmin, router]);
 
   if (loading) {
     return (
@@ -30,7 +33,7 @@ export default function AdminLayout({
             <Shield className="w-7 h-7 text-[#0284C7] animate-spin" style={{ animationDuration: '3s' }} />
           </div>
         </div>
-        <p className="text-xs sm:text-sm font-bold text-slate-800">Memuat Portal Admin Marlins...</p>
+        <p className="text-xs sm:text-sm font-bold text-slate-800">Memuat Portal Pengelolaan Marlins...</p>
       </div>
     );
   }

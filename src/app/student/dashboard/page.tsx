@@ -94,7 +94,22 @@ export default function StudentDashboardPage() {
               .eq('is_active', true),
           ]);
 
-          if (resultsRes.data) setRecentResults(resultsRes.data as StudentResult[]);
+          let resList: StudentResult[] = [];
+          if (resultsRes.data && resultsRes.data.length > 0) {
+            resList = resultsRes.data as StudentResult[];
+          } else if (typeof window !== 'undefined') {
+            const histStr = localStorage.getItem('marlins_history_results');
+            if (histStr) {
+              try {
+                const arr = JSON.parse(histStr);
+                if (Array.isArray(arr) && arr.length > 0) {
+                  resList = arr.slice(0, 5);
+                }
+              } catch (e) {}
+            }
+          }
+
+          setRecentResults(resList);
           if (entRes.data) {
             setEntitlements(new Set(entRes.data.map((e) => e.test_number)));
           }

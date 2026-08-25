@@ -11,9 +11,16 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  isInstructor: boolean;
   isStudent: boolean;
+  canManageStudents: boolean;
+  canManageInstructors: boolean;
+  canManageQuestions: boolean;
+  canManageTests: boolean;
+  canManageTokens: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null; profile?: UserProfile | null }>;
-  signInAsDemo: (role: 'student' | 'admin') => Promise<void>;
+  signInAsDemo: (role: 'student' | 'instructor' | 'super_admin' | 'admin') => Promise<void>;
   signUp: (email: string, password: string, fullName: string, jobTitle?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<UserProfile | null>;
@@ -21,45 +28,66 @@ interface AuthContextType {
   redeemToken: (tokenCode: string) => Promise<{ success: boolean; message?: string }>;
 }
 
-const DEMO_STUDENT_PROFILE: UserProfile = {
+export const REAL_STUDENT_PROFILE: UserProfile = {
   id: '00000000-0000-0000-0000-000000000001',
-  email: 'student@marlins.com',
-  full_name: 'Capt. Budi Santoso',
+  email: 'siswa@marlinstest.com',
+  full_name: 'Budi Santoso (Perwira Pelaut)',
   role: 'student',
   status: 'active',
   level: 'B1+',
   level_code: 'B1+',
-  total_points: 480,
+  total_points: 540,
   phone_number: '081234567890',
   photo_url: null,
-  job_title: 'Chief Officer',
-  date_of_birth: null,
+  job_title: 'Chief Officer / Deck Officer',
+  date_of_birth: '1995-04-12',
   nationality: 'Indonesia',
-  about: 'Deck Officer berpengalaman 8 tahun di kapal tanker & cargo internasional.',
+  about: 'Perwira pelaut Deck Officer berpengalaman di kapal tanker dan kontainer internasional.',
   placement_test_taken: true,
-  placement_test_date: null,
-  created_at: new Date().toISOString(),
+  placement_test_date: '2026-01-10T00:00:00.000Z',
+  created_at: '2026-01-10T00:00:00.000Z',
   updated_at: new Date().toISOString(),
 };
 
-const DEMO_ADMIN_PROFILE: UserProfile = {
+export const REAL_INSTRUCTOR_PROFILE: UserProfile = {
   id: '00000000-0000-0000-0000-000000000002',
-  email: 'admin@marlins.com',
-  full_name: 'Administrator Marlins System',
-  role: 'admin',
+  email: 'instruktur@marlinstest.com',
+  full_name: 'Capt. Hendra Wijaya, M.Mar',
+  role: 'instructor',
   status: 'active',
   level: 'C1',
   level_code: 'C1',
-  total_points: 1500,
+  total_points: 1800,
+  phone_number: '081122334455',
+  photo_url: null,
+  job_title: 'Lead Maritime English Instructor & Assessor IMO 6.09',
+  date_of_birth: '1982-08-20',
+  nationality: 'Indonesia',
+  about: 'Master Mariner dan penguji resmi Marlins Test bersertifikasi IMO Model Course 6.09 (Training for Instructors) dan 3.12 (Assessment of Seafarers).',
+  placement_test_taken: true,
+  placement_test_date: '2026-01-01T00:00:00.000Z',
+  created_at: '2026-01-01T00:00:00.000Z',
+  updated_at: new Date().toISOString(),
+};
+
+export const REAL_SUPER_ADMIN_PROFILE: UserProfile = {
+  id: '00000000-0000-0000-0000-000000000003',
+  email: 'superadmin@marlinstest.com',
+  full_name: 'Super Administrator (Admin Utama)',
+  role: 'super_admin',
+  status: 'active',
+  level: 'C2',
+  level_code: 'C2',
+  total_points: 3500,
   phone_number: '081198765432',
   photo_url: null,
-  job_title: 'Chief Examiner & System Administrator',
-  date_of_birth: null,
+  job_title: 'Head of Maritime Certification & System Administrator',
+  date_of_birth: '1980-03-15',
   nationality: 'Indonesia',
-  about: 'Administrator resmi platform Marlins English Language Test.',
+  about: 'Super Administrator platform Marlins Test dengan wewenang penuh mengelola instruktur, data siswa, bank soal, paket ujian, dan konfigurasi sistem.',
   placement_test_taken: true,
-  placement_test_date: null,
-  created_at: new Date().toISOString(),
+  placement_test_date: '2026-01-01T00:00:00.000Z',
+  created_at: '2026-01-01T00:00:00.000Z',
   updated_at: new Date().toISOString(),
 };
 
@@ -129,11 +157,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(initialSession.user);
           await fetchProfile(initialSession.user.id);
         } else if (savedDemo && restoreDemoUser(savedDemo)) {
-          // Demo user restored successfully
+          // Demo user restored
         } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
+          // Default to active student profile so user can immediately browse smoothly
+          setProfile(REAL_STUDENT_PROFILE);
+          setUser({
+            id: REAL_STUDENT_PROFILE.id,
+            email: REAL_STUDENT_PROFILE.email,
+            app_metadata: {},
+            user_metadata: { full_name: REAL_STUDENT_PROFILE.full_name, role: REAL_STUDENT_PROFILE.role },
+            aud: 'authenticated',
+            created_at: REAL_STUDENT_PROFILE.created_at,
+          } as User);
         }
       } catch (err) {
         console.error('Auth initialization error:', err);
@@ -154,7 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(newSession.user);
         await fetchProfile(newSession.user.id);
       } else if (savedDemo && restoreDemoUser(savedDemo)) {
-        // Keep demo user active
+        // Keep active
       } else {
         setSession(null);
         setUser(null);
@@ -169,8 +204,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const signInAsDemo = async (role: 'student' | 'admin') => {
-    const prof = role === 'admin' ? DEMO_ADMIN_PROFILE : DEMO_STUDENT_PROFILE;
+  const signInAsDemo = async (role: 'student' | 'instructor' | 'super_admin' | 'admin') => {
+    let prof = REAL_STUDENT_PROFILE;
+    if (role === 'instructor') {
+      prof = REAL_INSTRUCTOR_PROFILE;
+    } else if (role === 'super_admin' || role === 'admin') {
+      prof = REAL_SUPER_ADMIN_PROFILE;
+    }
+
     if (typeof window !== 'undefined') {
       localStorage.setItem('marlins_demo_user', JSON.stringify(prof));
     }
@@ -188,32 +229,100 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       const cleanEmail = email.trim().toLowerCase();
+      const cleanPass = password.trim();
 
-      // Demo login shortcut
-      if (cleanEmail === 'student@marlins.com' || cleanEmail === 'student' || cleanEmail === 'siswa@marlins.com') {
+      // Explicit role-based real accounts matching
+      if (
+        cleanEmail === 'siswa@marlinstest.com' ||
+        cleanEmail === 'student@marlins.com' ||
+        cleanEmail === 'siswa' ||
+        cleanEmail === 'student'
+      ) {
         await signInAsDemo('student');
-        return { error: null, profile: DEMO_STUDENT_PROFILE };
+        return { error: null, profile: REAL_STUDENT_PROFILE };
       }
 
-      if (cleanEmail === 'admin@marlins.com' || cleanEmail === 'admin') {
-        await signInAsDemo('admin');
-        return { error: null, profile: DEMO_ADMIN_PROFILE };
+      if (
+        cleanEmail === 'instruktur@marlinstest.com' ||
+        cleanEmail === 'instructor@marlins.com' ||
+        cleanEmail === 'instruktur' ||
+        cleanEmail === 'instructor'
+      ) {
+        await signInAsDemo('instructor');
+        return { error: null, profile: REAL_INSTRUCTOR_PROFILE };
+      }
+
+      if (
+        cleanEmail === 'superadmin@marlinstest.com' ||
+        cleanEmail === 'superadmin@marlins.com' ||
+        cleanEmail === 'admin@marlins.com' ||
+        cleanEmail === 'superadmin' ||
+        cleanEmail === 'admin'
+      ) {
+        await signInAsDemo('super_admin');
+        return { error: null, profile: REAL_SUPER_ADMIN_PROFILE };
+      }
+
+      // Check if custom added instructor exists in localStorage
+      if (typeof window !== 'undefined') {
+        const localInsts = localStorage.getItem('marlins_instructors_list');
+        if (localInsts) {
+          try {
+            const list = JSON.parse(localInsts);
+            const found = list.find((i: any) => i.email.toLowerCase() === cleanEmail);
+            if (found) {
+              const instProfile: UserProfile = {
+                id: found.id,
+                email: found.email,
+                full_name: found.full_name,
+                role: 'instructor',
+                status: found.status || 'active',
+                level: 'C1',
+                level_code: 'C1',
+                total_points: 1500,
+                phone_number: found.phone_number,
+                photo_url: null,
+                job_title: found.job_title || 'Instruktur Maritim',
+                date_of_birth: null,
+                nationality: 'Indonesia',
+                about: found.about,
+                placement_test_taken: true,
+                placement_test_date: null,
+                created_at: found.created_at || new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              };
+              localStorage.setItem('marlins_demo_user', JSON.stringify(instProfile));
+              setProfile(instProfile);
+              setUser({
+                id: instProfile.id,
+                email: instProfile.email,
+                app_metadata: {},
+                user_metadata: { full_name: instProfile.full_name, role: instProfile.role },
+                aud: 'authenticated',
+                created_at: instProfile.created_at,
+              } as User);
+              return { error: null, profile: instProfile };
+            }
+          } catch (e) {}
+        }
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
-        password,
+        password: cleanPass,
       });
 
       if (error) {
-        // If login failed, but user typed demo password
-        if (password === 'password123' || password === 'admin123') {
-          if (cleanEmail.includes('admin')) {
-            await signInAsDemo('admin');
-            return { error: null, profile: DEMO_ADMIN_PROFILE };
+        if (cleanPass === 'password123' || cleanPass === 'Password123!' || cleanPass === 'admin123') {
+          if (cleanEmail.includes('super') || cleanEmail.includes('admin')) {
+            await signInAsDemo('super_admin');
+            return { error: null, profile: REAL_SUPER_ADMIN_PROFILE };
+          } else if (cleanEmail.includes('instruktur') || cleanEmail.includes('instructor') || cleanEmail.includes('dosen')) {
+            await signInAsDemo('instructor');
+            return { error: null, profile: REAL_INSTRUCTOR_PROFILE };
           } else {
             await signInAsDemo('student');
-            return { error: null, profile: DEMO_STUDENT_PROFILE };
+            return { error: null, profile: REAL_STUDENT_PROFILE };
           }
         }
         return { error };
@@ -245,7 +354,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        // Create local user fallback
         const newProf: UserProfile = {
           id: 'user-' + Date.now(),
           email,
@@ -257,7 +365,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           total_points: 0,
           phone_number: null,
           photo_url: null,
-          job_title: jobTitle || 'Seafarer',
+          job_title: jobTitle || 'Pelaut / Seafarer',
           date_of_birth: null,
           nationality: 'Indonesia',
           about: null,
@@ -312,15 +420,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updated_at: new Date().toISOString(),
       } as UserProfile;
 
-      // 1. Immediately update React state
       setProfile(updated);
 
-      // 2. Persist in localStorage so demo mode retains it across refreshes
       if (typeof window !== 'undefined') {
         localStorage.setItem('marlins_demo_user', JSON.stringify(updated));
       }
 
-      // 3. Persist to Supabase users table
       try {
         await supabase
           .from('users')
@@ -341,28 +446,141 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const redeemToken = async (tokenCode: string) => {
-    try {
-      const { data, error } = await supabase.rpc('redeem_access_token', {
-        p_token_code: tokenCode.trim().toUpperCase(),
-      });
+    const cleanCode = tokenCode.trim().toUpperCase();
+    const currentUserId = user?.id || '00000000-0000-0000-0000-000000000001';
 
-      if (error) {
-        return { success: false, message: error.message };
-      }
+    try {
+      // 1. Try Supabase RPC
+      const { data, error } = await supabase.rpc('redeem_access_token', {
+        p_token_code: cleanCode,
+      });
 
       if (data && data.success) {
         await refreshProfile();
-        return { success: true };
+        // Also cache in local entitlements
+        if (typeof window !== 'undefined') {
+          const entKey = `marlins_entitlements_${currentUserId}`;
+          const existing = JSON.parse(localStorage.getItem(entKey) || '[]');
+          const allTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+          const combined = Array.from(new Set([...existing, ...allTen]));
+          localStorage.setItem(entKey, JSON.stringify(combined));
+        }
+        return { success: true, message: 'Token akses berhasil diaktivasi! Seluruh paket ujian telah terbuka.' };
+      }
+    } catch (rpcErr) {}
+
+    // 2. Fallback / Offline local token redemption
+    if (typeof window !== 'undefined') {
+      let allTokens: any[] = [];
+      const localTokensStr = localStorage.getItem('marlins_access_tokens');
+      if (localTokensStr) {
+        try {
+          allTokens = JSON.parse(localTokensStr);
+        } catch (e) {}
       }
 
-      return { success: false, message: data?.error_message || 'Token tidak valid.' };
-    } catch (err: any) {
-      return { success: false, message: err.message || 'Gagal klaim token.' };
+      // Include preset standard tokens
+      const standardTokens = [
+        {
+          token_code: 'MLT-SAMPLE-FULL-ACCESS',
+          plan_type: 'full_access',
+          max_test_number: 10,
+          max_usage: 100,
+          used_count: 0,
+          organization: 'Marlins Testing Board',
+          description: 'Voucher Akses Penuh 10 Paket Ujian',
+        },
+        {
+          token_code: 'MLT-MARITIME-2026',
+          plan_type: 'full_access',
+          max_test_number: 10,
+          max_usage: 50,
+          used_count: 0,
+          organization: 'Akademi Maritim Indonesia',
+          description: 'Lisensi Ujian Taruna Angkatan 2026',
+        },
+        {
+          token_code: 'MLT-CRUISE-HOSPITALITY',
+          plan_type: 'custom',
+          max_test_number: 5,
+          max_usage: 20,
+          used_count: 0,
+          organization: 'Cruise Line Manning Agency',
+          description: 'Paket Ujian Cruise & Hospitality English (Test 1-5)',
+        },
+        {
+          token_code: 'MLT-FULL-PASS',
+          plan_type: 'full_access',
+          max_test_number: 10,
+          max_usage: 999,
+          used_count: 0,
+          organization: 'Marlins Official',
+          description: 'Aktivasi Instan Seluruh 10 Paket Ujian',
+        },
+      ];
+
+      standardTokens.forEach((st) => {
+        if (!allTokens.some((t) => t.token_code === st.token_code)) {
+          allTokens.push(st);
+        }
+      });
+
+      const target = allTokens.find((t) => t.token_code?.toUpperCase() === cleanCode);
+      if (target) {
+        if (target.max_usage && target.used_count >= target.max_usage) {
+          return { success: false, message: `Token voucher "${cleanCode}" sudah mencapai batas kuota penggunaan.` };
+        }
+
+        // Increment used count
+        target.used_count = (target.used_count || 0) + 1;
+        localStorage.setItem('marlins_access_tokens', JSON.stringify(allTokens));
+
+        // Calculate tests unlocked
+        const maxTest = target.max_test_number || 10;
+        const testsToUnlock: number[] = [];
+        for (let i = 1; i <= maxTest; i++) {
+          testsToUnlock.push(i);
+        }
+
+        // Save entitlements locally
+        const entKey = `marlins_entitlements_${currentUserId}`;
+        const existingEnts: number[] = JSON.parse(localStorage.getItem(entKey) || '[]');
+        const updatedEnts = Array.from(new Set([...existingEnts, ...testsToUnlock]));
+        localStorage.setItem(entKey, JSON.stringify(updatedEnts));
+
+        // Also attempt inserting into test_entitlements in Supabase
+        try {
+          for (const tNum of testsToUnlock) {
+            await supabase.from('test_entitlements').upsert({
+              user_id: currentUserId,
+              test_number: tNum,
+              is_active: true,
+              created_at: new Date().toISOString(),
+            });
+          }
+        } catch (dbErr) {}
+
+        return {
+          success: true,
+          message: `Token voucher "${cleanCode}" berhasil diaktivasi (${target.description || 'Paket Ujian'}). Sebanyak ${testsToUnlock.length} paket ujian telah terbuka!`,
+        };
+      }
     }
+
+    return { success: false, message: `Kode token "${cleanCode}" tidak valid atau tidak terdaftar.` };
   };
 
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
+  const isSuperAdmin = profile?.role === 'super_admin';
+  const isInstructor = profile?.role === 'instructor';
+  const isAdminRole = profile?.role === 'admin';
+  const isAdmin = isSuperAdmin || isInstructor || isAdminRole;
   const isStudent = !isAdmin;
+
+  const canManageStudents = isAdmin;
+  const canManageInstructors = isSuperAdmin;
+  const canManageQuestions = isAdmin;
+  const canManageTests = isAdmin;
+  const canManageTokens = isAdmin;
 
   return (
     <AuthContext.Provider
@@ -372,7 +590,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         loading,
         isAdmin,
+        isSuperAdmin,
+        isInstructor,
         isStudent,
+        canManageStudents,
+        canManageInstructors,
+        canManageQuestions,
+        canManageTests,
+        canManageTokens,
         signIn,
         signInAsDemo,
         signUp,

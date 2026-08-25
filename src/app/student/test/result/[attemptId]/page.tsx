@@ -68,6 +68,99 @@ export default function TestResultPage() {
               setCertificate(certData as Certificate);
             }
           }
+        } else {
+          // Check localStorage fallback for offline / demo session
+          const localStr =
+            typeof window !== 'undefined'
+              ? localStorage.getItem(`marlins_result_${attemptId}`) ||
+                localStorage.getItem(`test_result_${attemptId}`)
+              : null;
+
+          if (localStr) {
+            try {
+              const localRes = JSON.parse(localStr);
+              // Normalize score & correct_answers mapping
+              const normalized: StudentResult = {
+                id: localRes.id || `res-${attemptId}`,
+                student_id: localRes.student_id || '00000000-0000-0000-0000-000000000001',
+                attempt_id: attemptId,
+                score: localRes.overall_score !== undefined ? localRes.overall_score : localRes.score || 0,
+                correct_answers:
+                  localRes.total_score !== undefined
+                    ? localRes.total_score
+                    : localRes.correct_answers || 0,
+                total_questions: localRes.total_questions || 60,
+                level:
+                  localRes.level ||
+                  (localRes.score >= 80 ? 'C1' : localRes.score >= 70 ? 'B2' : 'B1'),
+                category_scores: Array.isArray(localRes.category_scores)
+                  ? Object.fromEntries(
+                      localRes.category_scores.map((cs: any) => [
+                        cs.category,
+                        { correct: cs.correct, total: cs.total },
+                      ])
+                    )
+                  : localRes.category_scores || {},
+                start_time: localRes.start_time || new Date().toISOString(),
+                end_time: localRes.completed_at || localRes.end_time || new Date().toISOString(),
+                is_passed: localRes.is_passed,
+                test_name: localRes.test_name || `Marlins Test #${localRes.test_number || 1}`,
+                marlint_test_number: localRes.test_number || 1,
+                test_mode: 'standard',
+                points_earned: localRes.points_earned || Math.round((localRes.overall_score || 70) * 1.5),
+                time_spent_seconds: localRes.time_spent_seconds || 3600,
+                created_at: localRes.completed_at || new Date().toISOString(),
+              };
+
+              setResult(normalized);
+
+              if (normalized.is_passed) {
+                confetti({
+                  particleCount: 90,
+                  spread: 60,
+                  origin: { y: 0.6 },
+                });
+
+                const certStr = localStorage.getItem(`marlins_cert_${attemptId}`);
+                if (certStr) {
+                  setCertificate(JSON.parse(certStr) as Certificate);
+                } else {
+                  // Synthesize demo certificate
+                  const demoCert: Certificate = {
+                    id: `cert-${attemptId}`,
+                    certificate_number: `MARLINS-${normalized.marlint_test_number}-${Date.now()
+                      .toString()
+                      .slice(-6)}`,
+                    user_id: user?.id || '00000000-0000-0000-0000-000000000001',
+                    marlint_test_id: `test-${normalized.marlint_test_number}`,
+                    result_id: normalized.id,
+                    student_name: user?.user_metadata?.full_name || 'Capt. Budi Santoso',
+                    student_email: user?.email || 'student@marlins.com',
+                    test_name: normalized.test_name,
+                    test_number: normalized.marlint_test_number,
+                    score: normalized.score,
+                    grade: normalized.score >= 85 ? 'Distinction' : 'Merit',
+                    level: normalized.level,
+                    is_passed: true,
+                    category_scores: normalized.category_scores,
+                    total_questions: normalized.total_questions,
+                    correct_answers: normalized.correct_answers,
+                    duration_minutes: 60,
+                    passing_grade: 70,
+                    completion_date: new Date().toISOString(),
+                    is_valid: true,
+                    verification_code: `VER-${Date.now().toString().slice(-8)}`,
+                    issued_at: new Date().toISOString(),
+                  };
+                  localStorage.setItem(`marlins_cert_${attemptId}`, JSON.stringify(demoCert));
+                  localStorage.setItem(`marlins_cert_id_${demoCert.id}`, JSON.stringify(demoCert));
+                  setCertificate(demoCert);
+                }
+              }
+            } catch (parseErr) {
+              console.warn('Could not parse local result:', parseErr);
+            }
+          }
         }
       } catch (err) {
         console.error('Error loading result:', err);
@@ -186,19 +279,27 @@ export default function TestResultPage() {
           </div>
         </div>
 
-        {/* Action Button: View Certificate if passed */}
-        {result.is_passed && certificate && (
-          <div className="pt-2">
+        {/* Action Buttons: Review Questions and Certificate */}
+        <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href={`/student/test/review/${attemptId}`}
+            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-extrabold text-xs sm:text-sm text-white bg-[#5046E5] hover:bg-[#4338CA] shadow-lg shadow-indigo-500/25 transition-all hover:scale-105"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Review & Pembahasan Lengkap (60 Soal)</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          {result.is_passed && certificate && (
             <Link
               href={`/student/certificates/${certificate.id}`}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-lg shadow-amber-500/25 transition-all hover:scale-105"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-lg shadow-amber-500/25 transition-all hover:scale-105"
             >
-              <Award className="w-5 h-5" />
+              <Award className="w-4 h-4" />
               <span>Lihat & Cetak Sertifikat Resmi</span>
-              <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Competency Breakdown by Category */}
@@ -253,7 +354,7 @@ export default function TestResultPage() {
       </div>
 
       {/* Bottom Navigation Actions */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <Link
           href="/student/tests"
           className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 shadow-2xs transition-colors"
@@ -262,13 +363,30 @@ export default function TestResultPage() {
           <span>Kembali ke Katalog Tes</span>
         </Link>
 
-        <Link
-          href="/student/dashboard"
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3 rounded-full text-xs font-extrabold text-white bg-[#5046E5] hover:bg-[#4338CA] shadow-md shadow-indigo-500/20 transition-all hover:scale-105"
-        >
-          <span>Ke Dashboard Siswa</span>
-          <ChevronRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <Link
+            href={`/student/test/review/${attemptId}`}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-[#5046E5] bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 transition-all"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Review Jawaban</span>
+          </Link>
+
+          <Link
+            href="/student/history"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 shadow-2xs transition-colors"
+          >
+            <span>Riwayat Nilai</span>
+          </Link>
+
+          <Link
+            href="/student/dashboard"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-extrabold text-white bg-slate-900 hover:bg-slate-800 shadow-md shadow-slate-900/20 transition-all hover:scale-105"
+          >
+            <span>Ke Dashboard</span>
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </div>
   );

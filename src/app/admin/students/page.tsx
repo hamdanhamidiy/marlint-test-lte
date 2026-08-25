@@ -23,15 +23,18 @@ import {
   ArrowRight,
   Filter,
 } from 'lucide-react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
-import { UserProfile } from '@/lib/supabase/types';
+import { UserProfile, UserRole } from '@/lib/supabase/types';
 import { getLevelBadge, formatDateIndo } from '@/lib/utils';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function AdminStudentsPage() {
+  const { isSuperAdmin, isInstructor, profile } = useAuth();
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'admin'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'instructor' | 'super_admin' | 'admin'>('all');
 
   // Student Detail / Access Modal
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
@@ -78,11 +81,12 @@ export default function AdminStudentsPage() {
         setStudentAttempts(attempts);
       }
 
-      // Load entitlements
+      // Load entitlements from canonical test_entitlements table
       const { data: ents } = await supabase
-        .from('user_entitlements')
+        .from('test_entitlements')
         .select('test_number')
-        .eq('user_id', st.id);
+        .eq('user_id', st.id)
+        .eq('is_active', true);
 
       if (ents) {
         setStudentEntitlements(ents.map((e) => e.test_number));
@@ -106,24 +110,37 @@ export default function AdminStudentsPage() {
       if (hasAccess) {
         // Revoke access
         await supabase
-          .from('user_entitlements')
-          .delete()
+          .from('test_entitlements')
+          .update({ is_active: false, revoked_at: new Date().toISOString() })
           .eq('user_id', selectedStudent.id)
           .eq('test_number', testNumber);
 
         setStudentEntitlements((prev) => prev.filter((t) => t !== testNumber));
       } else {
         // Grant access
+        const { data: tData } = await supabase
+          .from('marlint_tests')
+          .select('id')
+          .eq('test_number', testNumber)
+          .maybeSingle();
+
+        const marlintTestId = tData?.id || `test-${testNumber}`;
+
         await supabase
-          .from('user_entitlements')
-          .insert([
-            {
-              user_id: selectedStudent.id,
-              test_number: testNumber,
-              granted_by_token: 'ADMIN_MANUAL_GRANT',
-              created_at: new Date().toISOString(),
-            },
-          ]);
+          .from('test_entitlements')
+          .upsert(
+            [
+              {
+                user_id: selectedStudent.id,
+                marlint_test_id: marlintTestId,
+                test_number: testNumber,
+                source: 'super_admin_grant',
+                is_active: true,
+                granted_at: new Date().toISOString(),
+              },
+            ],
+            { onConflict: 'user_id, marlint_test_id' }
+          );
 
         setStudentEntitlements((prev) => [...prev, testNumber]);
       }
@@ -174,6 +191,68 @@ export default function AdminStudentsPage() {
       (s.nationality && s.nationality.toLowerCase().includes(q))
     );
   });
+
+  // Role-Based Access Guard: Only Super Admin can access and manage student data
+  if (!isSuperAdmin && profile?.role !== 'admin') {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-4">
+        <div className="max-w-lg w-full bg-white rounded-3xl border border-slate-200/90 p-8 shadow-sm text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
+            <Lock className="w-8 h-8 text-amber-600" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold uppercase tracking-wider">
+              <Shield className="w-3.5 h-3.5" />
+              <span>Akses Dibatasi — Khusus Super Admin</span>
+            </div>
+            <h2 className="text-xl font-heading font-extrabold text-slate-900">
+              Manajemen Data Siswa Terproteksi
+            </h2>
+            <p className="text-xs text-slate-500 leading-relaxed max-w-md mx-auto font-medium">
+              Anda saat ini masuk sebagai <strong className="text-slate-800 font-bold">{profile?.full_name || 'Instruktur'}</strong> (Role:{' '}
+              <span className="text-amber-600 font-bold uppercase">{profile?.role || 'Instruktur'}</span>). Halaman kelola data siswa, reset sesi, dan pemberian hak akses ujian dibatasi khusus untuk <strong>Super Administrator</strong> demi privasi dan keamanan data taruna.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-2 text-xs">
+            <p className="font-bold text-slate-700">Wewenang Instruktur meliputi:</p>
+            <ul className="space-y-1.5 text-slate-600 text-[11px]">
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Pengelolaan Bank Soal IMO SMCP (600+ Soal)</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Pengaturan & Peninjauan Paket Ujian (Tes 1–10)</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Pembuatan & Distribusi Token Akses / Voucher Ujian</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+            <Link
+              href="/admin/dashboard"
+              className="py-2.5 px-4 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Kembali ke Dashboard</span>
+            </Link>
+            <Link
+              href="/admin/questions"
+              className="py-2.5 px-4 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/20"
+            >
+              <FileCheck2 className="w-3.5 h-3.5" />
+              <span>Buka Bank Soal</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-7 min-w-0 font-sans pb-12">
@@ -239,14 +318,25 @@ export default function AdminStudentsPage() {
           </button>
           <button
             type="button"
-            onClick={() => setRoleFilter('admin')}
+            onClick={() => setRoleFilter('instructor')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              roleFilter === 'admin'
-                ? 'bg-[#EA580C] text-white shadow-xs'
+              roleFilter === 'instructor'
+                ? 'bg-amber-600 text-white shadow-xs'
                 : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
             }`}
           >
-            Admin ({students.filter((s) => s.role === 'admin').length})
+            Instruktur ({students.filter((s) => s.role === 'instructor').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter('super_admin')}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === 'super_admin'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+            }`}
+          >
+            Super Admin ({students.filter((s) => s.role === 'super_admin' || s.role === 'admin').length})
           </button>
         </div>
       </div>

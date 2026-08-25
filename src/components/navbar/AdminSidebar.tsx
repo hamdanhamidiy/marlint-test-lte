@@ -9,6 +9,7 @@ import {
   FileCheck2,
   KeyRound,
   Users,
+  GraduationCap,
   LogOut,
   ArrowLeft,
   Shield,
@@ -18,27 +19,37 @@ import { useAuth } from '@/lib/context/AuthContext';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isSuperAdmin, isInstructor } = useAuth();
 
-  const links = [
+  const isInstructorRole = profile?.role === 'instructor' || isInstructor;
+  const isSuperAdminRole = profile?.role === 'super_admin' || isSuperAdmin;
+
+  // Navigation Links
+  const baseLinks = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    ...(isSuperAdminRole
+      ? [{ name: 'Manajemen Instruktur', href: '/admin/instructors', icon: GraduationCap }]
+      : []),
+    { name: 'Data Siswa & Nilai', href: '/admin/students', icon: Users },
     { name: 'Bank Soal', href: '/admin/questions', icon: HelpCircle },
     { name: 'Kelola Ujian', href: '/admin/tests', icon: FileCheck2 },
     { name: 'Token Akses', href: '/admin/tokens', icon: KeyRound },
-    { name: 'Data Siswa', href: '/admin/students', icon: Users },
   ];
+
+  const badgeText = isSuperAdminRole ? 'SUPER ADMIN' : isInstructorRole ? 'INSTRUKTUR' : 'ADMIN';
+  const subtitleText = isSuperAdminRole ? 'Master Control' : isInstructorRole ? 'Instructor Portal' : 'Control Center';
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200/90 shadow-2xs flex flex-col justify-between p-5 shrink-0 min-h-screen select-none font-sans">
       <div className="space-y-6">
-        {/* Brand Logo with Official ADMIN Badge */}
+        {/* Brand Logo with Dynamic Badge */}
         <div className="px-2 pt-1 pb-1">
           <Logo
             size="md"
             showBadge={true}
-            badgeText="ADMIN"
+            badgeText={badgeText}
             showSubtitle={true}
-            subtitleText="Control Center"
+            subtitleText={subtitleText}
             href="/admin/dashboard"
           />
         </div>
@@ -46,12 +57,12 @@ export default function AdminSidebar() {
         {/* Section: MANAJEMEN SISTEM */}
         <div className="space-y-1">
           <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-2">
-            Manajemen Sistem
+            {isInstructorRole ? 'Modul Pengajaran & Ujian' : 'Manajemen Sistem'}
           </p>
           <nav className="space-y-1">
-            {links.map((item) => {
+            {baseLinks.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const isActive = pathname === item.href || (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
 
               return (
                 <Link
@@ -84,8 +95,22 @@ export default function AdminSidebar() {
 
         <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-2 shadow-2xs">
           <div className="min-w-0">
-            <p className="text-xs font-black text-slate-950 truncate">{profile?.full_name || 'Administrator'}</p>
-            <p className="text-[10px] text-[#EA580C] uppercase font-black tracking-wider">{profile?.role || 'Admin'}</p>
+            <p className="text-xs font-black text-slate-950 truncate">{profile?.full_name || 'Staff Marlins'}</p>
+            <p
+              className={`text-[10px] uppercase font-black tracking-wider ${
+                isSuperAdminRole
+                  ? 'text-purple-600'
+                  : isInstructorRole
+                  ? 'text-amber-600'
+                  : 'text-[#EA580C]'
+              }`}
+            >
+              {profile?.role === 'instructor'
+                ? 'Instruktur'
+                : profile?.role === 'super_admin'
+                ? 'Super Admin'
+                : profile?.role || 'Admin'}
+            </p>
           </div>
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 shrink-0" title="Online & Connected" />
         </div>

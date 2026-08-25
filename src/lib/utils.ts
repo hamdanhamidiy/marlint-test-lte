@@ -172,3 +172,95 @@ export function getLevelBadge(level: string): {
       };
   }
 }
+
+/**
+ * Deterministic Pseudo-Random Number Generator (PRNG) based on string seed.
+ * Produces consistent random sequences for a specific attempt/session ID.
+ */
+export function createSeededRandom(seedStr: string): () => number {
+  let h = 1779033703 ^ (seedStr || 'marlins').length;
+  for (let i = 0; i < (seedStr || 'marlins').length; i++) {
+    h = Math.imul(h ^ (seedStr || 'marlins').charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let a = h;
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Shuffles an array using Fisher-Yates algorithm and a custom PRNG.
+ */
+export function shuffleArrayWithSeed<T>(array: T[], rng: () => number): T[] {
+  if (!array || array.length <= 1) return [...(array || [])];
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
+ * Randomizes questions order and their internal multiple-choice options,
+ * dropdown options, draggable labels, and word arrangement lists per test session.
+ */
+export function randomizeTestQuestions(questions: any[], sessionKey: string): any[] {
+  if (!questions || !Array.isArray(questions) || questions.length === 0) return [];
+  const rng = createSeededRandom(sessionKey || `marlins-${Date.now()}`);
+
+  // 1. Shuffle the order of questions
+  const shuffledQuestions = shuffleArrayWithSeed(questions, rng);
+
+  // 2. Shuffle choices / options inside each question
+  return shuffledQuestions.map((q, idx) => {
+    const cloned = { ...q, order_number: idx + 1 };
+
+    // Multiple Choice / Audio Listening / Image Choice options
+    if (cloned.options && Array.isArray(cloned.options) && cloned.options.length > 1) {
+      cloned.options = shuffleArrayWithSeed(cloned.options, rng);
+    }
+
+    // Question Data sub-options
+    if (cloned.question_data && typeof cloned.question_data === 'object') {
+      const qData = { ...cloned.question_data };
+
+      // Sentence reorder word chips
+      if (qData.words && Array.isArray(qData.words) && qData.words.length > 1) {
+        qData.words = shuffleArrayWithSeed(qData.words, rng);
+      }
+
+      // Drag and drop labels pool
+      if (qData.labels && Array.isArray(qData.labels) && qData.labels.length > 1) {
+        qData.labels = shuffleArrayWithSeed(qData.labels, rng);
+      }
+
+      // Paragraph title match dropdown options
+      if (qData.titles && Array.isArray(qData.titles) && qData.titles.length > 1) {
+        qData.titles = shuffleArrayWithSeed(qData.titles, rng);
+      }
+
+      // Gap fill choices per blank
+      if (qData.gaps && Array.isArray(qData.gaps)) {
+        qData.gaps = qData.gaps.map((gap: any) => {
+          if (gap && gap.options && Array.isArray(gap.options) && gap.options.length > 1) {
+            return {
+              ...gap,
+              options: shuffleArrayWithSeed(gap.options, rng),
+            };
+          }
+          return gap;
+        });
+      }
+
+      cloned.question_data = qData;
+    }
+
+    return cloned;
+  });
+}
+

@@ -89,14 +89,14 @@ export default function Logo({
               variant === 'light' ? 'text-white' : 'text-slate-950'
             } ${sizeClasses.text}`}
           >
-            Marlins<span className="text-[#0284C7]">Test</span>
+            Marlins<span className="text-[#EA580C]">Test</span>
           </span>
 
           {showBadge && (
             <span
               className={`font-mono font-black uppercase tracking-wider rounded-md ${sizeClasses.badge} ${
                 variant === 'light'
-                  ? 'bg-white/20 text-white'
+                  ? 'bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/20'
                   : 'bg-orange-50 text-[#C2410C] border border-orange-200/90 shadow-2xs'
               }`}
             >

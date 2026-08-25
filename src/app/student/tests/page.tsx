@@ -40,16 +40,32 @@ export default function StudentTestsPage() {
         }
 
         if (user) {
-          const { data: entData } = await supabase
-            .from('test_entitlements')
-            .select('test_number')
-            .eq('user_id', user.id)
-            .eq('is_active', true);
+          const entSet = new Set<number>();
+          try {
+            const { data: entData } = await supabase
+              .from('test_entitlements')
+              .select('test_number')
+              .eq('user_id', user.id)
+              .eq('is_active', true);
 
-          if (entData) {
-            const entSet = new Set<number>(entData.map((e) => e.test_number));
-            setEntitlements(entSet);
+            if (entData) {
+              entData.forEach((e) => entSet.add(e.test_number));
+            }
+          } catch (e) {}
+
+          if (typeof window !== 'undefined') {
+            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
+            if (localEnt) {
+              try {
+                const arr = JSON.parse(localEnt);
+                if (Array.isArray(arr)) {
+                  arr.forEach((num) => entSet.add(Number(num)));
+                }
+              } catch (e) {}
+            }
           }
+
+          setEntitlements(entSet);
         }
       } catch (err) {
         console.error('Error loading tests:', err);

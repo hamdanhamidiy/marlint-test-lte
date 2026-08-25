@@ -229,21 +229,6 @@ export default function StudentDashboardPage() {
             </div>
           </div>
 
-          {/* Bottom Info Strip */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>Simulasi Soal Interaktif Marlins • Audio VHF Anjungan Kapal • Sertifikasi Digital</span>
-            </div>
-            <Link
-              href="/student/test/1"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors"
-            >
-              <span>Mulai Ujian Langsung</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
         </div>
 
         {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}

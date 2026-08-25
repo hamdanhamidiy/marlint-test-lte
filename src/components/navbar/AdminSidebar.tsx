@@ -50,12 +50,11 @@ export default function AdminSidebar({
   const sidebarContent = (
     <aside className="w-64 bg-white border-r border-slate-200/90 shadow-2xs flex flex-col justify-between p-5 select-none font-sans h-full overflow-y-auto">
       <div className="space-y-6">
-        {/* Brand Logo with Dynamic Badge & Mobile Close Button */}
+        {/* Brand Logo & Mobile Close Button */}
         <div className="flex items-center justify-between px-2 pt-1 pb-1">
           <Logo
             size="md"
-            showBadge={true}
-            badgeText={badgeText}
+            showBadge={false}
             showSubtitle={true}
             subtitleText={subtitleText}
             href="/admin/dashboard"

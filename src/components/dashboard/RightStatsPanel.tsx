@@ -38,11 +38,11 @@ export default function RightStatsPanel({
   ];
 
   return (
-    <aside className="w-full lg:w-80 bg-white rounded-[28px] p-5 sm:p-6 border border-slate-200/90 space-y-5 select-none shrink-0 shadow-2xs">
+    <aside className="w-full lg:w-80 bg-white rounded-[26px] p-4.5 sm:p-5 border border-slate-200/90 space-y-4 select-none shrink-0 shadow-2xs">
       {/* User Profile Card Summary */}
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] p-0.5 shadow-xs flex items-center justify-center shrink-0">
-          <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-base overflow-hidden">
+      <div className="flex items-center gap-3 pb-3.5 border-b border-slate-100">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] p-0.5 shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-sm overflow-hidden">
             {profile?.photo_url ? (
               <img
                 src={profile.photo_url}
@@ -73,16 +73,16 @@ export default function RightStatsPanel({
       </div>
 
       {/* Bar Chart Widget (Kompetensi Bahasa Inggris Maritim) */}
-      <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 space-y-3.5">
+      <div className="bg-[#F8FAFC] rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-slate-800 tracking-tight">Kompetensi Maritim</span>
-          <span className="text-xs text-[#C2410C] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200 shadow-2xs">
+          <span className="text-xs text-[#C2410C] font-bold px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 shadow-2xs">
             {scoreAverage}% Rata-rata
           </span>
         </div>
 
         {/* Dynamic Visual Bar Chart with Clean Gradients */}
-        <div className="h-24 flex items-end justify-between px-1.5 pt-2">
+        <div className="h-22 flex items-end justify-between px-1.5 pt-1.5">
           <div className="w-full flex items-end justify-around h-full gap-2">
             {chartBars.map((bar, idx) => (
               <div
@@ -97,7 +97,7 @@ export default function RightStatsPanel({
 
                 {/* Animated colored bar */}
                 <div
-                  className={`w-full max-w-[28px] rounded-t-lg transition-all duration-300 group-hover:scale-105 cursor-pointer shadow-2xs ${bar.color}`}
+                  className={`w-full max-w-[26px] rounded-t-lg transition-all duration-300 group-hover:scale-105 cursor-pointer shadow-2xs ${bar.color}`}
                   style={{ height: `${bar.height}%` }}
                 />
               </div>
@@ -106,7 +106,7 @@ export default function RightStatsPanel({
         </div>
 
         {/* X-axis competency labels */}
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-2 border-t border-slate-200/60">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1 pt-1.5 border-t border-slate-200/60">
           <span className="text-center flex-1">Grammar</span>
           <span className="text-center flex-1">Listen</span>
           <span className="text-center flex-1">Vocab</span>
@@ -116,7 +116,7 @@ export default function RightStatsPanel({
       </div>
 
       {/* Sertifikasi & Standar Maritim Section */}
-      <div className="space-y-3.5 pt-1">
+      <div className="space-y-3 pt-0.5">
         <div className="flex items-center justify-between">
           <h3 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider">
             Status Sertifikasi
@@ -130,10 +130,10 @@ export default function RightStatsPanel({
         </div>
 
         {/* CEFR & STCW Competency Card */}
-        <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 space-y-3">
+        <div className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#EA580C] flex items-center justify-center text-xs">
+              <div className="w-7 h-7 rounded-xl bg-amber-50 text-[#EA580C] flex items-center justify-center text-xs">
                 <Award className="w-4 h-4" />
               </div>
               <div>
@@ -146,17 +146,17 @@ export default function RightStatsPanel({
             </span>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
+          <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 text-xs">
             <span className="text-slate-500 text-[11px]">Jenjang Bahasa:</span>
             <span className="font-bold text-[#0284C7]">Level {levelCode} Operational</span>
           </div>
         </div>
 
         {/* Action Links */}
-        <div className="space-y-2 pt-1">
+        <div className="space-y-2 pt-0.5">
           <Link
             href="/student/level"
-            className="w-full flex items-center justify-between px-4 py-3 rounded-full border border-slate-200/90 hover:bg-sky-50/50 hover:border-[#0284C7] transition-all text-xs font-bold text-slate-800 shadow-2xs group"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full border border-slate-200/90 hover:bg-sky-50/50 hover:border-[#0284C7] transition-all text-xs font-bold text-slate-800 shadow-2xs group"
           >
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#0284C7]" />
@@ -167,7 +167,7 @@ export default function RightStatsPanel({
 
           <Link
             href="/student/articles"
-            className="w-full flex items-center justify-center py-3 rounded-full text-xs font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full flex items-center justify-center py-2.5 rounded-full text-xs font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Buka Modul Materi IMO SMCP</span>
           </Link>

@@ -85,7 +85,7 @@ export default function StudentLayout({
           </div>
 
           {/* Page Content */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-6.5">
+          <main className="flex-1 p-4 sm:p-5 lg:p-5.5">
             {children}
           </main>
         </div>

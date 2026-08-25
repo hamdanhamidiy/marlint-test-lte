@@ -178,19 +178,19 @@ export default function StudentDashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-start">
+    <div className="flex flex-col lg:flex-row gap-5 items-start">
       {/* Center Main Content Area */}
-      <div className="flex-1 w-full space-y-6 min-w-0">
+      <div className="flex-1 w-full space-y-4 sm:space-y-4.5 min-w-0">
 
         {/* Modern Clean Executive Maritime Hero Card */}
-        <div className="bg-white rounded-[28px] border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4 relative overflow-hidden">
+        <div className="bg-white rounded-[26px] border border-slate-200/90 p-4.5 sm:p-5.5 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-3 relative overflow-hidden">
           
           {/* Top Ambient Signature Gradient Line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
 
           {/* Top Row: Official Status & Quick Metric Badges */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700">
+          <div className="flex items-center justify-between gap-2.5 flex-wrap">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
               <span className="font-bold text-slate-900">Platform Resmi</span>
               <span className="text-slate-300">•</span>
@@ -198,16 +198,16 @@ export default function StudentDashboardPage() {
             </div>
 
             {/* Quick Metrics Strip */}
-            <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-slate-700">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
+            <div className="flex items-center gap-1.5 flex-wrap text-xs font-bold text-slate-700">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs">
                 <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
                 <span>Stopwatch</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs">
                 <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                 <span>60 Soal</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-950 text-white shadow-xs">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950 text-white shadow-xs">
                 <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 <span>Passing 70%</span>
               </div>
@@ -215,13 +215,13 @@ export default function StudentDashboardPage() {
           </div>
 
           {/* Center Row: Main Greeting & Typewriter Subtitle */}
-          <div className="space-y-1 pt-1">
-            <h1 className="font-heading text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight leading-tight">
-              Halo, {greetingName}! <span className="animate-wave inline-block text-2xl sm:text-[28px] ml-1">👋</span>
+          <div className="space-y-0.5 pt-0.5">
+            <h1 className="font-heading text-2xl sm:text-[26px] font-extrabold text-slate-950 tracking-tight leading-tight">
+              Halo, {greetingName}! <span className="animate-wave inline-block text-2xl sm:text-[26px] ml-1">👋</span>
             </h1>
 
             {/* Dynamic Typewriter Subtitle */}
-            <div className="min-h-[24px] flex items-center">
+            <div className="min-h-[22px] flex items-center">
               <p className="text-[13px] sm:text-sm text-slate-600 font-medium leading-normal max-w-3xl">
                 <span>{currentText}</span>
                 <span className="animate-cursor font-bold text-[#EA580C] text-sm ml-0.5">|</span>
@@ -232,10 +232,10 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Paket Ujian Marlins</span>
                 <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200 shadow-2xs">
                   Ready
@@ -254,7 +254,7 @@ export default function StudentDashboardPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
             {loading ? (
               <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
                 <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
@@ -270,14 +270,14 @@ export default function StudentDashboardPage() {
                 return (
                   <div
                     key={test.id}
-                    className={`bg-white rounded-[26px] p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
+                    className={`bg-white rounded-[26px] p-4.5 sm:p-5 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
                       isTest1
-                        ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.06)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
+                        ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.06)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-0.5'
                         : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-400 hover:-translate-y-0.5'
                     }`}
                   >
                     {/* Top Tag & Access Indicator */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
@@ -317,9 +317,9 @@ export default function StudentDashboardPage() {
                     </div>
 
                     {/* Details Row (Specs) & CTA Button */}
-                    <div className="pt-4 mt-4 border-t border-slate-100 space-y-3.5">
+                    <div className="pt-3 mt-3 border-t border-slate-100 space-y-3">
                       {/* Inline specs with clean typography */}
-                      <div className="grid grid-cols-3 gap-1.5 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
+                      <div className="grid grid-cols-3 gap-1.5 py-1.5 px-2 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
                           <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
@@ -337,7 +337,7 @@ export default function StudentDashboardPage() {
                       {/* Action Button: Primary Blue for Test 1, Deep Black for Test 2 & 3 */}
                       <Link
                         href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                        className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
+                        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
                           hasAccess
                             ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20'
                             : 'bg-black hover:bg-neutral-800 text-white shadow-slate-900/10'
@@ -355,7 +355,7 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Riwayat Hasil & Modul Pembelajaran */}
-        <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-slate-200/90 space-y-4 shadow-2xs">
+        <div className="bg-white rounded-[26px] p-5 sm:p-5.5 border border-slate-200/90 space-y-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">

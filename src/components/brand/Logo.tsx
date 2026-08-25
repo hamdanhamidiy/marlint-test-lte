@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -18,7 +19,7 @@ export default function Logo({
   showBadge = false,
   badgeText = 'OFFICIAL',
   showSubtitle = false,
-  subtitleText = 'Maritime English Platform',
+  subtitleText = 'Hotel Marine Training Center',
   variant = 'dark',
   href = '/',
   className = '',
@@ -26,29 +27,25 @@ export default function Logo({
 }: LogoProps) {
   const sizeClasses = {
     sm: {
-      box: 'w-7 h-7 rounded-xl',
-      svg: 'w-4 h-4',
+      imgBox: 'w-8 h-8',
       text: 'text-sm',
       badge: 'text-[9px] px-1.5 py-0.5',
       subtitle: 'text-[9px]',
     },
     md: {
-      box: 'w-9 h-9 rounded-2xl',
-      svg: 'w-5 h-5',
+      imgBox: 'w-10 h-10',
       text: 'text-base sm:text-lg',
       badge: 'text-[10px] px-2 py-0.5',
       subtitle: 'text-[10px]',
     },
     lg: {
-      box: 'w-11 h-11 rounded-2xl',
-      svg: 'w-6 h-6',
+      imgBox: 'w-12 h-12',
       text: 'text-xl sm:text-2xl',
       badge: 'text-xs px-2.5 py-0.5',
       subtitle: 'text-xs',
     },
     xl: {
-      box: 'w-14 h-14 rounded-3xl',
-      svg: 'w-8 h-8',
+      imgBox: 'w-16 h-16',
       text: 'text-2xl sm:text-3xl',
       badge: 'text-xs px-3 py-1',
       subtitle: 'text-sm',
@@ -57,46 +54,33 @@ export default function Logo({
 
   const content = (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>
-      {/* Modern Minimalist Nautical Geometric Icon */}
+      {/* Official LTE Cruise Logo */}
       <div
-        className={`${sizeClasses.box} relative flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20 bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-[#0F172A] transition-transform duration-300 hover:scale-105`}
+        className={`${sizeClasses.imgBox} relative flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 drop-shadow-xs`}
       >
-        <svg
-          className={`${sizeClasses.svg} text-white`}
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Subtle Outer Nautical Ring */}
-          <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.2" strokeWidth="1.5" />
-          
-          {/* Modern 4-point Star / Compass Navigation Sparkle */}
-          <path
-            d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4772 12 22C12 16.4772 16.4772 12 22 12C16.4772 12 12 7.52285 12 2Z"
-            fill="white"
-          />
-          
-          {/* Inner Nautical Center Ring */}
-          <circle cx="12" cy="12" r="2.2" fill="#EA580C" />
-        </svg>
+        <img
+          src="/images/lte-cruise-logo.png"
+          alt="LTE Cruise - Hotel Marine Training Center"
+          className="w-full h-full object-contain filter"
+        />
       </div>
 
       {/* Clean Modern Typography */}
       <div className={`flex flex-col ${hideTextOnMobile ? 'hidden sm:flex' : ''}`}>
         <div className="flex items-center gap-1.5 leading-none">
           <span
-            className={`font-heading font-black tracking-tight ${
+            className={`font-heading font-extrabold tracking-tight ${
               variant === 'light' ? 'text-white' : 'text-slate-950'
             } ${sizeClasses.text}`}
           >
-            Marlins<span className="text-[#EA580C]">Test</span>
+            LTE <span className="text-[#0284C7]">Cruise</span>
           </span>
 
           {showBadge && (
             <span
               className={`font-mono font-black uppercase tracking-wider rounded-md ${sizeClasses.badge} ${
                 variant === 'light'
-                  ? 'bg-[#EA580C]/15 text-[#EA580C] border border-[#EA580C]/20'
+                  ? 'bg-sky-500/20 text-[#38BDF8] border border-sky-400/30'
                   : 'bg-orange-50 text-[#C2410C] border border-orange-200/90 shadow-2xs'
               }`}
             >
@@ -107,7 +91,7 @@ export default function Logo({
 
         {showSubtitle && (
           <p
-            className={`font-semibold tracking-tight mt-0.5 ${
+            className={`font-bold tracking-tight mt-0.5 ${
               variant === 'light' ? 'text-slate-300' : 'text-slate-500'
             } ${sizeClasses.subtitle}`}
           >

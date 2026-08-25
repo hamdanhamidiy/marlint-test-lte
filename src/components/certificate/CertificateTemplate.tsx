@@ -55,14 +55,14 @@ export default function CertificateTemplate({
 
         {/* Header: Logo & Title */}
         <div className="relative z-10 text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0A2540] text-[#C5A059] mb-4 shadow-md">
-            <Anchor className="w-9 h-9" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white p-2 mb-3 shadow-md border border-slate-100 mx-auto">
+            <img src="/images/lte-cruise-logo.png" alt="LTE Cruise Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase tracking-widest text-[#0A2540]">
             Certificate of Proficiency
           </h1>
           <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-[#C5A059] mt-1">
-            MARLINS MARITIME ENGLISH LANGUAGE TEST FOR SEAFARERS
+            LTE CRUISE • MARLINS MARITIME ENGLISH TEST
           </p>
         </div>
 

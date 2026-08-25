@@ -10,17 +10,13 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
-  Building2,
-  Layers,
-  Award,
   Unlock,
-  Check,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 
 function RedeemContent() {
   const searchParams = useSearchParams();
-  const { redeemToken, user } = useAuth();
+  const { redeemToken } = useAuth();
 
   const [tokenCode, setTokenCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,26 +36,26 @@ function RedeemContent() {
       if (res.success) {
         setStatus({
           type: 'success',
-          message: res.message || 'Token akses berhasil diaktivasi! Seluruh paket ujian telah terbuka.',
+          message: res.message || 'Token akses berhasil diaktivasi! Paket ujian Anda telah terbuka.',
         });
         setTokenCode('');
       } else {
         setStatus({
           type: 'error',
-          message: res.message || 'Token tidak valid, kedaluwarsa, atau sudah mencapai batas penggunaan.',
+          message: res.message || 'Kode token tidak valid, kedaluwarsa, atau sudah digunakan.',
         });
       }
     } catch (err: any) {
       setStatus({
         type: 'error',
-        message: err.message || 'Terjadi kesalahan sistem.',
+        message: err.message || 'Terjadi kesalahan sistem saat memproses token.',
       });
     } finally {
       setLoading(false);
     }
   };
 
-  // Auto-fill from URL query param
+  // Auto-fill from URL query param if present
   useEffect(() => {
     const qToken = searchParams.get('token') || searchParams.get('code');
     if (qToken) {
@@ -73,70 +69,77 @@ function RedeemContent() {
     executeRedeem(tokenCode);
   };
 
-  const handleFillSample = (sample: string) => {
-    setTokenCode(sample);
-  };
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6 font-sans pb-12">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 border border-amber-200 shadow-2xs">
-          <KeyRound className="w-6 h-6" />
-        </div>
-        <h1 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900">
-          Aktivasi Token Akses Ujian
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-          Masukkan kode voucher atau token lisensi resmi dari perusahaan pelayaran atau akademi maritim Anda untuk membuka paket ujian Marlins.
-        </p>
-      </div>
+    <div className="max-w-[480px] mx-auto space-y-6 font-sans py-4 sm:py-8">
+      {/* Main Clean Card */}
+      <div className="bg-white p-6 sm:p-8 rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6 relative overflow-hidden text-center">
+        
+        {/* Subtle Top Ambient Gradient Line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
 
-      {/* Form Card */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Icon & Title */}
+        <div className="space-y-2 pt-1">
+          <div className="w-13 h-13 rounded-2xl bg-amber-50 text-[#EA580C] border border-amber-200/70 flex items-center justify-center mx-auto shadow-2xs">
+            <KeyRound className="w-6 h-6" />
+          </div>
+          <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Aktivasi Token Ujian
+          </h1>
+          <p className="text-xs sm:text-[13px] text-slate-500 max-w-sm mx-auto leading-relaxed">
+            Masukkan kode lisensi atau voucher untuk membuka akses paket ujian Marlins.
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Kode Token Akses:
+            <label className="block text-xs font-bold text-slate-700 text-center uppercase tracking-wider">
+              Kode Token Lisensi
             </label>
             <div className="relative">
-              <KeyRound className="w-5 h-5 text-amber-600 absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Contoh: MLT-SAMPLE-FULL-ACCESS"
+                placeholder="CONTOH: MLT-XXXX-XXXX"
                 value={tokenCode}
                 onChange={(e) => setTokenCode(e.target.value.toUpperCase())}
                 required
-                className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 font-mono font-bold text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500 uppercase tracking-wider"
+                className="w-full px-4 py-3 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 font-mono font-bold text-sm sm:text-base text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 uppercase tracking-widest text-center transition-all shadow-inner"
               />
             </div>
-            <p className="text-xs text-slate-400">
-              Format kode diawali dengan prefix <strong className="text-amber-800 font-bold">MLT-</strong> diikuti karakter alfanumerik.
-            </p>
           </div>
 
-          {/* Status feedback */}
+          {/* Status Feedback Alerts */}
           {status.type === 'success' && (
             <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-2 font-medium animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center gap-2.5 font-bold text-emerald-800">
-                <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+              <div className="flex items-center gap-2 font-bold text-emerald-800">
+                <CheckCircle2 className="w-4.5 h-4.5 shrink-0 text-emerald-600" />
                 <span>Aktivasi Berhasil!</span>
               </div>
-              <p className="text-emerald-700 pl-7 leading-relaxed">{status.message}</p>
+              <p className="text-emerald-700 leading-relaxed">{status.message}</p>
+              <div className="pt-1">
+                <Link
+                  href="/student/tests"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 underline underline-offset-2"
+                >
+                  <Unlock className="w-3.5 h-3.5" />
+                  <span>Buka Halaman Ujian Sekarang &rarr;</span>
+                </Link>
+              </div>
             </div>
           )}
 
           {status.type === 'error' && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center gap-2.5 font-medium animate-in fade-in zoom-in-95 duration-150">
-              <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center gap-2.5 font-medium animate-in fade-in zoom-in-95 duration-150">
+              <AlertCircle className="w-4.5 h-4.5 shrink-0 text-rose-600" />
               <span>{status.message}</span>
             </div>
           )}
 
+          {/* Submit Button (Antigravity Solid Black Pill) */}
           <button
             type="submit"
             disabled={loading || !tokenCode.trim()}
-            className="w-full py-3 rounded-xl font-semibold text-xs text-white bg-slate-900 hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+            className="w-full py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98"
           >
             {loading ? (
               <>
@@ -146,68 +149,17 @@ function RedeemContent() {
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>Klaim & Aktifkan Paket Ujian</span>
+                <span>Klaim & Aktifkan Paket</span>
               </>
             )}
           </button>
         </form>
 
-        {/* Action Button after Success */}
-        {status.type === 'success' && (
-          <div className="pt-2 text-center">
-            <Link
-              href="/student/tests"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#5046E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition-colors"
-            >
-              <Unlock className="w-4 h-4" />
-              <span>Buka Katalog Ujian Sekarang</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
-
-        {/* Preset Sample Voucher Codes */}
-        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-          <span className="font-bold text-slate-800 text-[10px] uppercase tracking-wider block">
-            Voucher Sampel Pengujian (Klik untuk Pasang):
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleFillSample('MLT-SAMPLE-FULL-ACCESS')}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors text-left cursor-pointer space-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-slate-900 text-xs">MLT-SAMPLE-FULL-ACCESS</span>
-                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">All 10 Tests</span>
-              </div>
-              <p className="text-[11px] text-slate-500">Voucher Akses Penuh Seluruh 10 Paket Ujian</p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleFillSample('MLT-MARITIME-2026')}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors text-left cursor-pointer space-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-slate-900 text-xs">MLT-MARITIME-2026</span>
-                <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">Akademi</span>
-              </div>
-              <p className="text-[11px] text-slate-500">Lisensi Ujian Taruna Angkatan 2026</p>
-            </button>
-          </div>
+        {/* Subtle Security Badge Footer */}
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Akses ujian otomatis aktif permanen setelah aktivasi</span>
         </div>
-      </div>
-
-      {/* Info Card */}
-      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1.5">
-        <p className="font-bold text-slate-800 flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Ketentuan Hak Akses Voucher:</span>
-        </p>
-        <p className="text-slate-500 leading-relaxed">
-          Setiap token akses yang berhasil diaktivasi akan membuka hak pengerjaan ujian secara permanen pada akun pelaut Anda. Sesi ujian dapat diulang dan hasil kelulusan akan diterbitkan dalam sertifikat resmi.
-        </p>
       </div>
     </div>
   );
@@ -218,7 +170,7 @@ export default function RedeemTokenPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center p-12">
-          <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-sky-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

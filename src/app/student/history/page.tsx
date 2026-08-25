@@ -169,40 +169,48 @@ export default function StudentHistoryPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>Rekam Jejak Evaluasi Resmi • Standar IMO STCW</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/70 text-slate-700 text-xs font-semibold mb-2">
+            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse" />
+            <span className="font-bold text-slate-900">Rekam Jejak Resmi</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Standar IMO STCW</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
             Riwayat Ujian Marlins Saya
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal leading-relaxed">
             Catatan rekapitulasi skor kompetensi, analisis sub-kategori, dan hasil evaluasi Bahasa Inggris Maritim Anda.
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-xs self-start md:self-auto">
+        {/* Filter Pills - Antigravity Style */}
+        <div className="flex items-center gap-1.5 bg-[#F1F3F5] p-1 rounded-full border border-slate-200/60 shadow-2xs self-start md:self-auto">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeFilter === 'all' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+              activeFilter === 'all'
+                ? 'bg-black text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/60'
             }`}
           >
             Semua ({totalSessions})
           </button>
           <button
             onClick={() => setActiveFilter('passed')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeFilter === 'passed' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+              activeFilter === 'passed'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/60'
             }`}
           >
             Lulus ({passedSessions})
           </button>
           <button
             onClick={() => setActiveFilter('failed')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeFilter === 'failed' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+              activeFilter === 'failed'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/60'
             }`}
           >
             Remedial ({totalSessions - passedSessions})
@@ -210,74 +218,92 @@ export default function StudentHistoryPage() {
         </div>
       </div>
 
-      {/* 4 Stats Cards */}
+      {/* 4 Clean Minimalist Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Sesi</span>
-            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-700">
-              <RotateCcw className="w-4 h-4" />
-            </div>
+        {/* Card 1: Total Sesi */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-colors">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Total Sesi
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-2xl sm:text-3xl font-bold text-slate-900">
+              {totalSessions}
+            </span>
+            <span className="text-xs text-slate-400 font-medium">sesi</span>
           </div>
-          <p className="font-heading text-2xl font-bold text-slate-900">{totalSessions}</p>
-          <p className="text-xs text-slate-500 font-medium">Sesi Ujian Resmi</p>
+          <p className="text-[11px] text-slate-500 mt-1 font-normal">Sesi Ujian Resmi</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Rata-Rata Skor</span>
-            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-700">
-              <TrendingUp className="w-4 h-4" />
-            </div>
+        {/* Card 2: Rata-Rata Skor */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-colors">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Rata-Rata Skor
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-2xl sm:text-3xl font-bold text-[#0284C7]">
+              {avgScore}%
+            </span>
+            <span className="text-xs text-slate-400 font-medium">rata-rata</span>
           </div>
-          <p className="font-heading text-2xl font-bold text-slate-900">{avgScore}%</p>
-          <p className="text-xs text-slate-500 font-medium">Standar Passing 70%</p>
+          <p className="text-[11px] text-slate-500 mt-1 font-normal">Standar Passing 70%</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Tingkat Kelulusan</span>
-            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
+        {/* Card 3: Tingkat Kelulusan */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-colors">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Tingkat Kelulusan
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-2xl sm:text-3xl font-bold text-emerald-600">
+              {passRate}%
+            </span>
+            <span className="text-xs text-slate-400 font-medium">lulus</span>
           </div>
-          <p className="font-heading text-2xl font-bold text-emerald-600">{passRate}%</p>
-          <p className="text-xs text-slate-500 font-medium">{passedSessions} Tes Berhasil Lulus</p>
+          <p className="text-[11px] text-slate-500 mt-1 font-normal">{passedSessions} Tes Berhasil Lulus</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Poin Kemahiran</span>
-            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-amber-500">
-              <Award className="w-4 h-4" />
-            </div>
+        {/* Card 4: Poin Kemahiran */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-slate-300 transition-colors">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+            Poin Kemahiran
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-2xl sm:text-3xl font-bold text-[#EA580C]">
+              {profile?.total_points || 0}
+            </span>
+            <span className="text-xs text-slate-400 font-medium">XP</span>
           </div>
-          <p className="font-heading text-2xl font-bold text-slate-900">{profile?.total_points || 0} XP</p>
-          <p className="text-xs text-slate-500 font-medium">Standar Level {profile?.level_code || 'B1'}</p>
+          <p className="text-[11px] text-slate-500 mt-1 font-normal">Standar Level {profile?.level_code || 'B1'}</p>
         </div>
       </div>
 
       {/* History List */}
       <div className="space-y-3">
         {loading ? (
-          <div className="p-12 text-center bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs">
-            <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p>Memuat rekam jejak ujian...</p>
+          <div className="p-12 text-center bg-white border border-slate-200/80 rounded-2xl text-slate-500 text-xs shadow-2xs">
+            <div className="w-7 h-7 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <p className="font-medium">Memuat rekam jejak ujian...</p>
           </div>
         ) : filteredResults.length === 0 ? (
-          <div className="p-12 text-center bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs space-y-3">
-            <BookOpen className="w-10 h-10 text-slate-300 mx-auto" />
-            <p className="font-bold text-slate-800 text-base">Belum Ada Riwayat Ujian</p>
-            <p className="text-slate-500 max-w-sm mx-auto">
-              Anda belum memiliki sesi ujian yang tercatat. Silakan mulai salah satu dari 10 Paket Ujian Marlins.
-            </p>
-            <Link
-              href="/student/tests"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors"
-            >
-              <span>Mulai Ujian Sekarang</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          <div className="p-12 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-500 text-xs space-y-4 shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto text-slate-400">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <p className="font-bold text-slate-900 text-base">Belum Ada Riwayat Ujian</p>
+              <p className="text-slate-500 max-w-sm mx-auto text-xs leading-relaxed font-normal">
+                Anda belum memiliki sesi ujian yang tercatat. Silakan mulai salah satu dari 10 Paket Ujian Marlins.
+              </p>
+            </div>
+            <div>
+              <Link
+                href="/student/tests"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-xs shadow-xs transition-all hover:scale-[1.02]"
+              >
+                <span>Mulai Ujian Sekarang</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         ) : (
           filteredResults.map((item) => (
@@ -311,7 +337,7 @@ export default function StudentHistoryPage() {
                     >
                       {item.is_passed ? 'Lulus' : 'Remedial'}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-mono text-[10px] font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] font-mono text-[10px] font-bold border border-sky-200/80">
                       {item.level}
                     </span>
                   </div>
@@ -336,15 +362,15 @@ export default function StudentHistoryPage() {
               <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                 <Link
                   href={`/student/test/review/${item.attempt_id}`}
-                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                  <BookOpen className="w-3.5 h-3.5 text-[#0284C7]" />
                   <span>Review Jawaban</span>
                 </Link>
 
                 <Link
                   href={`/student/test/result/${item.attempt_id}`}
-                  className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 hover:scale-[1.02]"
                 >
                   <span>Analisis Nilai</span>
                   <ArrowRight className="w-3.5 h-3.5" />

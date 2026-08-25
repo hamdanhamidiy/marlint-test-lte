@@ -149,24 +149,22 @@ export default function AdminTokensPage() {
   const totalUsedSessions = tokens.reduce((acc, curr) => acc + (curr.used_count || 0), 0);
 
   return (
-    <div className="space-y-7 min-w-0 font-sans pb-12">
+    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-12 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-3">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900">Manajemen Voucher & Token</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Access Generator</span>
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+            <span className="font-bold text-slate-900">Manajemen Voucher & Token</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Access Generator</span>
           </div>
 
-          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
             Access Token Generator
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
             Terbitkan kode voucher ujian Marlins untuk instansi maritim, akademi pelayaran, dan siswa khusus secara realtime.
           </p>
         </div>
@@ -176,16 +174,48 @@ export default function AdminTokensPage() {
             setGeneratedCode(null);
             setModalOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs text-white bg-[#EA580C] hover:bg-[#C2410C] shadow-md shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-[13px] text-white bg-[#EA580C] hover:bg-[#C2410C] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Terbitkan Token Baru</span>
         </button>
       </div>
 
+      {/* KPI Overview Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Voucher Diterbitkan</span>
+          <div className="flex items-center justify-between">
+            <span className="text-2xl sm:text-3xl font-extrabold text-slate-950 font-mono">{totalIssued}</span>
+            <div className="w-9 h-9 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center shadow-2xs">
+              <KeyRound className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Token Aktif</span>
+          <div className="flex items-center justify-between">
+            <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">{totalActiveTokens}</span>
+            <div className="w-9 h-9 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-2xs">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-[#0369A1] text-xs font-bold uppercase tracking-wider">Total Sesi Ujian Terpakai</span>
+          <div className="flex items-center justify-between">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#0284C7] font-mono">{totalUsedSessions}</span>
+            <div className="w-9 h-9 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center shadow-2xs">
+              <Users className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
@@ -193,19 +223,19 @@ export default function AdminTokensPage() {
             placeholder="Cari prefix token, nama instansi, atau keterangan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
           />
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70 shrink-0 overflow-x-auto">
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               statusFilter === 'all'
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                ? 'bg-black text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Semua ({tokens.length})
@@ -213,10 +243,10 @@ export default function AdminTokensPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('active')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               statusFilter === 'active'
-                ? 'bg-[#0284C7] text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                ? 'bg-black text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Aktif ({totalActiveTokens})
@@ -224,10 +254,10 @@ export default function AdminTokensPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('exhausted')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               statusFilter === 'exhausted'
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                ? 'bg-black text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Habis ({tokens.length - totalActiveTokens})
@@ -237,14 +267,14 @@ export default function AdminTokensPage() {
 
       {/* Tokens List Cards */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2">
           <div className="w-8 h-8 rounded-full bg-orange-50 text-[#EA580C] flex items-center justify-center mx-auto animate-pulse">
             <KeyRound className="w-4 h-4" />
           </div>
-          <p className="font-semibold text-slate-700">Memuat daftar token akses...</p>
+          <p className="font-bold text-slate-700">Memuat daftar token akses...</p>
         </div>
       ) : filteredTokens.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
           <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#EA580C] flex items-center justify-center mx-auto border border-orange-100">
             <KeyRound className="w-6 h-6" />
           </div>
@@ -264,7 +294,7 @@ export default function AdminTokensPage() {
             return (
               <div
                 key={tok.id}
-                className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-200 space-y-3.5 ${
+                className={`bg-white p-5 sm:p-6 rounded-[26px] border transition-all duration-200 space-y-3.5 ${
                   isExhausted
                     ? 'border-slate-200 bg-slate-50/50 opacity-75'
                     : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-slate-300'
@@ -278,7 +308,7 @@ export default function AdminTokensPage() {
                     </span>
 
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                      className={`px-3 py-1 rounded-full text-xs font-extrabold ${
                         isExhausted
                           ? 'bg-slate-200 text-slate-600'
                           : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
@@ -287,7 +317,7 @@ export default function AdminTokensPage() {
                       {isExhausted ? 'KUOTA HABIS' : 'AKTIF'}
                     </span>
 
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-[10px] font-bold text-slate-700 uppercase">
+                    <span className="px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-700 uppercase">
                       {tok.plan_type?.replace('_', ' ')}
                     </span>
                   </div>
@@ -296,7 +326,7 @@ export default function AdminTokensPage() {
                     <button
                       type="button"
                       onClick={() => setDeleteConfirmId(tok.id)}
-                      className="p-1.5 rounded-full text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer"
+                      className="p-2 rounded-full text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer shadow-2xs"
                       title="Hapus / Cabut Token Ini"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -306,17 +336,17 @@ export default function AdminTokensPage() {
 
                 {/* Middle Row: Description & Organization */}
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-slate-950">
+                  <p className="text-sm sm:text-base font-extrabold text-slate-950">
                     {tok.organization ? `Instansi: ${tok.organization}` : tok.description || 'Token Mandiri Siswa'}
                   </p>
                   {tok.description && tok.organization && (
-                    <p className="text-xs text-slate-500 font-medium">{tok.description}</p>
+                    <p className="text-xs sm:text-[13px] text-slate-500 font-medium">{tok.description}</p>
                   )}
                 </div>
 
                 {/* Bottom Row: Usage Progress Bar & Meta */}
                 <div className="pt-3 border-t border-slate-100 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+                  <div className="flex items-center justify-between text-xs sm:text-[13px] text-slate-500 font-medium">
                     <span>
                       Akses Paket: <strong className="text-slate-800 font-bold">s/d Paket #{tok.max_test_number}</strong>
                     </span>

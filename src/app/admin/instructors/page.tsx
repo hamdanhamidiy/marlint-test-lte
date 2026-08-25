@@ -320,18 +320,18 @@ export default function AdminInstructorsPage() {
   const teknikaCount = instructors.filter((i) => i.specialization === 'teknika').length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16">
+    <div className="space-y-6 sm:space-y-7 max-w-7xl mx-auto font-sans pb-16">
       {/* Header with Title and Add Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs">
             <Shield className="w-3.5 h-3.5" />
             <span>Hak Akses Super Administrator</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Manajemen Instruktur & Dosen Maritim
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-xs sm:text-[14px] text-slate-500 leading-relaxed max-w-2xl">
             Kelola data staf pengajar, nomor sertifikasi penguji IMO 6.09, hak akses bank soal, dan status keaktifan instruktur.
           </p>
         </div>
@@ -339,7 +339,7 @@ export default function AdminInstructorsPage() {
         <button
           type="button"
           onClick={handleOpenAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Instruktur Baru</span>
@@ -347,69 +347,69 @@ export default function AdminInstructorsPage() {
       </div>
 
       {/* 4 Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Instruktur</span>
-          <p className="font-heading text-2xl font-bold text-slate-900">{totalCount}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Total Instruktur</span>
+          <p className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono">{totalCount}</p>
           <p className="text-xs text-slate-500 font-medium">Staf Pengajar Terdaftar</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Instruktur Aktif</span>
-          <p className="font-heading text-2xl font-bold text-emerald-600">{activeCount}</p>
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">Instruktur Aktif</span>
+          <p className="font-heading text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">{activeCount}</p>
           <p className="text-xs text-slate-500 font-medium">Memiliki Hak Kelola Soal</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">Bidang Nautika & Deck</span>
-          <p className="font-heading text-2xl font-bold text-[#5046E5]">{nautikaCount}</p>
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0369A1]">Bidang Nautika & Deck</span>
+          <p className="font-heading text-2xl sm:text-3xl font-extrabold text-[#0284C7] font-mono">{nautikaCount}</p>
           <p className="text-xs text-slate-500 font-medium">Master Mariner / Watchkeeper</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700">Bidang Teknika & Engine</span>
-          <p className="font-heading text-2xl font-bold text-amber-600">{teknikaCount}</p>
+        <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-1 hover:border-slate-300 transition-all">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#C2410C]">Bidang Teknika & Engine</span>
+          <p className="font-heading text-2xl sm:text-3xl font-extrabold text-[#EA580C] font-mono">{teknikaCount}</p>
           <p className="text-xs text-slate-500 font-medium">Chief / Marine Engineer</p>
         </div>
       </div>
 
       {/* Toolbar: Search, Status Filter, Specialization Filter */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-[280px]">
+      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-wrap items-center justify-between gap-3.5">
+        <div className="flex items-center gap-2.5 flex-wrap flex-1 min-w-[280px]">
           {/* Search Box */}
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Cari nama, email, no. sertifikat..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#5046E5]"
+              className="w-full pl-10 pr-3.5 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all"
             />
           </div>
 
           {/* Status Filter */}
-          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                statusFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                statusFilter === 'all' ? 'bg-black text-white shadow-xs' : 'text-slate-600 hover:text-black hover:bg-white/70'
               }`}
             >
               Semua ({totalCount})
             </button>
             <button
               onClick={() => setStatusFilter('active')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-black hover:bg-white/70'
               }`}
             >
               Aktif ({activeCount})
             </button>
             <button
               onClick={() => setStatusFilter('inactive')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                statusFilter === 'inactive' ? 'bg-rose-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                statusFilter === 'inactive' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:text-black hover:bg-white/70'
               }`}
             >
               Nonaktif ({totalCount - activeCount})
@@ -419,11 +419,11 @@ export default function AdminInstructorsPage() {
 
         {/* Specialization Dropdown */}
         <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <Filter className="w-4 h-4 text-slate-400" />
           <select
             value={specFilter}
             onChange={(e) => setSpecFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#5046E5]"
+            className="px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
           >
             <option value="all">Semua Spesialisasi</option>
             <option value="nautika">Nautika & Navigasi</option>
@@ -436,87 +436,87 @@ export default function AdminInstructorsPage() {
       </div>
 
       {/* Instructors List Grid / Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {loading ? (
-          <div className="col-span-full p-12 text-center bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs">
-            <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p>Memuat data instruktur...</p>
+          <div className="col-span-full p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-xs">
+            <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <p className="font-bold text-slate-700">Memuat data instruktur...</p>
           </div>
         ) : filteredInstructors.length === 0 ? (
-          <div className="col-span-full p-12 text-center bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs space-y-2">
+          <div className="col-span-full p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-xs space-y-2">
             <GraduationCap className="w-10 h-10 text-slate-300 mx-auto" />
-            <p className="font-bold text-slate-800 text-base">Tidak Ditemukan Instruktur</p>
-            <p className="text-slate-500">Coba sesuaikan kata kunci pencarian atau filter status di atas.</p>
+            <p className="font-extrabold text-slate-900 text-base">Tidak Ditemukan Instruktur</p>
+            <p className="text-slate-500 text-xs sm:text-[13px]">Coba sesuaikan kata kunci pencarian atau filter status di atas.</p>
           </div>
         ) : (
           filteredInstructors.map((inst) => (
             <div
               key={inst.id}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4"
+              className="bg-white rounded-[26px] border border-slate-200/90 p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col justify-between space-y-4 group relative overflow-hidden"
             >
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {/* Top Row: Specialization Badge & Status Toggle */}
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tight ${
                       inst.specialization === 'nautika'
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        ? 'bg-sky-50 text-[#0369A1] border border-sky-200'
                         : inst.specialization === 'teknika'
-                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
                         : inst.specialization === 'gmdss'
                         ? 'bg-purple-50 text-purple-700 border border-purple-200'
                         : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                   >
-                    {inst.specialization === 'nautika' && <Compass className="w-3 h-3" />}
-                    {inst.specialization === 'teknika' && <Anchor className="w-3 h-3" />}
-                    {inst.specialization === 'gmdss' && <Radio className="w-3 h-3" />}
+                    {inst.specialization === 'nautika' && <Compass className="w-3.5 h-3.5 text-[#0284C7]" />}
+                    {inst.specialization === 'teknika' && <Anchor className="w-3.5 h-3.5 text-amber-600" />}
+                    {inst.specialization === 'gmdss' && <Radio className="w-3.5 h-3.5 text-purple-600" />}
                     <span>{inst.specialization}</span>
                   </span>
 
                   <button
                     type="button"
                     onClick={() => handleToggleStatus(inst.id)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                       inst.status === 'active'
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
                         : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
                     }`}
                     title="Klik untuk mengubah status aktif/nonaktif"
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${inst.status === 'active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                    <span className={`w-2 h-2 rounded-full ${inst.status === 'active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                     <span>{inst.status === 'active' ? 'Aktif' : 'Nonaktif'}</span>
                   </button>
                 </div>
 
                 {/* Name & Title */}
                 <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-base leading-snug">
+                  <h3 className="font-heading font-extrabold text-slate-900 text-base sm:text-[17px] leading-snug group-hover:text-[#0284C7] transition-colors">
                     {inst.full_name}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5 line-clamp-1">
                     {inst.job_title || 'Instruktur Bahasa Inggris Maritim'}
                   </p>
                 </div>
 
                 {/* Meta details */}
-                <div className="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div className="space-y-2 text-xs sm:text-[13px] text-slate-600 pt-2.5 border-t border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <Mail className="w-4 h-4 text-slate-400 shrink-0" />
                     <span className="truncate">{inst.email}</span>
                   </div>
 
                   {inst.phone_number && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div className="flex items-center gap-2.5">
+                      <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                       <span>{inst.phone_number}</span>
                     </div>
                   )}
 
                   {inst.certificate_number && (
-                    <div className="flex items-center gap-2">
-                      <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span className="font-mono text-[11px] font-semibold text-slate-800">
+                    <div className="flex items-center gap-2.5">
+                      <Award className="w-4 h-4 text-amber-500 shrink-0" />
+                      <span className="font-mono text-xs font-bold text-slate-900">
                         {inst.certificate_number}
                       </span>
                     </div>
@@ -525,7 +525,7 @@ export default function AdminInstructorsPage() {
 
                 {/* About note */}
                 {inst.about && (
-                  <p className="text-xs text-slate-500 italic bg-slate-50 p-2.5 rounded-xl border border-slate-100 line-clamp-2">
+                  <p className="text-xs sm:text-[13px] text-slate-600 italic bg-[#F8FAFC] p-3 rounded-2xl border border-slate-100 leading-relaxed line-clamp-2">
                     "{inst.about}"
                   </p>
                 )}
@@ -533,7 +533,7 @@ export default function AdminInstructorsPage() {
 
               {/* Bottom Actions */}
               <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100">
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[11px] text-slate-400">
                   Terdaftar: {formatDateIndo(inst.created_at)}
                 </span>
 
@@ -541,7 +541,7 @@ export default function AdminInstructorsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenEditModal(inst)}
-                    className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer"
+                    className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer shadow-2xs"
                     title="Edit Data Instruktur"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
@@ -550,7 +550,7 @@ export default function AdminInstructorsPage() {
                   <button
                     type="button"
                     onClick={() => handleDeleteInstructor(inst.id, inst.full_name)}
-                    className="p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
+                    className="p-2 rounded-full border border-rose-100 bg-rose-50/70 hover:bg-rose-100 text-rose-600 transition-colors cursor-pointer shadow-2xs"
                     title="Hapus Akun Instruktur"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

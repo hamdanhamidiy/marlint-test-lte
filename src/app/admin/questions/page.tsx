@@ -356,24 +356,22 @@ export default function AdminQuestionsPage() {
   };
 
   return (
-    <div className="space-y-7 min-w-0 font-sans pb-12">
+    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-12 max-w-7xl mx-auto">
       {/* Top Header & Add Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-3">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900">Bank Soal Standar IMO STCW & SMCP</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Evaluation Repository</span>
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+            <span className="font-bold text-slate-900">Bank Soal Standar IMO STCW & SMCP</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Evaluation Repository</span>
           </div>
 
-          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
             Kelola Bank Soal Maritim
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
             Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
           </p>
         </div>
@@ -381,7 +379,7 @@ export default function AdminQuestionsPage() {
         <button
           type="button"
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs text-white bg-slate-950 hover:bg-slate-800 shadow-md shadow-slate-900/15 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-[13px] text-white bg-black hover:bg-neutral-800 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Soal Baru</span>
@@ -389,7 +387,7 @@ export default function AdminQuestionsPage() {
       </div>
 
       {/* Quick Test Package Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
         {[
           { label: 'Semua Paket', val: 'all', count: allQuestions.length },
           { label: 'Paket #1', val: '1', count: allQuestions.filter((q) => q.marlint_test_number === 1).length },
@@ -412,8 +410,8 @@ export default function AdminQuestionsPage() {
             }}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               selectedTestNum === tab.val
-                ? 'bg-[#0284C7] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-slate-950 border border-slate-200/90 hover:bg-slate-50'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black border border-slate-200/90 hover:bg-slate-50'
             }`}
           >
             <span>{tab.label}</span>
@@ -427,8 +425,8 @@ export default function AdminQuestionsPage() {
       </div>
 
       {/* Modern Clean Filter Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3.5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3.5 items-center">
           {/* Search Input */}
           <div className="relative lg:col-span-6">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -437,7 +435,7 @@ export default function AdminQuestionsPage() {
               placeholder="Cari kata kunci soal, kunci jawaban, atau opsi..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/20 font-medium transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/20 font-medium transition-all"
             />
           </div>
 
@@ -446,7 +444,7 @@ export default function AdminQuestionsPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
+              className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
             >
               <option value="all">Semua Kategori</option>
               <option value="grammar">Grammar</option>
@@ -527,7 +525,7 @@ export default function AdminQuestionsPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-200 ease-out space-y-3.5 hover:shadow-sm ${
+                className={`bg-white p-5 sm:p-6 rounded-[26px] border transition-all duration-200 ease-out space-y-3.5 hover:shadow-md ${
                   q.is_active === false
                     ? 'border-slate-200 bg-slate-50/60 opacity-60'
                     : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-slate-300'
@@ -537,24 +535,24 @@ export default function AdminQuestionsPage() {
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-[10px] font-extrabold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
+                      className={`px-3 py-1 rounded-full text-xs font-extrabold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
                     >
                       {catInfo.name}
                     </span>
 
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-[10px] text-slate-700 font-bold">
+                    <span className="px-3 py-1 rounded-full bg-slate-100 text-xs text-slate-700 font-bold">
                       {formatQuestionTypeName(q.question_type)}
                     </span>
 
                     {q.marlint_test_number && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] text-[10px] font-extrabold border border-sky-200">
+                      <span className="px-3 py-1 rounded-full bg-sky-50 text-[#0369A1] text-xs font-extrabold border border-sky-200">
                         Paket #{q.marlint_test_number}
                       </span>
                     )}
 
                     {q.audio_url && (
-                      <span className="flex items-center gap-1 text-[10px] text-[#C2410C] font-extrabold bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                        <Headphones className="w-3 h-3 text-[#EA580C]" /> Audio VHF
+                      <span className="flex items-center gap-1.5 text-xs text-[#C2410C] font-extrabold bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                        <Headphones className="w-3.5 h-3.5 text-[#EA580C]" /> Audio VHF
                       </span>
                     )}
                   </div>
@@ -563,30 +561,30 @@ export default function AdminQuestionsPage() {
                   <button
                     type="button"
                     onClick={() => handleToggleActive(q)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                       q.is_active !== false
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-slate-200 text-slate-600'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                        : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
                     }`}
                     title="Klik untuk mengubah status aktif/nonaktif"
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${q.is_active !== false ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                    <span className={`w-2 h-2 rounded-full ${q.is_active !== false ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                     <span>{q.is_active !== false ? 'Aktif' : 'Nonaktif'}</span>
                   </button>
                 </div>
 
                 {/* Row 2: Question Prompt */}
                 <div className="space-y-1">
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-slate-950 leading-relaxed break-words">
+                  <h3 className="font-heading text-base sm:text-[17px] font-extrabold text-slate-950 leading-relaxed break-words">
                     {q.question_text}
                   </h3>
                 </div>
 
-                {/* Row 3: Answer Key & Action Buttons with Generous Gap */}
+                {/* Row 3: Answer Key & Action Buttons */}
                 <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <span className="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Kunci:</span>
-                    <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/90 text-xs truncate max-w-lg">
+                  <div className="flex items-center gap-2 text-xs sm:text-[13px] text-slate-600 font-medium">
+                    <span className="font-bold text-slate-400 uppercase text-[11px] tracking-wider">Kunci:</span>
+                    <span className="px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/90 text-xs sm:text-[13px] truncate max-w-lg">
                       {q.correct_answer || '-'}
                     </span>
                   </div>
@@ -596,7 +594,7 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => setPreviewQuestion(q)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-sky-50 hover:bg-sky-100 text-[#0284C7] border border-sky-200 transition-all cursor-pointer shadow-2xs"
                       title="Interactive Preview"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -606,7 +604,7 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => handleDuplicateQuestion(q)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
                       title="Duplikasi Butir Soal"
                     >
                       <Copy className="w-3.5 h-3.5 text-slate-500" />
@@ -616,7 +614,7 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(q)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all cursor-pointer shadow-2xs"
                       title="Edit Soal"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -626,7 +624,7 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => setDeleteConfirmId(q.id)}
-                      className="p-2 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all cursor-pointer shadow-2xs"
+                      className="p-2.5 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all cursor-pointer shadow-2xs"
                       title="Hapus Soal"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -641,31 +639,32 @@ export default function AdminQuestionsPage() {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-200/80 text-xs font-bold text-slate-600">
-          <button
-            type="button"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Sebelumnya</span>
-          </button>
+        <div className="flex items-center justify-between gap-4 pt-2">
+          <p className="text-xs sm:text-[13px] text-slate-500 font-medium">
+            Menampilkan <strong className="text-slate-900 font-bold">{Math.min((currentPage - 1) * itemsPerPage + 1, questions.length)}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * itemsPerPage, questions.length)}</strong> dari <strong className="text-slate-900 font-bold">{questions.length}</strong> butir soal
+          </p>
 
-          <span className="text-slate-500">
-            Halaman <strong className="text-slate-900">{currentPage}</strong> dari{' '}
-            <strong className="text-slate-900">{totalPages}</strong>
-          </span>
-
-          <button
-            type="button"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
-          >
-            <span>Berikutnya</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs sm:text-[13px] font-bold text-slate-800 px-2">
+              Halaman {currentPage} dari {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 

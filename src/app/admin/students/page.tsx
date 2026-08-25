@@ -255,31 +255,29 @@ export default function AdminStudentsPage() {
   }
 
   return (
-    <div className="space-y-7 min-w-0 font-sans pb-12">
+    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-12 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-3">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-              <span className="font-bold text-slate-900">Direktori Pelaut Terdaftar</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Candidate Directory</span>
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+            <span className="font-bold text-slate-900">Direktori Pelaut Terdaftar</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500 font-medium">Candidate Directory</span>
           </div>
 
-          <h1 className="font-heading text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
             Data Siswa & Pelaut
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
             Kelola direktori siswa, akses hak ujian (*entitlements*), dan tinjau riwayat evaluasi kompetensi secara realtime.
           </p>
         </div>
       </div>
 
       {/* Modern Filter & Search Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -288,19 +286,19 @@ export default function AdminStudentsPage() {
             placeholder="Cari nama kandidat, email, jabatan, atau kebangsaan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
           />
         </div>
 
         {/* Role Filter Tabs */}
-        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70">
           <button
             type="button"
             onClick={() => setRoleFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               roleFilter === 'all'
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                ? 'bg-black text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Semua ({students.length})
@@ -308,10 +306,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setRoleFilter('student')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               roleFilter === 'student'
                 ? 'bg-[#0284C7] text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Siswa / Taruna ({students.filter((s) => s.role === 'student').length})
@@ -319,10 +317,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setRoleFilter('instructor')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               roleFilter === 'instructor'
                 ? 'bg-amber-600 text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Instruktur ({students.filter((s) => s.role === 'instructor').length})
@@ -330,10 +328,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setRoleFilter('super_admin')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               roleFilter === 'super_admin'
                 ? 'bg-purple-600 text-white shadow-xs'
-                : 'bg-slate-50 text-slate-600 hover:text-slate-950 border border-slate-200/80'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
             Super Admin ({students.filter((s) => s.role === 'super_admin' || s.role === 'admin').length})
@@ -343,14 +341,14 @@ export default function AdminStudentsPage() {
 
       {/* Students List Cards */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2">
           <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <Users className="w-4 h-4" />
           </div>
-          <p className="font-semibold text-slate-700">Memuat data siswa dari database...</p>
+          <p className="font-bold text-slate-700">Memuat data siswa dari database...</p>
         </div>
       ) : filteredStudents.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
           <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
             <Users className="w-6 h-6" />
           </div>
@@ -383,36 +381,40 @@ export default function AdminStudentsPage() {
             return (
               <div
                 key={st.id}
-                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-xs transition-all"
+                className="bg-white p-5 sm:p-6 rounded-[26px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-md transition-all"
               >
                 {/* Left: Avatar & Candidate Information */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#0F172A] text-white font-heading font-black text-base flex items-center justify-center shrink-0 shadow-md shadow-sky-500/10 overflow-hidden">
-                    {st.photo_url ? (
-                      <img src={st.photo_url} alt={st.full_name} className="w-full h-full object-cover" />
-                    ) : (
-                      st.full_name?.charAt(0)?.toUpperCase() || 'S'
-                    )}
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] text-white font-heading font-black text-base flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-0.5">
+                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                      {st.photo_url ? (
+                        <img src={st.photo_url} alt={st.full_name} className="w-full h-full object-cover" />
+                      ) : (
+                        st.full_name?.charAt(0)?.toUpperCase() || 'S'
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-heading text-base font-bold text-slate-950 truncate">
+                      <h3 className="font-heading text-base sm:text-[17px] font-extrabold text-slate-950 truncate">
                         {st.full_name || 'Kandidat Pelaut'}
                       </h3>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        st.role === 'admin'
-                          ? 'bg-orange-50 text-[#C2410C] border border-orange-200'
+                        st.role === 'admin' || st.role === 'super_admin'
+                          ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                          : st.role === 'instructor'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
                           : 'bg-slate-100 text-slate-700'
                       }`}>
                         {st.role || 'Student'}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-500 font-medium truncate flex items-center gap-1.5 flex-wrap">
+                    <p className="text-xs sm:text-[13px] text-slate-500 font-medium truncate flex items-center gap-2 flex-wrap">
                       <span>{st.email}</span>
                       <span className="text-slate-300">•</span>
-                      <span className="text-slate-700 font-semibold">{st.job_title || 'Seafarer'}</span>
+                      <span className="text-slate-800 font-bold">{st.job_title || 'Perwira / Rating'}</span>
                       <span className="text-slate-300">•</span>
                       <span>{st.nationality || 'Indonesia'}</span>
                     </p>
@@ -435,7 +437,7 @@ export default function AdminStudentsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenStudentDetail(st)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-xs cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
                   >
                     <span>Kelola Akses</span>
                     <ArrowRight className="w-3.5 h-3.5" />

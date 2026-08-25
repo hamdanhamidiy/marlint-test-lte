@@ -55,8 +55,8 @@ export default function AdminSidebar() {
         </div>
 
         {/* Section: MANAJEMEN SISTEM */}
-        <div className="space-y-1">
-          <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-2">
+        <div className="space-y-1.5">
+          <p className="px-3 text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-2">
             {isInstructorRole ? 'Modul Pengajaran & Ujian' : 'Manajemen Sistem'}
           </p>
           <nav className="space-y-1">
@@ -68,13 +68,13 @@ export default function AdminSidebar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-150 ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] shadow-xs'
-                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#0284C7]' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#38BDF8]' : 'text-slate-400'}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -87,17 +87,17 @@ export default function AdminSidebar() {
       <div className="space-y-2.5 pt-4 border-t border-slate-100">
         <Link
           href="/student/dashboard"
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50 transition-colors"
+          className="flex items-center gap-2.5 px-3.5 py-2 rounded-full text-[13px] font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Lihat Portal Siswa</span>
         </Link>
 
-        <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-2 shadow-2xs">
+        <div className="p-3.5 rounded-[22px] bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-2 shadow-2xs">
           <div className="min-w-0">
-            <p className="text-xs font-black text-slate-950 truncate">{profile?.full_name || 'Staff Marlins'}</p>
+            <p className="text-[13px] font-extrabold text-slate-950 truncate">{profile?.full_name || 'Staff Marlins'}</p>
             <p
-              className={`text-[10px] uppercase font-black tracking-wider ${
+              className={`text-[10px] uppercase font-extrabold tracking-wider ${
                 isSuperAdminRole
                   ? 'text-purple-600'
                   : isInstructorRole
@@ -117,7 +117,7 @@ export default function AdminSidebar() {
 
         <button
           onClick={() => signOut()}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 px-3.5 py-2 rounded-full text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           <span>Keluar Akun</span>

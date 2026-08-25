@@ -216,6 +216,39 @@ export default function TestTakingPage() {
         else if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 
+        // Security check: verify entitlement for paid tests 2 to 10
+        if (parsedTestNum > 1 && user) {
+          let hasAccess = false;
+          try {
+            const { data: entData } = await supabase
+              .from('test_entitlements')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('test_number', parsedTestNum)
+              .eq('is_active', true)
+              .maybeSingle();
+
+            if (entData) hasAccess = true;
+          } catch (e) {}
+
+          if (typeof window !== 'undefined') {
+            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
+            if (localEnt) {
+              try {
+                const arr = JSON.parse(localEnt);
+                if (Array.isArray(arr) && arr.map(Number).includes(Number(parsedTestNum))) {
+                  hasAccess = true;
+                }
+              } catch (e) {}
+            }
+          }
+
+          if (!hasAccess) {
+            router.push(`/student/checkout/${parsedTestNum}`);
+            return;
+          }
+        }
+
         const info = getTestInfo(parsedTestNum);
 
         const { data, error } = await supabase.rpc('get_test_attempt', {

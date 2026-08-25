@@ -100,6 +100,12 @@ export default function TestOverviewPage() {
   const handleStartAttempt = async () => {
     if (!user || !test) return;
 
+    // Strict access check
+    if (!test.is_free && !hasEntitlement) {
+      router.push(`/student/checkout/${test.test_number}`);
+      return;
+    }
+
     try {
       setStarting(true);
       setErrorMsg(null);
@@ -110,10 +116,10 @@ export default function TestOverviewPage() {
 
       if (error) {
         if (error.message.includes('TEST_ACCESS_REQUIRED') && !test.is_free && !hasEntitlement) {
-          setErrorMsg('Tes ini membutuhkan token akses atau aktivasi. Silakan klaim voucher di menu Redeem.');
+          router.push(`/student/checkout/${test.test_number}`);
           return;
         } else {
-          // Direct fallback for instant demo testing
+          // Direct fallback session
           router.push(`/student/test/take/session-test-${test.test_number}-${Date.now()}`);
           return;
         }
@@ -356,35 +362,49 @@ export default function TestOverviewPage() {
         {/* Action Button Bar */}
         <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-500 font-normal">
-            Sistem Stopwatch Pencatat Waktu Pengerjaan • Hasil instan realtime
+            Sistem Stopwatch Pencatat Waktu Pengerjaan • Standar IMO STCW & SMCP
           </p>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            {!test.is_free && !hasEntitlement && (
-              <Link
-                href="/student/redeem"
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-              >
-                <KeyRound className="w-3.5 h-3.5 text-amber-600" />
-                <span>Punya Token?</span>
-              </Link>
-            )}
+            {/* If test is locked */}
+            {!test.is_free && !hasEntitlement ? (
+              <>
+                <Link
+                  href="/student/redeem"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full font-bold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                >
+                  <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Punya Token?</span>
+                </Link>
 
-            <button
-              type="button"
-              onClick={handleStartAttempt}
-              disabled={starting}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-[#5046E5] hover:bg-[#4338CA] transition-all cursor-pointer disabled:opacity-50"
-            >
-              {starting ? (
-                <span>Menyiapkan Ujian...</span>
-              ) : (
-                <>
-                  <span>Mulai Ujian Sekarang</span>
+                <Link
+                  href={`/student/checkout/${test.test_number}`}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98"
+                >
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Beli Akses Ujian ({formatPriceIDR(test.price)})</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
+                </Link>
+              </>
+            ) : (
+              /* If test is free or already unlocked */
+              <button
+                type="button"
+                onClick={handleStartAttempt}
+                disabled={starting}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98 disabled:opacity-50"
+              >
+                {starting ? (
+                  <span>Menyiapkan Ujian...</span>
+                ) : (
+                  <>
+                    <Unlock className="w-4 h-4 text-white" />
+                    <span>Mulai Ujian Sekarang</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>

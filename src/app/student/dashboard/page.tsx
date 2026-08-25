@@ -334,14 +334,14 @@ export default function StudentDashboardPage() {
 
                       {/* Action Button: Primary Blue for Test 1, Deep Black for Test 2 & 3 */}
                       <Link
-                        href={`/student/test/${test.test_number}`}
+                        href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
                         className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs group-hover:shadow-md ${
-                          isTest1
+                          hasAccess
                             ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20 group-hover:scale-[1.01] active:scale-[0.99]'
-                            : 'bg-slate-950 hover:bg-slate-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
+                            : 'bg-black hover:bg-neutral-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
                         }`}
                       >
-                        <span>{hasAccess ? 'Mulai Ujian Sekarang' : 'Buka Akses Ujian'}</span>
+                        <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </div>

@@ -281,14 +281,14 @@ export default function StudentTestsPage() {
 
                   {/* Action Button */}
                   <Link
-                    href={`/student/test/${test.test_number}`}
-                    className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs group-hover:shadow-md ${
+                    href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
+                    className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs group-hover:shadow-md ${
                       hasAccess
-                        ? 'bg-[#4F46E5] hover:bg-[#4338CA] text-white shadow-indigo-500/15 group-hover:scale-[1.01] active:scale-[0.99]'
-                        : 'bg-slate-900 hover:bg-slate-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
+                        ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/15 group-hover:scale-[1.01] active:scale-[0.99]'
+                        : 'bg-black hover:bg-neutral-800 text-white group-hover:scale-[1.01] active:scale-[0.99]'
                     }`}
                   >
-                    <span>{hasAccess ? 'Mulai Ujian Sekarang' : 'Buka Akses Ujian'}</span>
+                    <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>

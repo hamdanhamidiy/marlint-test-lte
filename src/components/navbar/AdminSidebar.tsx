@@ -12,12 +12,20 @@ import {
   GraduationCap,
   LogOut,
   ArrowLeft,
-  Shield,
+  X,
 } from 'lucide-react';
 import Logo from '@/components/brand/Logo';
 import { useAuth } from '@/lib/context/AuthContext';
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  isOpenMobile?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export default function AdminSidebar({
+  isOpenMobile = false,
+  onCloseMobile,
+}: AdminSidebarProps) {
   const pathname = usePathname();
   const { profile, signOut, isSuperAdmin, isInstructor } = useAuth();
 
@@ -39,11 +47,11 @@ export default function AdminSidebar() {
   const badgeText = isSuperAdminRole ? 'SUPER ADMIN' : isInstructorRole ? 'INSTRUKTUR' : 'ADMIN';
   const subtitleText = isSuperAdminRole ? 'Master Control' : isInstructorRole ? 'Instructor Portal' : 'Control Center';
 
-  return (
-    <aside className="w-64 bg-white border-r border-slate-200/90 shadow-2xs flex flex-col justify-between p-5 shrink-0 min-h-screen select-none font-sans">
+  const sidebarContent = (
+    <aside className="w-64 bg-white border-r border-slate-200/90 shadow-2xs flex flex-col justify-between p-5 select-none font-sans h-full overflow-y-auto">
       <div className="space-y-6">
-        {/* Brand Logo with Dynamic Badge */}
-        <div className="px-2 pt-1 pb-1">
+        {/* Brand Logo with Dynamic Badge & Mobile Close Button */}
+        <div className="flex items-center justify-between px-2 pt-1 pb-1">
           <Logo
             size="md"
             showBadge={true}
@@ -52,6 +60,16 @@ export default function AdminSidebar() {
             subtitleText={subtitleText}
             href="/admin/dashboard"
           />
+          {onCloseMobile && (
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              className="lg:hidden p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Section: MANAJEMEN SISTEM */}
@@ -68,6 +86,7 @@ export default function AdminSidebar() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={onCloseMobile}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold transition-all duration-200 ${
                     isActive
                       ? 'bg-black text-white shadow-xs'
@@ -87,6 +106,7 @@ export default function AdminSidebar() {
       <div className="space-y-2.5 pt-4 border-t border-slate-100">
         <Link
           href="/student/dashboard"
+          onClick={onCloseMobile}
           className="flex items-center gap-2.5 px-3.5 py-2 rounded-full text-[13px] font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -124,5 +144,28 @@ export default function AdminSidebar() {
         </button>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar (Permanent) */}
+      <div className="hidden lg:flex shrink-0 min-h-screen">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile Drawer (Collapsible) */}
+      {isOpenMobile && (
+        <div className="fixed inset-0 z-50 lg:hidden flex animate-in fade-in duration-200">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            onClick={onCloseMobile}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 w-64 max-w-[80vw] h-full shadow-2xl animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

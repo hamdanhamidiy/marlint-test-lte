@@ -89,13 +89,13 @@ export default function StudentProfilePage() {
   const processUploadedFile = async (file: File) => {
     if (!user) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setPhotoError('Ukuran foto maksimal 5 MB.');
+    if (file.size > 8 * 1024 * 1024) {
+      setPhotoError('Ukuran foto maksimal 8 MB.');
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      setPhotoError('Format file harus berupa gambar (JPG, PNG, atau WEBP).');
+      setPhotoError('Format file harus berupa gambar (JPG, PNG, WEBP, atau JPEG).');
       return;
     }
 
@@ -104,34 +104,42 @@ export default function StudentProfilePage() {
       setPhotoError(null);
       setPhotoSuccess(null);
 
+      // 1. Resize and compress image client-side to crisp, lightweight JPEG
       const base64Data = await fileToBase64(file);
       let finalPhotoUrl: string = base64Data;
+      let uploadedToCloud = false;
 
-      const fileExt = file.name.split('.').pop() || 'jpg';
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `profile_photos/${fileName}`;
-
+      // 2. Convert base64 to Blob for Supabase Storage upload
       try {
-        const { error: uploadError } = await supabase.storage
+        const response = await fetch(base64Data);
+        const imageBlob = await response.blob();
+        const fileName = `${user.id}-${Date.now()}.jpg`;
+        const filePath = `profile_photos/${fileName}`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(filePath, file, {
+          .upload(filePath, imageBlob, {
             upsert: true,
-            contentType: file.type,
+            contentType: 'image/jpeg',
           });
 
-        if (!uploadError) {
+        if (!uploadError && uploadData) {
           const { data: publicUrlData } = supabase.storage
             .from('avatars')
             .getPublicUrl(filePath);
 
           if (publicUrlData?.publicUrl) {
             finalPhotoUrl = publicUrlData.publicUrl;
+            uploadedToCloud = true;
           }
+        } else if (uploadError) {
+          console.warn('Supabase storage upload error:', uploadError);
         }
       } catch (storageErr) {
         console.warn('Storage bucket upload fallback to Base64:', storageErr);
       }
 
+      // 3. Update active user profile
       const { error: updateErr } = await updateProfile({
         photo_url: finalPhotoUrl,
       });
@@ -140,8 +148,12 @@ export default function StudentProfilePage() {
         throw new Error(updateErr.message || 'Gagal menyimpan foto profil.');
       }
 
-      setPhotoSuccess('Foto profil resmi berhasil diperbarui!');
-      setTimeout(() => setPhotoSuccess(null), 3500);
+      if (uploadedToCloud) {
+        setPhotoSuccess('Foto profil berhasil diunggah ke cloud database (tersinkron di semua perangkat)!');
+      } else {
+        setPhotoSuccess('Foto profil berhasil diperbarui.');
+      }
+      setTimeout(() => setPhotoSuccess(null), 4000);
     } catch (err: any) {
       console.error('Error uploading photo:', err);
       setPhotoError(err.message || 'Gagal mengunggah foto profil.');

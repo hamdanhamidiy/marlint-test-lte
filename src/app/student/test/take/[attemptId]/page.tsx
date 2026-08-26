@@ -129,7 +129,7 @@ function getTestInfo(testNum: number) {
 export default function TestTakingPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, isSuperAdmin, isInstructor } = useAuth();
   const attemptId = params.attemptId as string;
 
   const [attempt, setAttempt] = useState<AttemptData | null>(null);
@@ -217,30 +217,75 @@ export default function TestTakingPage() {
         else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
 
         // Security check: verify entitlement for paid tests 2 to 10
-        if (parsedTestNum > 1 && user) {
-          let hasAccess = false;
-          try {
-            const { data: entData } = await supabase
-              .from('test_entitlements')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('test_number', parsedTestNum)
-              .eq('is_active', true)
-              .maybeSingle();
+        if (parsedTestNum > 1 && (user || profile)) {
+          const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
+          let hasAccess = isStaff;
 
-            if (entData) hasAccess = true;
-          } catch (e) {}
+          const userIds = [user?.id, profile?.id].filter(Boolean);
+          const userEmails = [user?.email, profile?.email].filter(Boolean);
 
-          if (typeof window !== 'undefined') {
-            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
-            if (localEnt) {
-              try {
-                const arr = JSON.parse(localEnt);
+          // 1. Check profile.department_track
+          if (!hasAccess && profile?.department_track && profile.department_track.startsWith('[')) {
+            try {
+              const arr = JSON.parse(profile.department_track);
+              if (Array.isArray(arr) && arr.map(Number).includes(Number(parsedTestNum))) {
+                hasAccess = true;
+              }
+            } catch (e) {}
+          }
+
+          // 2. Check users.department_track in Supabase
+          if (!hasAccess) {
+            try {
+              const { data: uData } = await supabase
+                .from('users')
+                .select('department_track')
+                .or(`id.eq.${user?.id || profile?.id},email.eq.${user?.email || profile?.email}`)
+                .maybeSingle();
+
+              if (uData?.department_track && uData.department_track.startsWith('[')) {
+                const arr = JSON.parse(uData.department_track);
                 if (Array.isArray(arr) && arr.map(Number).includes(Number(parsedTestNum))) {
                   hasAccess = true;
                 }
-              } catch (e) {}
-            }
+              }
+            } catch (e) {}
+          }
+
+          // 3. Check test_entitlements table
+          if (!hasAccess && userIds.length > 0) {
+            try {
+              const { data: entData } = await supabase
+                .from('test_entitlements')
+                .select('id')
+                .or(`user_id.in.(${userIds.map((id) => `"${id}"`).join(',')}),user_id.in.(${userEmails.map((em) => `"${em}"`).join(',')})`)
+                .eq('test_number', parsedTestNum)
+                .eq('is_active', true)
+                .maybeSingle();
+
+              if (entData) hasAccess = true;
+            } catch (e) {}
+          }
+
+          // 4. Check local storage
+          if (!hasAccess && typeof window !== 'undefined') {
+            const checkKeys = [
+              ...userIds.map((id) => `marlins_entitlements_${id}`),
+              ...userEmails.map((em) => `marlins_entitlements_${em?.toLowerCase()}`),
+              'marlins_entitlements_all',
+            ];
+
+            checkKeys.forEach((k) => {
+              const localEnt = localStorage.getItem(k);
+              if (localEnt) {
+                try {
+                  const arr = JSON.parse(localEnt);
+                  if (Array.isArray(arr) && arr.map(Number).includes(Number(parsedTestNum))) {
+                    hasAccess = true;
+                  }
+                } catch (e) {}
+              }
+            });
           }
 
           if (!hasAccess) {

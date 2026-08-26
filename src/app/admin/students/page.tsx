@@ -470,11 +470,25 @@ export default function AdminStudentsPage() {
     try {
       setLoadingDetails(true);
 
+      let studentRecord = st;
+      try {
+        const { data: freshUser } = await supabase
+          .from('users')
+          .select('*')
+          .or(`id.eq.${st.id},email.eq.${st.email}`)
+          .maybeSingle();
+
+        if (freshUser) {
+          studentRecord = { ...st, ...freshUser };
+          setSelectedStudent(studentRecord);
+        }
+      } catch (e) {}
+
       // 1. Load results from Supabase student_results
       const { data: resultsData } = await supabase
         .from('student_results')
         .select('*')
-        .or(`student_id.eq.${st.id},student_id.eq.${st.email}`)
+        .or(`student_id.eq.${studentRecord.id},student_id.eq.${studentRecord.email}`)
         .order('created_at', { ascending: false });
 
       let resultsList: StudentResult[] = [];
@@ -490,12 +504,12 @@ export default function AdminStudentsPage() {
           if (k && (k.startsWith('marlins_result_') || k.startsWith('test_result_'))) {
             try {
               const item = JSON.parse(localStorage.getItem(k) || '');
-              if (item.student_id === st.id || item.student_email === st.email) {
+              if (item.student_id === studentRecord.id || item.student_email === studentRecord.email) {
                 const aid = item.attempt_id || item.id;
                 if (aid && !found.has(aid)) {
                   resultsList.push({
                     id: aid,
-                    student_id: st.id,
+                    student_id: studentRecord.id,
                     attempt_id: aid,
                     score: item.overall_score !== undefined ? item.overall_score : item.score || 0,
                     correct_answers: item.total_score !== undefined ? item.total_score : item.correct_answers || 0,
@@ -527,9 +541,9 @@ export default function AdminStudentsPage() {
       const entSet = new Set<number>([1]); // Test 1 free by default
 
       // A. Check database department_track JSON
-      if (st.department_track && st.department_track.startsWith('[')) {
+      if (studentRecord.department_track && studentRecord.department_track.startsWith('[')) {
         try {
-          const parsed = JSON.parse(st.department_track);
+          const parsed = JSON.parse(studentRecord.department_track);
           if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
         } catch (e) {}
       }
@@ -539,7 +553,7 @@ export default function AdminStudentsPage() {
         const { data: ents } = await supabase
           .from('test_entitlements')
           .select('test_number, is_active')
-          .or(`user_id.eq.${st.id},user_id.eq.${st.email}`)
+          .or(`user_id.eq.${studentRecord.id},user_id.eq.${studentRecord.email}`)
           .eq('is_active', true);
 
         if (ents && ents.length > 0) {
@@ -549,7 +563,7 @@ export default function AdminStudentsPage() {
 
       // C. Check localStorage entitlements
       if (typeof window !== 'undefined') {
-        const keys = [`marlins_entitlements_${st.id}`, `marlins_entitlements_${st.email?.toLowerCase()}`];
+        const keys = [`marlins_entitlements_${studentRecord.id}`, `marlins_entitlements_${studentRecord.email?.toLowerCase()}`];
         keys.forEach((k) => {
           const val = localStorage.getItem(k);
           if (val) {
@@ -616,6 +630,21 @@ export default function AdminStudentsPage() {
 
       setStudentEntitlements(nextEnts);
 
+      // Update state in memory
+      const updatedStudent = {
+        ...selectedStudent,
+        department_track: JSON.stringify(nextEnts),
+      };
+      setSelectedStudent(updatedStudent);
+
+      setStudents((prev) =>
+        prev.map((s) =>
+          s.id === selectedStudent.id || s.email?.toLowerCase() === selectedStudent.email?.toLowerCase()
+            ? { ...s, department_track: JSON.stringify(nextEnts) }
+            : s
+        )
+      );
+
       // Save to local storage for cross-session fallback
       if (typeof window !== 'undefined') {
         localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify(nextEnts));
@@ -658,6 +687,20 @@ export default function AdminStudentsPage() {
         await supabase.from('test_entitlements').insert(records);
       } catch (e) {}
 
+      const updatedStudent = {
+        ...selectedStudent,
+        department_track: JSON.stringify(allNums),
+      };
+      setSelectedStudent(updatedStudent);
+
+      setStudents((prev) =>
+        prev.map((s) =>
+          s.id === selectedStudent.id || s.email?.toLowerCase() === selectedStudent.email?.toLowerCase()
+            ? { ...s, department_track: JSON.stringify(allNums) }
+            : s
+        )
+      );
+
       if (typeof window !== 'undefined') {
         localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify(allNums));
         if (selectedStudent.email) {
@@ -693,6 +736,20 @@ export default function AdminStudentsPage() {
           .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
           .neq('test_number', 1);
       } catch (e) {}
+
+      const updatedStudent = {
+        ...selectedStudent,
+        department_track: JSON.stringify([1]),
+      };
+      setSelectedStudent(updatedStudent);
+
+      setStudents((prev) =>
+        prev.map((s) =>
+          s.id === selectedStudent.id || s.email?.toLowerCase() === selectedStudent.email?.toLowerCase()
+            ? { ...s, department_track: JSON.stringify([1]) }
+            : s
+        )
+      );
 
       if (typeof window !== 'undefined') {
         localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify([1]));

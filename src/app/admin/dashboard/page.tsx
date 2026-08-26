@@ -71,33 +71,59 @@ export default function AdminDashboardPage() {
           { count: qCount },
           { count: tCount },
           { count: aCount },
+          { count: sCount },
           { count: cCount },
         ] = await Promise.all([
           supabase.from('users').select('*', { count: 'exact', head: true }),
           supabase.from('questions').select('*', { count: 'exact', head: true }),
           supabase.from('marlint_tests').select('*', { count: 'exact', head: true }),
           supabase.from('test_attempts').select('*', { count: 'exact', head: true }),
+          supabase.from('student_results').select('*', { count: 'exact', head: true }),
           supabase.from('certificates').select('*', { count: 'exact', head: true }),
         ]);
+
+        const totalAtts = Math.max(aCount || 0, sCount || 0);
 
         setStats({
           totalUsers: uCount || 0,
           totalQuestions: Math.max(qCount || 0, TOTAL_STANDARD_QUESTIONS_COUNT),
           totalTests: tCount || 10,
-          totalAttempts: aCount || 0,
+          totalAttempts: totalAtts,
           totalCertificates: cCount || 0,
         });
 
-        // Load recent attempts
-        const { data: attemptsData } = await supabase
-          .from('test_attempts')
-          .select('*, marlint_tests(test_name)')
+        // Load recent attempts from student_results or test_attempts
+        let attemptsList: any[] = [];
+        const { data: resultsData } = await supabase
+          .from('student_results')
+          .select('*')
           .order('created_at', { ascending: false })
-          .limit(5);
+          .limit(6);
 
-        if (attemptsData) {
-          setRecentAttempts(attemptsData);
+        if (resultsData && resultsData.length > 0) {
+          attemptsList = resultsData.map((r: any) => ({
+            id: r.id,
+            score: r.score,
+            is_passed: r.is_passed,
+            created_at: r.created_at,
+            test_number: r.marlint_test_number || 1,
+            marlint_tests: {
+              test_name: r.test_name || `Marlins Test 1 - Cruise Hospitality & Maritime English`,
+            },
+          }));
+        } else {
+          const { data: attemptsData } = await supabase
+            .from('test_attempts')
+            .select('*, marlint_tests(test_name)')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (attemptsData) {
+            attemptsList = attemptsData;
+          }
         }
+
+        setRecentAttempts(attemptsList);
 
         // Load test packages summary
         const { data: testsData } = await supabase

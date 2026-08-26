@@ -264,87 +264,109 @@ export default function StudentDashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 items-start">
+    <div className="flex flex-col lg:flex-row gap-5 sm:gap-6 items-start max-w-7xl mx-auto font-sans pb-16">
       {/* Center Main Content Area */}
-      <div className="flex-1 w-full space-y-4 sm:space-y-4.5 min-w-0">
+      <div className="flex-1 w-full space-y-5 sm:space-y-6 min-w-0">
 
-        {/* Modern Clean Executive Maritime Hero Card - Rock Solid & Fully Responsive */}
-        <div className="bg-white rounded-[24px] sm:rounded-[28px] border border-slate-200/90 p-5 sm:p-6 lg:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-4 relative overflow-hidden">
-          
-          {/* Top Ambient Signature Gradient Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+        {/* Modern Clean Executive Maritime Hero Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0d1629] to-slate-950 p-6 sm:p-7 text-white border border-slate-800/90 shadow-xl">
+          {/* Subtle Ambient Lighting Effects */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-400 opacity-80" />
 
-          {/* Top Row: Official Status & Quick Metric Badges in a single clean row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 w-fit">
-              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse shrink-0"></span>
-              <span className="font-bold text-slate-900">LTE Cruise Training Center</span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Perhotelan & Kapal Pesiar</span>
+          <div className="relative z-10 space-y-4">
+            {/* Top Tag Row */}
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-slate-200 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span>LTE Cruise Training Center</span>
+                <span className="text-white/30">•</span>
+                <span className="text-slate-300 font-medium">Perhotelan & Kapal Pesiar</span>
+              </div>
+
+              {/* Quick Spec Badges */}
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-slate-200">
+                  <Clock className="w-3 h-3 text-sky-400" />
+                  <span>Stopwatch</span>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-slate-200">
+                  <FileCheck2 className="w-3 h-3 text-amber-400" />
+                  <span>60 Soal</span>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300">
+                  <Award className="w-3 h-3 text-emerald-400" />
+                  <span>Passing 70%</span>
+                </span>
+              </div>
             </div>
 
-            {/* Quick Metrics Strip */}
-            <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-bold text-slate-700 w-fit">
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 shadow-2xs shrink-0">
-                <Clock className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
-                <span>Stopwatch</span>
+            {/* Greeting & Typewriter */}
+            <div className="space-y-1.5 pt-1">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                <span>Halo, {greetingName}!</span>
+                <span className="animate-bounce inline-block text-2xl sm:text-3xl">👋</span>
+              </h1>
+
+              <div className="min-h-[26px] flex items-center">
+                <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed max-w-2xl">
+                  <span>{currentText}</span>
+                  <span className="font-bold text-amber-400 animate-pulse ml-0.5">|</span>
+                </p>
               </div>
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200/80 shadow-2xs shrink-0">
-                <FileCheck2 className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
-                <span>60 Soal</span>
-              </div>
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950 text-white shadow-xs shrink-0">
-                <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Passing 70%</span>
-              </div>
+            </div>
+
+            {/* Quick Action Pills in Hero */}
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/student/tests"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Compass className="w-3.5 h-3.5 text-blue-600" />
+                <span>Pilih Paket Ujian Marlins</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              </Link>
+
+              <Link
+                href="/student/history"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold transition-all backdrop-blur-sm"
+              >
+                <span>Lihat Riwayat Nilai</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-300" />
+              </Link>
             </div>
           </div>
-
-          {/* Center Row: Main Greeting & Typewriter Subtitle */}
-          <div className="space-y-1 sm:space-y-1.5 pt-0.5 sm:pt-1">
-            <h1 className="font-heading text-xl sm:text-2xl lg:text-[28px] font-extrabold text-slate-950 tracking-tight leading-tight">
-              Halo, {greetingName}! <span className="animate-wave inline-block text-xl sm:text-2xl lg:text-[28px] ml-1">👋</span>
-            </h1>
-
-            {/* Dynamic Typewriter Subtitle */}
-            <div className="min-h-[28px] flex items-center">
-              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-3xl">
-                <span>{currentText}</span>
-                <span className="animate-cursor font-bold text-[#EA580C] text-sm ml-0.5">|</span>
-              </p>
-            </div>
-          </div>
-
         </div>
 
         {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-slate-950 tracking-tight flex items-center gap-2">
                 <span>Paket Ujian Marlins</span>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200 shadow-2xs">
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Ready
                 </span>
               </h2>
-              <p className="text-xs text-slate-500 font-normal truncate sm:whitespace-normal mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5 font-normal">
                 Pilihan paket asesmen kompetensi maritim standar perwira & rating kapal
               </p>
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors shrink-0"
             >
-              <span>Lihat Semua</span>
+              <span>Lihat Semua (10)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
             {loading ? (
-              <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
-                <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
-                  <FileCheck2 className="w-4 h-4" />
+              <div className="col-span-full p-10 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-xs space-y-2">
+                <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto animate-spin">
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <p className="font-semibold text-slate-700">Memuat paket ujian resmi...</p>
               </div>
@@ -357,18 +379,14 @@ export default function StudentDashboardPage() {
                 return (
                   <div
                     key={test.id}
-                    className={`bg-white rounded-[26px] p-5 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
-                      isTest1
-                        ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.06)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-0.5'
-                        : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-slate-400 hover:-translate-y-0.5'
-                    }`}
+                    className="bg-white rounded-2xl p-5 border border-slate-200/80 hover:border-slate-300 shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col justify-between h-full group"
                   >
                     {/* Top Tag & Access Indicator */}
-                    <div className="space-y-2.5">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
-                            isTest1 ? 'bg-[#D8EEFD] text-[#0369A1]' : 'bg-slate-100 text-slate-700'
+                          <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-extrabold tracking-tight ${
+                            isTest1 ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-slate-100 text-slate-700'
                           }`}>
                             Paket #{test.test_number}
                           </span>
@@ -378,13 +396,13 @@ export default function StudentDashboardPage() {
                         </div>
 
                         {hasAccess ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shrink-0 shadow-2xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
                             <Unlock className="w-3 h-3 text-emerald-600" />
                             <span>{test.is_free ? 'Gratis' : 'Akses Terbuka'}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shrink-0 shadow-2xs">
-                            <Lock className="w-3 h-3 text-[#EA580C]" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200 shrink-0">
+                            <Lock className="w-3 h-3 text-amber-600" />
                             <span>{formatPriceIDR(test.price)}</span>
                           </span>
                         )}
@@ -392,9 +410,7 @@ export default function StudentDashboardPage() {
 
                       {/* Title & Description */}
                       <div className="space-y-1">
-                        <h3 className={`font-heading text-base font-bold text-slate-900 transition-colors leading-snug line-clamp-1 ${
-                          isTest1 ? 'group-hover:text-[#0284C7]' : 'group-hover:text-[#EA580C]'
-                        }`}>
+                        <h3 className="font-extrabold text-slate-950 text-base leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
                           {formattedTestName}
                         </h3>
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[2rem]">
@@ -403,35 +419,35 @@ export default function StudentDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Details Row (Specs) & CTA Button */}
+                    {/* Details Row & Action Button */}
                     <div className="pt-3 mt-3 border-t border-slate-100 space-y-3">
-                      {/* Inline specs with clean typography */}
-                      <div className="grid grid-cols-3 gap-1.5 py-1.5 px-2 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
-                          <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
+                      {/* Specs bar */}
+                      <div className="grid grid-cols-3 gap-1.5 py-1.5 px-2 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                        <div>
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
+                          <span className="text-xs font-bold text-slate-800 mt-0.5">Stopwatch</span>
                         </div>
-                        <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
-                          <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>
-                          <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
+                        <div className="border-x border-slate-200/80 px-1">
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>
+                          <span className="text-xs font-bold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
                         </div>
-                        <div className="flex flex-col items-center justify-center">
-                          <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Passing</span>
-                          <span className="text-xs font-extrabold text-emerald-600 mt-0.5">{test.passing_grade}%</span>
+                        <div>
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider block">Passing</span>
+                          <span className="text-xs font-bold text-emerald-600 mt-0.5">{test.passing_grade}%</span>
                         </div>
                       </div>
 
-                      {/* Action Button: Primary Blue for Test 1, Deep Black for Test 2 & 3 */}
+                      {/* Action Button */}
                       <Link
                         href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
+                        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] ${
                           hasAccess
-                            ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20'
-                            : 'bg-black hover:bg-neutral-800 text-white shadow-slate-900/10'
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
+                            : 'bg-slate-950 hover:bg-black text-white'
                         }`}
                       >
                         <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </Link>
                     </div>
                   </div>
@@ -442,24 +458,24 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Riwayat Hasil & Modul Pembelajaran */}
-        <div className="bg-white rounded-[26px] p-5 sm:p-5.5 border border-slate-200/90 space-y-3.5 shadow-2xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 space-y-4 shadow-xs">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-950">
                 Riwayat Hasil & Modul Pembelajaran
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">Hasil evaluasi tes dan materi referensi maritim Anda</p>
+              <p className="text-xs text-slate-500 mt-0.5 font-normal">Hasil evaluasi tes dan materi referensi maritim Anda</p>
             </div>
             <Link
               href="/student/history"
-              className="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
+              className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
             >
               Lihat Semua
             </Link>
           </div>
 
-          {/* Desktop Table View (md+ screens) */}
-          <div className="hidden md:block overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
@@ -472,31 +488,31 @@ export default function StudentDashboardPage() {
               <tbody className="divide-y divide-slate-100 text-xs">
                 {recentResults.length > 0 ? (
                   recentResults.map((res) => (
-                    <tr key={res.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={res.id || res.attempt_id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <FileCheck2 className="w-4 h-4" />
                           </div>
                           <div>
-                            <p className="font-bold text-slate-800 leading-tight">{res.test_name}</p>
+                            <p className="font-extrabold text-slate-900 leading-tight">{res.test_name}</p>
                             <p className="text-[10px] text-slate-400 mt-0.5">{formatDateIndo(res.created_at)}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 pr-4">
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D8EEFD] text-[#0369A1] uppercase tracking-wider">
+                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-wider">
                           STANDAR CEFR
                         </span>
                       </td>
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-[#0284C7] text-xs">{res.score}%</span>
+                          <span className="font-mono font-bold text-blue-600 text-xs">{res.score}%</span>
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                            className={`px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${
                               res.is_passed
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : 'bg-slate-100 text-slate-600'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-rose-100 text-rose-800'
                             }`}
                           >
                             {res.is_passed ? 'LULUS' : 'REMEDIAL'}
@@ -506,7 +522,7 @@ export default function StudentDashboardPage() {
                       <td className="py-3.5 text-right">
                         <Link
                           href={`/student/test/result/${res.attempt_id || res.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-[#0284C7] text-slate-400 hover:text-[#0284C7] hover:bg-sky-50 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-blue-600 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-2xs"
                           title="Lihat Rincian Hasil"
                         >
                           <ArrowUpRight className="w-4 h-4" />
@@ -519,17 +535,17 @@ export default function StudentDashboardPage() {
                     <tr key={art.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <BookOpen className="w-4 h-4" />
                           </div>
                           <div>
-                            <p className="font-bold text-slate-800 leading-tight">{art.title}</p>
+                            <p className="font-extrabold text-slate-900 leading-tight">{art.title}</p>
                             <p className="text-[10px] text-slate-400 mt-0.5">{formatDateIndo(art.created_at)}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 pr-4">
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wider">
+                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wider">
                           {art.category || 'IMO SMCP'}
                         </span>
                       </td>
@@ -539,7 +555,7 @@ export default function StudentDashboardPage() {
                       <td className="py-3.5 text-right">
                         <Link
                           href={`/student/articles/${art.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-black text-slate-500 hover:text-black hover:bg-slate-100 transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-black text-slate-500 hover:text-black hover:bg-slate-100 transition-colors shadow-2xs"
                           title="Baca Modul"
                         >
                           <ArrowUpRight className="w-4 h-4" />

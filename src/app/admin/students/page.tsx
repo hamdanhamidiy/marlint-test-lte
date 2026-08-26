@@ -185,7 +185,16 @@ export default function AdminStudentsPage() {
     try {
       setLoading(true);
 
-      // 1. Get locally created students
+      // 1. Fetch live student records directly from Supabase
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .neq('role', 'instructor')
+        .neq('role', 'super_admin')
+        .neq('role', 'admin')
+        .order('created_at', { ascending: false });
+
+      // 2. Get locally created students
       let localCustom: UserProfile[] = [];
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_students_list');
@@ -196,35 +205,26 @@ export default function AdminStudentsPage() {
         }
       }
 
-      // 2. Fetch live student records from Supabase where role is student (or null/student)
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .neq('role', 'instructor')
-        .neq('role', 'super_admin')
-        .neq('role', 'admin')
-        .order('created_at', { ascending: false });
-
-      // 3. Deduplicate strictly by email so each student appears only ONCE
+      // 3. Deduplicate strictly by email so each student appears ONLY ONCE
       const map = new Map<string, UserProfile>();
 
-      // Base default fallback students
-      DEFAULT_STUDENTS.forEach((s) => {
-        if (s.email) map.set(s.email.toLowerCase(), s);
-      });
-
-      // Live Supabase students take priority
       if (data && data.length > 0) {
+        // Priority 1: Live Supabase database student records
         data.forEach((s: any) => {
           if (s.email && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
             map.set(s.email.toLowerCase(), s as UserProfile);
           }
         });
+      } else {
+        // Fallback only if database returned 0 rows
+        DEFAULT_STUDENTS.forEach((s) => {
+          if (s.email) map.set(s.email.toLowerCase(), s);
+        });
       }
 
-      // Local custom added students
+      // Only add custom students that do not already exist in database
       localCustom.forEach((s) => {
-        if (s.email && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
+        if (s.email && !map.has(s.email.toLowerCase()) && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
           map.set(s.email.toLowerCase(), s);
         }
       });

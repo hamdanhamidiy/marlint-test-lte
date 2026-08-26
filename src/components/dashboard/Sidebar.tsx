@@ -61,10 +61,10 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
   ];
 
   return (
-    <aside className="w-full sm:w-64 bg-white flex flex-col justify-between p-5 border-r border-slate-100 select-none h-full overflow-y-auto shrink-0">
+    <aside className="w-full sm:w-60 bg-white flex flex-col justify-between p-4 sm:p-5 border-r border-slate-200/80 select-none h-full overflow-y-auto shrink-0 font-sans">
       <div className="space-y-6">
-        {/* Logo at Top + Mobile Close Button */}
-        <div className="flex items-center justify-between px-2 pt-1 pb-2">
+        {/* Brand Logo & Mobile Close Button */}
+        <div className="flex items-center justify-between px-1 pt-1 pb-1">
           <Logo size="md" showSubtitle={true} subtitleText="LTE Cruise Training Center" href="/student/dashboard" />
           {onCloseMobile && (
             <button
@@ -73,17 +73,17 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
               className="lg:hidden p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
               aria-label="Close menu"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Section: MAIN NAVIGATION */}
+        {/* Main Navigation */}
         <div className="space-y-1">
-          <p className="px-3 text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-2">
+          <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-1.5">
             Menu Utama
           </p>
-          <nav className="space-y-1.5">
+          <nav className="space-y-1">
             {mainNav.map((item) => {
               const Icon = item.icon;
               const isActive =
@@ -96,23 +96,23 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                   key={item.name}
                   href={item.href}
                   onClick={onCloseMobile}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-full text-[13px] transition-all duration-200 ${
+                  className={`flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
                     isActive
-                      ? 'bg-[#0F172A] text-white font-bold shadow-sm shadow-slate-900/10'
-                      : 'text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 font-medium'
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <Icon
-                      className={`w-4 h-4 ${
-                        isActive ? 'text-[#38BDF8]' : 'text-slate-400'
+                      className={`w-4 h-4 transition-colors ${
+                        isActive ? 'text-sky-400' : 'text-slate-400 group-hover:text-slate-600'
                       }`}
                     />
                     <span>{item.name}</span>
                   </div>
 
                   {item.badge && (
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#EA580C] text-white shadow-xs">
+                    <span className="px-1.5 py-0.2 rounded-md text-[8px] font-extrabold bg-amber-500 text-white">
                       {item.badge}
                     </span>
                   )}
@@ -123,25 +123,25 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         </div>
       </div>
 
-      {/* Section: SETTINGS & ACTIONS */}
-      <div className="space-y-1.5 pt-4 border-t border-slate-100">
-        <p className="px-3 text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-1.5">
+      {/* Settings & Logout */}
+      <div className="space-y-1 pt-4 border-t border-slate-100">
+        <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-1">
           Pengaturan
         </p>
         <Link
           href="/student/redeem"
           onClick={onCloseMobile}
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-[#EA580C] hover:bg-orange-50/70 transition-colors"
+          className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 transition-colors"
         >
-          <KeyRound className="w-4 h-4 text-[#EA580C]" />
+          <KeyRound className="w-4 h-4 text-slate-400" />
           <span>Aktivasi Token</span>
         </Link>
         <Link
           href="/student/profile"
           onClick={onCloseMobile}
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 transition-colors"
+          className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 transition-colors"
         >
-          <User className="w-4 h-4 text-[#0284C7]" />
+          <User className="w-4 h-4 text-slate-400" />
           <span>Profil Pelaut</span>
         </Link>
         <button
@@ -149,7 +149,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
             if (onCloseMobile) onCloseMobile();
             signOut();
           }}
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50/80 transition-colors text-left cursor-pointer mt-1"
         >
           <LogOut className="w-4 h-4 text-rose-500" />
           <span>Keluar Akun</span>

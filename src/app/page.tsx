@@ -13,6 +13,9 @@ import {
   Award,
   CheckCircle2,
   FileCheck2,
+  Ship,
+  Utensils,
+  Hotel,
 } from 'lucide-react';
 import PublicNavbar from '@/components/navbar/PublicNavbar';
 import Logo from '@/components/brand/Logo';
@@ -79,7 +82,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-slate-900 selection:bg-[#EA580C] selection:text-white flex flex-col font-sans">
       <PublicNavbar />
 
-      {/* Hero Section - Antigravity Clean Aesthetic */}
+      {/* Hero Section - LTE Cruise Hotel & Marine Training Theme */}
       <section className="relative overflow-hidden pt-16 pb-24 md:pt-28 md:pb-36 bg-white">
         {/* Subtle decorative background glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-sky-100/40 via-blue-50/30 to-orange-50/20 blur-[120px] pointer-events-none rounded-full" />
@@ -91,32 +94,32 @@ export default function LandingPage() {
           }`}
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/80 text-slate-800 text-[13px] font-medium shadow-2xs hover:border-slate-300 transition-colors">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-medium shadow-2xs hover:border-slate-300 transition-colors">
             <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse" />
-            <span className="font-semibold text-[#0284C7]">IMO STCW & SMCP</span>
+            <span className="font-bold text-[#0284C7]">LTE CRUISE TRAINING CENTER</span>
             <span className="text-slate-300">|</span>
-            <span>Platform Standar Uji Kemahiran Bahasa Inggris Pelaut</span>
+            <span className="text-slate-600 font-semibold">Sekolah Perhotelan & Kapal Pesiar</span>
           </div>
 
           {/* Heading */}
           <div className="space-y-6 max-w-4xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl md:text-[62px] font-extrabold text-black tracking-tight leading-[1.1]">
-              Marlins English Language <br />
+              Marlins English Test <br />
               <span className="bg-gradient-to-r from-black via-slate-800 to-[#0284C7] bg-clip-text text-transparent">
-                Test for Seafarers
+                Perhotelan & Kapal Pesiar
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
-              Persiapkan dan evaluasi kompetensi Bahasa Inggris Maritim Anda dengan format soal standar IMO SMCP, penilaian otomatis realtime, serta dashboard modern terpadu.
+              Platform resmi evaluasi dan asesmen Bahasa Inggris standar Marlins Test untuk taruna sekolah perhotelan, kru kapal pesiar (Food & Beverage, Housekeeping, Guest Service), serta perwira & rating maritim LTE Cruise.
             </p>
           </div>
 
-          {/* CTA Buttons - Signature Black Pill Button like Antigravity */}
+          {/* CTA Buttons - Signature Black Pill Button */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               href={user ? (isAdmin ? '/admin/dashboard' : '/student/dashboard') : '/login'}
-              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-medium text-sm sm:text-base text-white bg-black hover:bg-neutral-800 shadow-md shadow-black/10 transition-all duration-150 hover:scale-[1.02]"
+              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-black hover:bg-neutral-800 shadow-md shadow-black/10 transition-all duration-150 hover:scale-[1.02]"
             >
               <LayoutDashboard className="w-4.5 h-4.5 text-slate-200" />
               <span>{user ? (isAdmin ? 'Buka Portal Pengelolaan' : 'Buka Dashboard Siswa') : 'Mulai Ujian Sekarang'}</span>
@@ -125,36 +128,36 @@ export default function LandingPage() {
 
             <Link
               href="/verify"
-              className="group flex items-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm sm:text-base text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all duration-150 hover:border-slate-300"
+              className="group flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all duration-150 hover:border-slate-300"
             >
               <ShieldCheck className="w-4.5 h-4.5 text-emerald-600" />
               <span>Verifikasi Sertifikat</span>
             </Link>
           </div>
 
-          {/* Key Stat Badges in Antigravity Light Clean Style */}
+          {/* Key Stat Badges */}
           <div className="pt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
             <div className="bg-[#F8F9FA] p-5 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-slate-300 transition-all hover:bg-white">
-              <span className="font-mono text-2xl font-bold text-black">8+ Tipe</span>
-              <p className="text-[13px] text-slate-600 font-medium mt-1">Soal Interaktif Maritim</p>
+              <span className="font-mono text-2xl font-bold text-black">10 Paket</span>
+              <p className="text-[13px] text-slate-600 font-medium mt-1">Ujian Standar Marlins</p>
             </div>
             <div className="bg-[#F8F9FA] p-5 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-slate-300 transition-all hover:bg-white">
-              <span className="font-mono text-2xl font-bold text-[#0284C7]">CEFR A1-C1</span>
-              <p className="text-[13px] text-slate-600 font-medium mt-1">Standar Penjenjangan</p>
+              <span className="font-mono text-2xl font-bold text-[#0284C7]">Cruise Ready</span>
+              <p className="text-[13px] text-slate-600 font-medium mt-1">Perhotelan & Kapal Pesiar</p>
             </div>
             <div className="bg-[#F8F9FA] p-5 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-slate-300 transition-all hover:bg-white">
               <span className="font-mono text-2xl font-bold text-emerald-600">100% Instant</span>
-              <p className="text-[13px] text-slate-600 font-medium mt-1">Grading & Sertifikat</p>
+              <p className="text-[13px] text-slate-600 font-medium mt-1">Grading & E-Sertifikat</p>
             </div>
             <div className="bg-[#F8F9FA] p-5 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-slate-300 transition-all hover:bg-white">
-              <span className="font-mono text-2xl font-bold text-[#EA580C]">IMO SMCP</span>
-              <p className="text-[13px] text-slate-600 font-medium mt-1">Standar Komunikasi</p>
+              <span className="font-mono text-2xl font-bold text-[#EA580C]">IMO STCW</span>
+              <p className="text-[13px] text-slate-600 font-medium mt-1">Standar Internasional</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Features Showcase Section (Antigravity 3-Card Grid Layout) */}
+      {/* Main Features Showcase Section */}
       <section id="features" className="py-20 md:py-28 bg-[#FAFAFC] border-t border-b border-slate-200/60">
         <div
           ref={featuresReveal.ref}
@@ -164,13 +167,13 @@ export default function LandingPage() {
         >
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wider block">
-              Core Capabilities
+              Kurikulum & Fitur Unggulan
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-black tracking-tight">
-              Explore the main features
+              Standar Kompetensi Perhotelan & Kapal Pesiar
             </h2>
             <p className="text-sm sm:text-base text-slate-600">
-              Sistem ujian maritim terlengkap yang dirancang untuk kebutuhan sertifikasi pelaut dan institusi diklat pelayaran.
+              Sistem ujian Marlins terintegrasi yang dirancang khusus untuk siswa LTE Cruise (Hotel & Marine Training Center).
             </p>
           </div>
 
@@ -178,13 +181,13 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div className="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all space-y-4 group">
               <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-bold shadow-xs">
-                <Code2 className="w-6 h-6" />
+                <Utensils className="w-6 h-6" />
               </div>
               <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-[#0284C7] transition-colors">
-                Format Soal Standar Marlins
+                Hospitality & Cruise English
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Dilengkapi berbagai tipe soal interaktif: Audio Listening maritim, Grammar, Vocabulary, Gambar navigasi, dan Maritime SMCP.
+                Kosakata dan dialog interaktif khusus departemen Food & Beverage, Housekeeping, Galley, Front Desk, dan layanan tamu kapal pesiar.
               </p>
             </div>
 
@@ -194,10 +197,10 @@ export default function LandingPage() {
                 <Award className="w-6 h-6" />
               </div>
               <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-[#0284C7] transition-colors">
-                Kalkulasi CEFR & Skor Real-Time
+                Kalkulasi CEFR & Skor Instan
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Penilaian instan langsung selesai ujian dengan pemetaan ke level CEFR (A1 hingga C1) serta rincian analitik per kompetensi.
+                Penilaian otomatis langsung setelah ujian dengan pemetaan level CEFR (A1–C1) untuk kelayakan rekrutmen perusahaan kapal pesiar internasional.
               </p>
             </div>
 
@@ -207,10 +210,10 @@ export default function LandingPage() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-[#EA580C] transition-colors">
-                E-Certificate & QR Verification
+                Sertifikat Resmi LTE Cruise
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Sertifikat digital resmi dengan QR code unik untuk verifikasi keaslian dokumen oleh agen crewing dan perusahaan pelayaran.
+                Sertifikat kelulusan digital resmi dengan QR code unik untuk verifikasi keaslian oleh agensi kapal pesiar dan hotel internasional.
               </p>
             </div>
           </div>
@@ -229,18 +232,18 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/70 pb-6">
               <div>
                 <span className="text-[11px] font-bold text-[#EA580C] uppercase tracking-wider block mb-1">
-                  Modern Clean Interface
+                  LTE Cruise Portal
                 </span>
                 <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-black">
-                  Tampilan Dashboard Modern & Simpel
+                  Dashboard Siswa & Calon Kru Kapal Pesiar
                 </h2>
               </div>
 
               <Link
                 href="/student/dashboard"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold bg-black text-white hover:bg-neutral-800 transition-all shadow-xs"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-black text-white hover:bg-neutral-800 transition-all shadow-xs"
               >
-                <span>Eksplor Dashboard Siswa</span>
+                <span>Buka Dashboard Siswa</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -249,13 +252,13 @@ export default function LandingPage() {
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0369A1] via-[#0284C7] to-[#0F172A] p-7 sm:p-9 text-white shadow-md">
               <div className="relative z-10 max-w-xl space-y-4">
                 <span className="text-[11px] font-bold tracking-widest text-sky-200 uppercase block">
-                  Official Assessment
+                  LTE Cruise • Hotel Marine Training Center
                 </span>
                 <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-                  Maritime English Language Assessment System
+                  Sistem Ujian Marlins Test Resmi
                 </h3>
                 <p className="text-xs sm:text-sm text-sky-100/90 leading-relaxed">
-                  Akses simulasi ujian, pelajari terminologi pelayaran internasional, dan cetak sertifikat resmi Anda.
+                  Latihan soal interaktif, asah kemampuan mendengarkan instruksi bahasa Inggris di kapal pesiar, dan dapatkan sertifikat resmi.
                 </p>
                 <div className="pt-2">
                   <Link
@@ -276,28 +279,28 @@ export default function LandingPage() {
                   <Layers className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Listening & Audio</span>
-                  <h4 className="text-xs font-bold text-slate-900">Maritime Communication</h4>
+                  <span className="text-[10px] text-slate-400 font-medium block">Listening & Guest Orders</span>
+                  <h4 className="text-xs font-bold text-slate-900">Cruise Communication</h4>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-2xs flex items-center gap-3 hover:border-slate-300 transition-all">
                 <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#EA580C] flex items-center justify-center font-bold">
-                  <Compass className="w-5 h-5" />
+                  <Hotel className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Nautical Terms</span>
-                  <h4 className="text-xs font-bold text-slate-900">Vessel Operations</h4>
+                  <span className="text-[10px] text-slate-400 font-medium block">Hospitality Vocab</span>
+                  <h4 className="text-xs font-bold text-slate-900">F&B & Housekeeping</h4>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-2xs flex items-center gap-3 hover:border-slate-300 transition-all">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                  <Code2 className="w-5 h-5" />
+                  <Ship className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Grammar & Structure</span>
-                  <h4 className="text-xs font-bold text-slate-900">SMCP Protocol</h4>
+                  <span className="text-[10px] text-slate-400 font-medium block">Safety & Protocols</span>
+                  <h4 className="text-xs font-bold text-slate-900">IMO SMCP Standards</h4>
                 </div>
               </div>
             </div>
@@ -316,16 +319,16 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             <div className="space-y-2">
               <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-black tracking-tight">
-                Paket Ujian Marlins Unggulan
+                Paket Ujian Marlins Test
               </h2>
               <p className="text-sm sm:text-base text-slate-600 font-normal">
-                Pilih paket tes untuk mengukur kesiapan menghadapi standar IMO STCW pelayaran internasional.
+                Pilih paket evaluasi standar Marlins Test untuk kesiapan karier perhotelan & kapal pesiar internasional.
               </p>
             </div>
 
             <Link
               href="/student/tests"
-              className="group inline-flex items-center gap-2 text-sm font-semibold text-[#0284C7] hover:text-[#0369A1] transition-colors"
+              className="group inline-flex items-center gap-2 text-sm font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors"
             >
               <span>Lihat Semua Paket</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
@@ -386,8 +389,8 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-slate-200/80 bg-white py-10 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs text-slate-500">
-          <Logo size="sm" showSubtitle={true} subtitleText="Maritime English Platform" variant="dark" />
-          <p>&copy; {new Date().getFullYear()} Marlins Maritime System. All rights reserved.</p>
+          <Logo size="sm" showSubtitle={true} subtitleText="Hotel & Marine Training Center" variant="dark" />
+          <p>&copy; {new Date().getFullYear()} LTE Cruise - Hotel & Marine Training Center. Marlins Test System.</p>
         </div>
       </footer>
     </div>

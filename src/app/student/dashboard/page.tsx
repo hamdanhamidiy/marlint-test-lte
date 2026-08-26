@@ -23,9 +23,9 @@ import { formatPriceIDR, formatDateIndo } from '@/lib/utils';
 import RightStatsPanel from '@/components/dashboard/RightStatsPanel';
 
 const TYPEWRITER_PHRASES = [
-  'Siap melanjutkan evaluasi dan sertifikasi kompetensi Bahasa Inggris Maritim Anda hari ini?',
-  'Uji kecakapan SMCP, VHF Radio, Navigation & Engineering English standar STCW.',
-  'Raih sertifikat resmi Marlins Test yang diakui oleh perusahaan pelayaran global.',
+  'Siap mengikuti evaluasi Marlins Test standar perhotelan & kapal pesiar hari ini?',
+  'Uji kecakapan bahasa Inggris departemen Food & Beverage, Housekeeping, Guest Service & Maritim.',
+  'Raih sertifikat resmi Marlins Test untuk lolos seleksi hotel & kapal pesiar internasional.',
 ];
 
 export default function StudentDashboardPage() {
@@ -192,9 +192,9 @@ export default function StudentDashboardPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 w-fit">
               <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse shrink-0"></span>
-              <span className="font-bold text-slate-900">Platform Resmi</span>
+              <span className="font-bold text-slate-900">LTE Cruise Training Center</span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-600 font-medium">Standar IMO STCW & SMCP</span>
+              <span className="text-slate-600 font-medium">Perhotelan & Kapal Pesiar</span>
             </div>
 
             {/* Quick Metrics Strip */}

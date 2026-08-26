@@ -13,7 +13,7 @@ export default function PublicNavbar() {
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-100/80 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo */}
-        <Logo size="md" showBadge={true} badgeText="WEB" href="/" variant="dark" />
+        <Logo size="md" showBadge={false} showSubtitle={true} subtitleText="LTE Cruise Training Center" href="/" variant="dark" />
 
         {/* Center: Navigation Links */}
         <nav className="hidden md:flex items-center bg-[#F1F3F5] p-1 rounded-full border border-slate-200/60 shadow-2xs">

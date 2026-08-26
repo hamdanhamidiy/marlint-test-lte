@@ -36,6 +36,7 @@ export interface MarlintTest {
   currency: string;
   question_composition: Record<string, number>;
   icon_url: string | null;
+  deck_type?: string;
   color: string;
   is_active: boolean;
   display_order: number;

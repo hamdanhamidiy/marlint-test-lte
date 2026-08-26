@@ -65,7 +65,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
       <div className="space-y-6">
         {/* Logo at Top + Mobile Close Button */}
         <div className="flex items-center justify-between px-2 pt-1 pb-2">
-          <Logo size="md" showSubtitle={true} subtitleText="Maritime English Platform" href="/student/dashboard" />
+          <Logo size="md" showSubtitle={true} subtitleText="LTE Cruise Training Center" href="/student/dashboard" />
           {onCloseMobile && (
             <button
               type="button"

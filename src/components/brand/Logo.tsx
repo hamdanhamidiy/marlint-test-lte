@@ -18,7 +18,7 @@ export default function Logo({
   showBadge = false,
   badgeText = '',
   showSubtitle = true,
-  subtitleText = 'Hotel Marine Training Center',
+  subtitleText = 'LTE Cruise Training Center',
   variant = 'dark',
   href = '/',
   className = '',
@@ -59,12 +59,12 @@ export default function Logo({
       >
         <img
           src="/images/lte-cruise-logo.png"
-          alt="LTE Cruise"
+          alt="Marlins Test - LTE Cruise"
           className="w-full h-full object-contain filter drop-shadow-2xs"
         />
       </div>
 
-      {/* Clean Horizontal Modern Typography (Never Wrap) */}
+      {/* Clean Horizontal Modern Typography: MarlinsTest with LTE Cruise subline */}
       <div className={`flex flex-col justify-center min-w-0 ${hideTextOnMobile ? 'hidden sm:flex' : ''}`}>
         <div className="flex items-center gap-1.5 leading-tight whitespace-nowrap">
           <span
@@ -72,7 +72,7 @@ export default function Logo({
               variant === 'light' ? 'text-white' : 'text-slate-950'
             } ${sizeClasses.text}`}
           >
-            LTE <span className="text-[#0284C7]">Cruise</span>
+            Marlins<span className="text-[#0284C7]">Test</span>
           </span>
 
           {showBadge && badgeText && (

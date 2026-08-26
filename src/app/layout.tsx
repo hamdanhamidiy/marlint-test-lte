@@ -3,8 +3,8 @@ import './globals.css';
 import { AuthProvider } from '@/lib/context/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'Marlins Test - Maritime English Language Proficiency',
-  description: 'Official Maritime English Language Testing & CEFR Assessment Platform for Seafarers and Shipping Companies.',
+  title: 'Marlins Test - Sekolah Perhotelan & Kapal Pesiar LTE Cruise',
+  description: 'Platform resmi evaluasi dan asesmen Bahasa Inggris Marlins Test untuk lembaga pelatihan perhotelan & kru kapal pesiar LTE Cruise (Hotel & Marine Training Center).',
 };
 
 export default function RootLayout({

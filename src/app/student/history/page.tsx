@@ -41,28 +41,25 @@ export default function StudentHistoryPage() {
         let resList: StudentResult[] = [];
         const currentUserId = user?.id || profile?.id || 'a1c181cd-4d43-49b7-9814-d724ba27ea2e';
 
-        // 1. Query Supabase
-        if (user?.id) {
-          try {
-            const { data } = await supabase
-              .from('student_results')
-              .select('*')
-              .eq('student_id', user.id)
-              .order('created_at', { ascending: false });
-
-            if (data && data.length > 0) {
-              resList = [...(data as StudentResult[])];
-            }
-          } catch (err) {
-            console.warn('Supabase load history error:', err);
+        // 1. Fetch from Supabase student_results table
+        try {
+          let query = supabase.from('student_results').select('*').order('created_at', { ascending: false });
+          if (user?.id) {
+            query = query.or(`student_id.eq.${user.id},student_id.eq.00000000-0000-0000-0000-000000000001,student_id.eq.a1c181cd-4d43-49b7-9814-d724ba27ea2e`);
           }
+          const { data: dbData } = await query;
+          if (dbData && dbData.length > 0) {
+            resList = dbData.map((d: any) => normalizeHistoryItem(d, currentUserId));
+          }
+        } catch (err) {
+          console.warn('Supabase load history note:', err);
         }
 
-        // 2. Scan LocalStorage for any test results on this browser & device
+        // 2. Discover test results stored in browser localStorage (e.g. from tests taken on this device)
         if (typeof window !== 'undefined') {
           const foundAttempts = new Set<string>(resList.map((r) => r.attempt_id || r.id));
 
-          // A. Check marlins_history_results
+          // A. Check marlins_history_results array
           const historyArrStr = localStorage.getItem('marlins_history_results');
           if (historyArrStr) {
             try {
@@ -115,11 +112,36 @@ export default function StudentHistoryPage() {
             }
           }
 
-          // Backfill and sync localStorage with normalized array
+          // Update local cache
           if (resList.length > 0) {
             try {
               localStorage.setItem('marlins_history_results', JSON.stringify(resList));
             } catch (e) {}
+          }
+
+          // 3. Asynchronously upload local results to Supabase so other devices (laptop/phone) receive them immediately
+          if (user?.id && resList.length > 0) {
+            resList.forEach(async (item) => {
+              try {
+                await supabase.from('student_results').upsert({
+                  id: item.id,
+                  student_id: user.id,
+                  attempt_id: item.attempt_id,
+                  score: item.score,
+                  correct_answers: item.correct_answers,
+                  total_questions: item.total_questions,
+                  level: item.level,
+                  category_scores: item.category_scores,
+                  is_passed: item.is_passed,
+                  time_spent_seconds: item.time_spent_seconds,
+                  start_time: item.start_time,
+                  end_time: item.end_time,
+                  created_at: item.created_at,
+                });
+              } catch (syncErr) {
+                // Silently ignore if network offline or RLS pending
+              }
+            });
           }
         }
 
@@ -185,7 +207,7 @@ export default function StudentHistoryPage() {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16 min-w-0">
+    <div className="space-y-5 sm:space-y-7 max-w-7xl mx-auto font-sans pb-16 min-w-0">
       {/* If Staff / Admin / Instructor is viewing, show switch banner */}
       {isStaffRole && (
         <div className="p-4 rounded-2xl bg-black text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
@@ -211,26 +233,26 @@ export default function StudentHistoryPage() {
       )}
 
       {/* Header Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-1.5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 pb-3 border-b border-slate-200/80">
+        <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black text-white text-[11px] font-bold shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Rekam Jejak Evaluasi Resmi</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
+          <h1 className="font-heading text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
             Riwayat Ujian Marlins
           </h1>
-          <p className="text-xs sm:text-[14px] text-slate-500 font-normal leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed max-w-2xl">
             Catatan rekapitulasi skor kompetensi, analisis sub-kategori, dan riwayat evaluasi Bahasa Inggris Perhotelan & Kapal Pesiar LTE Cruise.
           </p>
         </div>
 
-        {/* Filter Pills - High Contrast Black Aesthetic */}
-        <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full text-xs font-bold text-slate-600 shrink-0 self-start md:self-auto">
+        {/* Filter Pills - Responsive Monochrome Design */}
+        <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full text-xs font-bold text-slate-600 shrink-0 self-start md:self-auto overflow-x-auto w-full md:w-auto">
           <button
             type="button"
             onClick={() => setActiveFilter('all')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 md:flex-initial ${
               activeFilter === 'all'
                 ? 'bg-black text-white shadow-xs'
                 : 'hover:text-black'
@@ -241,7 +263,7 @@ export default function StudentHistoryPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('passed')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 md:flex-initial ${
               activeFilter === 'passed'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'hover:text-black'
@@ -252,7 +274,7 @@ export default function StudentHistoryPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('failed')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 md:flex-initial ${
               activeFilter === 'failed'
                 ? 'bg-slate-800 text-white shadow-xs'
                 : 'hover:text-black'
@@ -263,10 +285,10 @@ export default function StudentHistoryPage() {
         </div>
       </div>
 
-      {/* 4 Clean Minimalist Metric Cards - Executive Monochrome Style */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Card 1: Total Sesi (Pitch Black Hero Card) */}
-        <div className="bg-black text-white p-4 sm:p-5 rounded-2xl shadow-sm flex flex-col justify-between space-y-2">
+      {/* 4 Clean Minimalist Metric Cards - Responsive (2-column on mobile, 4-column on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        {/* Card 1: Total Sesi (Signature Black Card) */}
+        <div className="bg-black text-white p-3.5 sm:p-5 rounded-2xl shadow-sm flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Total Sesi
@@ -277,17 +299,17 @@ export default function StudentHistoryPage() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="font-heading text-2xl sm:text-3xl font-black text-white">
+              <span className="font-heading text-xl sm:text-3xl font-black text-white">
                 {totalSessions}
               </span>
               <span className="text-xs text-slate-400 font-medium">sesi</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-0.5 font-medium">Sesi Ujian Selesai</p>
+            <p className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium truncate">Sesi Ujian Selesai</p>
           </div>
         </div>
 
         {/* Card 2: Rata-Rata Skor */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Rata-Rata Skor
@@ -298,17 +320,17 @@ export default function StudentHistoryPage() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="font-heading text-2xl sm:text-3xl font-black text-slate-950">
+              <span className="font-heading text-xl sm:text-3xl font-black text-slate-950">
                 {avgScore}%
               </span>
               <span className="text-xs text-slate-400 font-medium">rata-rata</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Standar Kelulusan 70%</p>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 font-medium truncate">Standar Kelulusan 70%</p>
           </div>
         </div>
 
         {/* Card 3: Tingkat Kelulusan */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Tingkat Kelulusan
@@ -317,17 +339,17 @@ export default function StudentHistoryPage() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="font-heading text-2xl sm:text-3xl font-black text-emerald-600">
+              <span className="font-heading text-xl sm:text-3xl font-black text-emerald-600">
                 {passRate}%
               </span>
               <span className="text-xs text-slate-400 font-medium">lulus</span>
             </div>
-            <p className="text-[11px] text-emerald-700 mt-0.5 font-bold">{passedSessions} Ujian Berhasil Lulus</p>
+            <p className="text-[10px] sm:text-[11px] text-emerald-700 mt-0.5 font-bold truncate">{passedSessions} Ujian Berhasil Lulus</p>
           </div>
         </div>
 
         {/* Card 4: Poin Kemahiran */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Poin Kemahiran
@@ -338,18 +360,18 @@ export default function StudentHistoryPage() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="font-heading text-2xl sm:text-3xl font-black text-slate-950">
-                {profile?.total_points || 0}
+              <span className="font-heading text-xl sm:text-3xl font-black text-slate-950">
+                {profile?.total_points || (results.length > 0 ? results.reduce((acc, r) => acc + (r.points_earned || 50), 0) : 0)}
               </span>
               <span className="text-xs text-amber-600 font-bold">XP</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Level {profile?.level_code || 'A1'}</p>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 font-medium truncate">Level {profile?.level_code || 'A1'}</p>
           </div>
         </div>
       </div>
 
       {/* History List Section */}
-      <div className="space-y-3.5">
+      <div className="space-y-3">
         {loading ? (
           <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-400 text-xs shadow-2xs space-y-2">
             <div className="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center mx-auto animate-pulse">
@@ -381,42 +403,44 @@ export default function StudentHistoryPage() {
         ) : (
           filteredResults.map((item) => (
             <div
-              key={item.id}
-              className="bg-white p-4.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black hover:shadow-md transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+              key={item.id || item.attempt_id}
+              className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black hover:shadow-md transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 group"
             >
-              <div className="flex items-start gap-3.5 min-w-0">
+              <div className="flex items-start gap-3 min-w-0">
                 {/* Score Square Badge with Outfit font */}
                 <div
-                  className={`w-13 h-13 rounded-2xl flex flex-col items-center justify-center font-bold text-sm shrink-0 shadow-2xs ${
+                  className={`w-12 h-12 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center font-bold text-sm shrink-0 shadow-2xs ${
                     item.is_passed
                       ? 'bg-black text-white'
-                      : 'bg-slate-100 text-slate-800 border border-slate-200'
+                      : 'bg-slate-900 text-white'
                   }`}
                 >
-                  <span className="font-heading text-base font-black leading-none">{item.score}%</span>
-                  <span className="text-[9px] font-heading font-extrabold uppercase tracking-wider mt-1 opacity-80">
+                  <span className="font-heading text-[15px] sm:text-base font-black leading-none">{item.score}%</span>
+                  <span className={`text-[8px] sm:text-[9px] font-heading font-extrabold uppercase tracking-wider mt-0.5 ${
+                    item.is_passed ? 'text-emerald-400' : 'text-rose-400'
+                  }`}>
                     {item.is_passed ? 'LULUS' : 'REMED'}
                   </span>
                 </div>
 
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-heading font-extrabold text-slate-950 text-sm sm:text-base leading-snug group-hover:text-black transition-colors truncate">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <h3 className="font-heading font-extrabold text-slate-950 text-xs sm:text-sm md:text-base leading-snug group-hover:text-black transition-colors truncate">
                       {item.test_name || `Marlins Test #${item.marlint_test_number || 1}`}
                     </h3>
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                      className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider ${
                         item.is_passed ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'
                       }`}
                     >
                       {item.is_passed ? 'Lulus' : 'Remedial'}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-900 font-extrabold text-[10px] border border-slate-200">
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-900 font-extrabold text-[9px] sm:text-[10px] border border-slate-200">
                       Level {item.level || 'A1'}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap font-medium">
+                  <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-slate-500 flex-wrap font-medium">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>{formatDateIndo(item.created_at)}</span>
@@ -434,11 +458,11 @@ export default function StudentHistoryPage() {
                 </div>
               </div>
 
-              {/* Action Buttons: Clean Monochrome */}
-              <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+              {/* Action Buttons: Responsive for both Desktop and Mobile */}
+              <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-0 border-slate-100 justify-end sm:justify-center shrink-0">
                 <Link
                   href={`/student/test/review/${item.attempt_id}`}
-                  className="px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-100 hover:border-black text-slate-900 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs"
+                  className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-100 hover:border-black text-slate-900 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-slate-600" />
                   <span>Review Jawaban</span>
@@ -446,7 +470,7 @@ export default function StudentHistoryPage() {
 
                 <Link
                   href={`/student/test/result/${item.attempt_id}`}
-                  className="px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Analisis Nilai</span>
                   <ArrowRight className="w-3.5 h-3.5" />

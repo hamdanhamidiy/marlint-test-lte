@@ -134,7 +134,7 @@ export default function StudentDashboardPage() {
   }, [user]);
 
   const getGreetingName = () => {
-    if (!profile?.full_name) return 'Capt. Budi';
+    if (!profile?.full_name) return 'Pelaut';
     const words = profile.full_name.split(' ');
     if (words.length > 1) {
       return `${words[0]} ${words[1]}`;

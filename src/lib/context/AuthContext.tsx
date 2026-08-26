@@ -274,91 +274,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const cleanEmail = email.trim().toLowerCase();
       const cleanPass = password.trim();
 
-      // Explicit role-based real accounts matching from Supabase Database
-      if (cleanEmail === 'hamdan1@gmail.com') {
-        const hamdanGuruProfile: UserProfile = {
-          id: 'f1e178ba-78d7-46dc-a982-9df72295faeb',
-          email: 'hamdan1@gmail.com',
-          full_name: 'Hamdan Guru',
-          role: 'instructor',
-          status: 'active',
-          level: 'C1',
-          level_code: 'C1',
-          total_points: 1500,
-          phone_number: null,
-          photo_url: null,
-          job_title: 'Instruktur Bahasa Inggris Maritim',
-          date_of_birth: null,
-          nationality: 'Indonesia',
-          about: 'Instruktur & Penguji Resmi Marlins Test LTE Cruise.',
-          placement_test_taken: true,
-          placement_test_date: '2026-01-01T00:00:00.000Z',
-          created_at: '2026-01-01T00:00:00.000Z',
-          updated_at: new Date().toISOString(),
-        };
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('marlins_demo_user', JSON.stringify(hamdanGuruProfile));
+      // 1. Direct query against live Supabase database for the exact user account
+      try {
+        const { data: dbUser, error: dbErr } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', cleanEmail)
+          .maybeSingle();
+
+        if (dbUser && !dbErr) {
+          const userProf = dbUser as UserProfile;
+          setProfile(userProf);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('marlins_demo_user', JSON.stringify(userProf));
+          }
+          setUser({
+            id: userProf.id,
+            email: userProf.email,
+            app_metadata: {},
+            user_metadata: { full_name: userProf.full_name, role: userProf.role },
+            aud: 'authenticated',
+            created_at: userProf.created_at,
+          } as User);
+          return { error: null, profile: userProf };
         }
-        setProfile(hamdanGuruProfile);
-        setUser({
-          id: hamdanGuruProfile.id,
-          email: hamdanGuruProfile.email,
-          app_metadata: {},
-          user_metadata: { full_name: hamdanGuruProfile.full_name, role: hamdanGuruProfile.role },
-          aud: 'authenticated',
-          created_at: hamdanGuruProfile.created_at,
-        } as User);
-        return { error: null, profile: hamdanGuruProfile };
+      } catch (errDb) {
+        console.warn('Database user lookup warning:', errDb);
       }
 
-      if (cleanEmail === 'hamdan@gmail.com') {
-        const hamdanSiswaProfile: UserProfile = {
-          id: 'a1c181cd-4d43-49b7-9814-d7293a525f0a',
-          email: 'hamdan@gmail.com',
-          full_name: 'Ahmad Hamdan Hamidiy',
-          role: 'student',
-          status: 'active',
-          level: 'A1',
-          level_code: 'A1',
-          total_points: 320,
-          phone_number: '0813318044694',
-          photo_url: null,
-          job_title: 'Taruna Nautika / Deck Officer',
-          date_of_birth: '1998-08-14',
-          nationality: 'Indonesia',
-          about: 'Taruna pelayaran persiapan ujian kompetensi Marlins Test.',
-          placement_test_taken: true,
-          placement_test_date: '2026-02-10T00:00:00.000Z',
-          created_at: '2026-02-10T00:00:00.000Z',
-          updated_at: new Date().toISOString(),
-        };
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('marlins_demo_user', JSON.stringify(hamdanSiswaProfile));
-        }
-        setProfile(hamdanSiswaProfile);
-        setUser({
-          id: hamdanSiswaProfile.id,
-          email: hamdanSiswaProfile.email,
-          app_metadata: {},
-          user_metadata: { full_name: hamdanSiswaProfile.full_name, role: hamdanSiswaProfile.role },
-          aud: 'authenticated',
-          created_at: hamdanSiswaProfile.created_at,
-        } as User);
-        return { error: null, profile: hamdanSiswaProfile };
-      }
-
+      // 2. Predefined accounts & role fallbacks
       if (
-        cleanEmail === 'siswa@marlinstest.com' ||
-        cleanEmail === 'student@marlins.com' ||
-        cleanEmail === 'asfa@gmail.com' ||
-        cleanEmail === 'bita@gmail.com' ||
-        cleanEmail === 'leo@gmail.com' ||
-        cleanEmail === 'zaki@gmail.com' ||
-        cleanEmail === 'siswa' ||
-        cleanEmail === 'student'
+        cleanEmail === 'superadmin@marlinstest.com' ||
+        cleanEmail === 'superadmin@marlins.com' ||
+        cleanEmail === 'admin@marlins.com' ||
+        cleanEmail === 'admin@marlinstest.com' ||
+        cleanEmail === 'superadmin' ||
+        cleanEmail === 'admin'
       ) {
-        await signInAsDemo('student');
-        return { error: null, profile: REAL_STUDENT_PROFILE };
+        await signInAsDemo('super_admin');
+        return { error: null, profile: REAL_SUPER_ADMIN_PROFILE };
       }
 
       if (
@@ -372,15 +326,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (
-        cleanEmail === 'superadmin@marlinstest.com' ||
-        cleanEmail === 'superadmin@marlins.com' ||
-        cleanEmail === 'admin@marlins.com' ||
-        cleanEmail === 'admin@marlinstest.com' ||
-        cleanEmail === 'superadmin' ||
-        cleanEmail === 'admin'
+        cleanEmail === 'siswa@marlinstest.com' ||
+        cleanEmail === 'student@marlins.com' ||
+        cleanEmail === 'siswa' ||
+        cleanEmail === 'student'
       ) {
-        await signInAsDemo('super_admin');
-        return { error: null, profile: REAL_SUPER_ADMIN_PROFILE };
+        await signInAsDemo('student');
+        return { error: null, profile: REAL_STUDENT_PROFILE };
       }
 
       // Check if custom added instructor exists in localStorage

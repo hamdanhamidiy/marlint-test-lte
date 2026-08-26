@@ -767,20 +767,35 @@ export default function AdminStudentsPage() {
       const deletedResult = studentResults.find((r) => r.id === resultId);
       const attemptId = deletedResult?.attempt_id || resultId;
 
-      // 1. Delete related certificates first (foreign key: result_id)
-      try {
-        await supabase.from('certificates').delete().eq('result_id', resultId);
-      } catch (certErr) {
-        console.warn('Certificate cleanup note:', certErr);
-      }
+      let deleteSuccess = false;
 
-      // 2. Delete the student result from Supabase
-      const { error } = await supabase.from('student_results').delete().eq('id', resultId);
-      if (error) {
-        // Also try deleting by attempt_id in case id doesn't match
-        const { error: error2 } = await supabase.from('student_results').delete().eq('attempt_id', attemptId);
-        if (error2) {
-          throw new Error(error.message || error2.message);
+      // 1. Try elevated RPC function first (SECURITY DEFINER bypasses RLS/table restrictions)
+      try {
+        const { data: rpcRes, error: rpcErr } = await supabase.rpc('delete_student_result', {
+          p_result_id: resultId,
+        });
+        if (!rpcErr && rpcRes) {
+          deleteSuccess = true;
+        }
+      } catch (e) {}
+
+      // 2. Fallback to direct DELETE operations if RPC is not installed
+      if (!deleteSuccess) {
+        // Delete related certificates first
+        try {
+          await supabase.from('certificates').delete().eq('result_id', resultId);
+        } catch (certErr) {
+          console.warn('Certificate cleanup note:', certErr);
+        }
+
+        // Delete from student_results
+        const { error } = await supabase.from('student_results').delete().eq('id', resultId);
+        if (error) {
+          // Try deleting by attempt_id
+          const { error: error2 } = await supabase.from('student_results').delete().eq('attempt_id', attemptId);
+          if (error2) {
+            throw new Error(error.message || error2.message);
+          }
         }
       }
 

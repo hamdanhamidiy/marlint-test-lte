@@ -1263,12 +1263,18 @@ export default function AdminStudentsPage() {
                       >
                         <div className="flex items-start gap-3 min-w-0">
                           <div
-                            className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold text-xs shrink-0 ${
-                              res.is_passed ? 'bg-black text-white' : 'bg-slate-900 text-white'
+                            className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center font-bold text-xs shrink-0 border shadow-2xs ${
+                              res.is_passed ? 'bg-white border-emerald-200' : 'bg-white border-rose-200'
                             }`}
                           >
-                            <span className="font-heading text-sm font-black">{res.score}%</span>
-                            <span className={`text-[8px] font-extrabold ${res.is_passed ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            <span className={`font-heading text-sm font-black leading-none ${
+                              res.is_passed ? 'text-emerald-600' : 'text-rose-600'
+                            }`}>
+                              {res.score}%
+                            </span>
+                            <span className={`text-[8px] font-extrabold uppercase mt-0.5 px-1 py-0.2 rounded text-white ${
+                              res.is_passed ? 'bg-emerald-600' : 'bg-rose-500'
+                            }`}>
                               {res.is_passed ? 'LULUS' : 'REMED'}
                             </span>
                           </div>

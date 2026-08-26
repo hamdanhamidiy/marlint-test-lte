@@ -394,18 +394,26 @@ export default function StudentHistoryPage() {
               className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black hover:shadow-md transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 group"
             >
               <div className="flex items-start gap-3 min-w-0">
-                {/* Score Square Badge with Outfit font */}
+                {/* Score Square Badge - Clean White High-Contrast Design */}
                 <div
-                  className={`w-12 h-12 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center font-bold text-sm shrink-0 shadow-2xs ${
+                  className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center font-bold shrink-0 border shadow-xs ${
                     item.is_passed
-                      ? 'bg-black text-white'
-                      : 'bg-slate-900 text-white'
+                      ? 'bg-white border-emerald-200'
+                      : 'bg-white border-rose-200'
                   }`}
                 >
-                  <span className="font-heading text-[15px] sm:text-base font-black leading-none">{item.score}%</span>
-                  <span className={`text-[8px] sm:text-[9px] font-heading font-extrabold uppercase tracking-wider mt-0.5 ${
-                    item.is_passed ? 'text-emerald-400' : 'text-rose-400'
-                  }`}>
+                  <span
+                    className={`font-heading text-base sm:text-lg font-black leading-none ${
+                      item.is_passed ? 'text-emerald-600' : 'text-rose-600'
+                    }`}
+                  >
+                    {item.score}%
+                  </span>
+                  <span
+                    className={`text-[8px] sm:text-[9px] font-heading font-extrabold uppercase tracking-wider mt-1 px-1.5 py-0.5 rounded text-white ${
+                      item.is_passed ? 'bg-emerald-600' : 'bg-rose-500'
+                    }`}
+                  >
                     {item.is_passed ? 'LULUS' : 'REMED'}
                   </span>
                 </div>

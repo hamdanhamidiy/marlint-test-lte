@@ -268,11 +268,11 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-4 sm:space-y-5 min-w-0">
 
-        {/* Compact, Clean, Low-Profile Executive Maritime Hero Card */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#0B192C] p-4 sm:p-5 text-white shadow-md shadow-indigo-500/10">
+        {/* Executive Maritime Hero Card - Well-Proportioned, Elegant & Spacious */}
+        <div className="relative overflow-hidden rounded-[26px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#0B192C] p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-indigo-500/15">
           {/* Decorative Star Watermark */}
-          <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20 hidden md:block">
-            <svg width="160" height="160" viewBox="0 0 100 100" fill="none">
+          <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none opacity-25 hidden sm:block">
+            <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
               <path
                 d="M50 0C50 27.6142 27.6142 50 0 50C27.6142 50 50 72.3858 50 100C50 72.3858 72.3858 50 100 50C72.3858 50 50 27.6142 50 0Z"
                 fill="white"
@@ -281,45 +281,48 @@ export default function StudentDashboardPage() {
             </svg>
           </div>
 
-          <div className="relative z-10 space-y-2.5">
+          <div className="relative z-10 space-y-3.5 sm:space-y-4">
             {/* Top Subtitle Badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-slate-100 backdrop-blur-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold text-slate-100 backdrop-blur-xs w-fit">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <span>LTE Cruise Training Center</span>
               <span className="text-white/30">•</span>
               <span className="text-slate-200 font-medium">Perhotelan & Kapal Pesiar</span>
             </div>
 
-            {/* Greeting + Typewriter + Quick Action in a sleek row */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
-              <div className="space-y-0.5 min-w-0">
-                <h1 className="font-heading text-lg sm:text-xl font-extrabold text-white flex items-center gap-1.5">
-                  <span>Halo, {greetingName}!</span>
-                  <span className="text-lg">👋</span>
-                </h1>
-                <p className="text-xs text-slate-200 font-normal leading-relaxed truncate max-w-lg">
+            {/* Main Greeting & Dynamic Typewriter */}
+            <div className="space-y-1 sm:space-y-1.5">
+              <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-tight flex items-center gap-2">
+                <span>Halo, {greetingName}!</span>
+                <span className="animate-wave inline-block text-2xl sm:text-3xl ml-0.5">👋</span>
+              </h1>
+
+              <div className="min-h-[24px] flex items-center">
+                <p className="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed max-w-2xl">
                   <span>{currentText}</span>
                   <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
                 </p>
               </div>
+            </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <Link
-                  href="/student/tests"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-xs hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <Compass className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Pilih Paket</span>
-                </Link>
+            {/* Quick Action Buttons */}
+            <div className="pt-1 flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/student/tests"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Compass className="w-3.5 h-3.5 text-blue-600" />
+                <span>Pilih Paket Ujian Marlins</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              </Link>
 
-                <Link
-                  href="/student/history"
-                  className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-xs"
-                >
-                  <span>Riwayat Nilai</span>
-                  <ArrowUpRight className="w-3 h-3 text-slate-200" />
-                </Link>
-              </div>
+              <Link
+                href="/student/history"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-xs hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Lihat Riwayat Nilai</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-200" />
+              </Link>
             </div>
           </div>
         </div>

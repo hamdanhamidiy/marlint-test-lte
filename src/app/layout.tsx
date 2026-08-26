@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
+import { Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/context/AuthContext';
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-outfit',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Marlins Test - Sekolah Perhotelan & Kapal Pesiar LTE Cruise',
@@ -13,16 +21,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" className={`${outfit.variable} ${outfit.className}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;450;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-[#EA580C] selection:text-white">
+      <body className={`${outfit.className} font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-black selection:text-white`}>
         <AuthProvider>
           {children}
         </AuthProvider>

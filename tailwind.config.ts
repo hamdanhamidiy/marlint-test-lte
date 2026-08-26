@@ -48,7 +48,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "var(--font-sans)",
+          "var(--font-outfit)",
           "Outfit",
           "-apple-system",
           "BlinkMacSystemFont",
@@ -59,7 +59,7 @@ const config: Config = {
           "sans-serif"
         ],
         heading: [
-          "var(--font-heading)",
+          "var(--font-outfit)",
           "Outfit",
           "-apple-system",
           "BlinkMacSystemFont",
@@ -70,8 +70,8 @@ const config: Config = {
           "sans-serif"
         ],
         mono: [
-          "var(--font-mono)",
-          "JetBrains Mono",
+          "var(--font-outfit)",
+          "Outfit",
           "ui-monospace",
           "SFMono-Regular",
           "Menlo",

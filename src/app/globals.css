@@ -4,30 +4,30 @@
 
 @layer base {
   :root {
-    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-sans: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-heading: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: var(--font-outfit), 'Outfit', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
-  * {
+  *, html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   body {
-    font-family: var(--font-sans);
+    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: #0f172a;
     background-color: #ffffff;
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.6;
     letter-spacing: -0.011em;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   h1, h2, h3, h4, h5, h6, .font-heading {
-    font-family: var(--font-heading);
+    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     letter-spacing: -0.028em;
     line-height: 1.15;
     font-weight: 700;
@@ -44,9 +44,13 @@
     line-height: 1.15;
   }
 
-  button, input, textarea, select {
-    font-family: inherit;
-    letter-spacing: inherit;
+  button, input, textarea, select, span, p, a, div {
+    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .font-mono {
+    font-family: var(--font-outfit), 'Outfit', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 

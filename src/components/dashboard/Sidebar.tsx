@@ -14,6 +14,7 @@ import {
   User,
   LogOut,
   X,
+  Sparkles,
 } from 'lucide-react';
 import Logo from '@/components/brand/Logo';
 import { useAuth } from '@/lib/context/AuthContext';
@@ -24,7 +25,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onCloseMobile }: SidebarProps) {
   const pathname = usePathname();
-  const { profile, signOut } = useAuth();
+  const { signOut } = useAuth();
 
   const mainNav = [
     {
@@ -61,7 +62,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
   ];
 
   return (
-    <aside className="w-full sm:w-60 bg-white flex flex-col justify-between p-4 sm:p-5 border-r border-slate-200/80 select-none h-full overflow-y-auto shrink-0 font-sans">
+    <aside className="w-full sm:w-64 bg-white/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-5 border-r border-slate-200/80 select-none h-full overflow-y-auto shrink-0 font-sans shadow-xs">
       <div className="space-y-6">
         {/* Brand Logo & Mobile Close Button */}
         <div className="flex items-center justify-between px-1 pt-1 pb-1">
@@ -79,10 +80,14 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         </div>
 
         {/* Main Navigation */}
-        <div className="space-y-1">
-          <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-1.5">
-            Menu Utama
-          </p>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between px-3 mb-2">
+            <span className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">
+              Menu Utama
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500/40" />
+          </div>
+
           <nav className="space-y-1">
             {mainNav.map((item) => {
               const Icon = item.icon;
@@ -96,26 +101,31 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                   key={item.name}
                   href={item.href}
                   onClick={onCloseMobile}
-                  className={`flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                  className={`group relative flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 ease-out active:scale-[0.98] ${
                     isActive
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
+                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-md shadow-blue-500/25 translate-x-1'
+                      : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3">
                     <Icon
-                      className={`w-4 h-4 transition-colors ${
-                        isActive ? 'text-sky-400' : 'text-slate-400 group-hover:text-slate-600'
+                      className={`w-4 h-4 transition-all duration-200 ${
+                        isActive
+                          ? 'text-cyan-200'
+                          : 'text-slate-400 group-hover:text-blue-600 group-hover:scale-110'
                       }`}
                     />
-                    <span>{item.name}</span>
+                    <span className="tracking-tight">{item.name}</span>
                   </div>
 
-                  {item.badge && (
-                    <span className="px-1.5 py-0.2 rounded-md text-[8px] font-extrabold bg-amber-500 text-white">
+                  {/* Active glowing indicator or badge */}
+                  {isActive ? (
+                    <span className="w-2 h-2 rounded-full bg-cyan-300 shadow-xs shadow-cyan-300/80 animate-pulse" />
+                  ) : item.badge ? (
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs group-hover:scale-105 transition-transform">
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </Link>
               );
             })}
@@ -124,34 +134,39 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
       </div>
 
       {/* Settings & Logout */}
-      <div className="space-y-1 pt-4 border-t border-slate-100">
-        <p className="px-3 text-[10px] font-extrabold text-slate-400 tracking-wider uppercase mb-1">
-          Pengaturan
-        </p>
+      <div className="space-y-1.5 pt-4 border-t border-slate-100">
+        <div className="px-3 mb-1">
+          <span className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">
+            Pengaturan
+          </span>
+        </div>
+
         <Link
           href="/student/redeem"
           onClick={onCloseMobile}
-          className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 transition-colors"
+          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-amber-600 hover:bg-amber-50/70 hover:translate-x-1.5 transition-all duration-200 ease-out"
         >
-          <KeyRound className="w-4 h-4 text-slate-400" />
+          <KeyRound className="w-4 h-4 text-slate-400 group-hover:text-amber-600 group-hover:scale-110 transition-all" />
           <span>Aktivasi Token</span>
         </Link>
+
         <Link
           href="/student/profile"
           onClick={onCloseMobile}
-          className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 transition-colors"
+          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5 transition-all duration-200 ease-out"
         >
-          <User className="w-4 h-4 text-slate-400" />
+          <User className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:scale-110 transition-all" />
           <span>Profil Pelaut</span>
         </Link>
+
         <button
           onClick={() => {
             if (onCloseMobile) onCloseMobile();
             signOut();
           }}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50/80 transition-colors text-left cursor-pointer mt-1"
+          className="group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:translate-x-1.5 transition-all duration-200 ease-out text-left cursor-pointer mt-1"
         >
-          <LogOut className="w-4 h-4 text-rose-500" />
+          <LogOut className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
           <span>Keluar Akun</span>
         </button>
       </div>

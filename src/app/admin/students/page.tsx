@@ -33,7 +33,7 @@ import { useAuth } from '@/lib/context/AuthContext';
 
 const DEFAULT_STUDENTS: UserProfile[] = [
   {
-    id: 'a1c181cd-4d43-49b7-9814-d7293a525f0a',
+    id: 'a1c181cd-4d43-49b7-9814-d724ba27ea2e',
     email: 'hamdan@gmail.com',
     full_name: 'Ahmad Hamdan Hamidiy',
     role: 'student',
@@ -42,7 +42,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     level_code: 'A1',
     total_points: 320,
     phone_number: '0813318044694',
-    photo_url: null,
+    photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/a1c181cd-4d43-49b7-9814-d724ba27ea2e-1770544970243.jpg',
     job_title: 'Taruna Nautika / Deck Officer',
     date_of_birth: '1998-08-14',
     nationality: 'Indonesia',
@@ -53,7 +53,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     updated_at: new Date().toISOString(),
   },
   {
-    id: '3f5812ac-0a1b-48e3-9a5d-6df3b8606886',
+    id: '3f5812ac-0a1b-48e3-9a5d-6dfb73c52611',
     email: 'asfa@gmail.com',
     full_name: 'Asfa Ahmad',
     role: 'student',
@@ -62,7 +62,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     level_code: 'A1',
     total_points: 150,
     phone_number: null,
-    photo_url: null,
+    photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/3f5812ac-0a1b-48e3-9a5d-6dfb73c52611-1768089944358.jpg',
     job_title: 'Taruna Pelaut',
     date_of_birth: null,
     nationality: 'Indonesia',
@@ -73,7 +73,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     updated_at: new Date().toISOString(),
   },
   {
-    id: '65a606b2-3074-43b1-ade6-fba40f4e4157',
+    id: '65a606b2-3074-43b1-ade6-fbbd7e00b7d6',
     email: 'bita@gmail.com',
     full_name: 'Tsabita Arni Safitri',
     role: 'student',
@@ -82,7 +82,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     level_code: 'A1',
     total_points: 210,
     phone_number: null,
-    photo_url: null,
+    photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/65a606b2-3074-43b1-ade6-fbbd7e00b7d6-1768119018128.jpg',
     job_title: 'Hospitality & Cruise Staff',
     date_of_birth: null,
     nationality: 'Indonesia',
@@ -93,7 +93,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     updated_at: new Date().toISOString(),
   },
   {
-    id: 'ad8db4a9-f175-4b4b-9fa1-9e73b22cf31f',
+    id: 'ad8db4a9-f175-4b4b-9fa1-9e7797a9a76f',
     email: 'leo@gmail.com',
     full_name: 'Paulus Leo Martin',
     role: 'student',
@@ -113,7 +113,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     updated_at: new Date().toISOString(),
   },
   {
-    id: 'c5118799-cd16-4340-8f27-39e564a93863',
+    id: 'c5118799-cd16-4340-8f27-39e90813554b',
     email: 'zaki@gmail.com',
     full_name: 'Faris Zaki Ahnaf',
     role: 'student',
@@ -130,26 +130,6 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     placement_test_taken: true,
     placement_test_date: '2026-02-13T00:00:00.000Z',
     created_at: '2026-02-13T00:00:00.000Z',
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'f1e178ba-78d7-46dc-a982-9df72295faeb',
-    email: 'hamdan1@gmail.com',
-    full_name: 'Hamdan Guru',
-    role: 'instructor',
-    status: 'active',
-    level: 'C1',
-    level_code: 'C1',
-    total_points: 1500,
-    phone_number: null,
-    photo_url: null,
-    job_title: 'Instruktur Bahasa Inggris Maritim',
-    date_of_birth: null,
-    nationality: 'Indonesia',
-    about: 'Pengajar & penilai resmi evaluasi Marlins Test LTE Cruise.',
-    placement_test_taken: true,
-    placement_test_date: '2026-01-01T00:00:00.000Z',
-    created_at: '2026-01-01T00:00:00.000Z',
     updated_at: new Date().toISOString(),
   },
   {
@@ -179,7 +159,7 @@ export default function AdminStudentsPage() {
   const [students, setStudents] = useState<UserProfile[]>(DEFAULT_STUDENTS);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'instructor' | 'super_admin' | 'admin'>('all');
+  const [deptFilter, setDeptFilter] = useState<'all' | 'nautika' | 'teknika' | 'hospitality'>('all');
 
   // Add Student Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -204,6 +184,8 @@ export default function AdminStudentsPage() {
   const loadStudents = async () => {
     try {
       setLoading(true);
+
+      // 1. Get locally created students
       let localCustom: UserProfile[] = [];
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_students_list');
@@ -214,24 +196,40 @@ export default function AdminStudentsPage() {
         }
       }
 
+      // 2. Fetch live student records from Supabase where role is student (or null/student)
       const { data, error } = await supabase
         .from('users')
         .select('*')
+        .neq('role', 'instructor')
+        .neq('role', 'super_admin')
+        .neq('role', 'admin')
         .order('created_at', { ascending: false });
 
+      // 3. Deduplicate strictly by email so each student appears only ONCE
+      const map = new Map<string, UserProfile>();
+
+      // Base default fallback students
+      DEFAULT_STUDENTS.forEach((s) => {
+        if (s.email) map.set(s.email.toLowerCase(), s);
+      });
+
+      // Live Supabase students take priority
       if (data && data.length > 0) {
-        // Merge Supabase users with local custom users
-        const map = new Map<string, UserProfile>();
-        DEFAULT_STUDENTS.forEach((s) => map.set(s.id, s));
-        data.forEach((s: any) => map.set(s.id, s as UserProfile));
-        localCustom.forEach((s) => map.set(s.id, s));
-        setStudents(Array.from(map.values()));
-      } else {
-        const map = new Map<string, UserProfile>();
-        DEFAULT_STUDENTS.forEach((s) => map.set(s.id, s));
-        localCustom.forEach((s) => map.set(s.id, s));
-        setStudents(Array.from(map.values()));
+        data.forEach((s: any) => {
+          if (s.email && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
+            map.set(s.email.toLowerCase(), s as UserProfile);
+          }
+        });
       }
+
+      // Local custom added students
+      localCustom.forEach((s) => {
+        if (s.email && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
+          map.set(s.email.toLowerCase(), s);
+        }
+      });
+
+      setStudents(Array.from(map.values()));
     } catch (err) {
       console.error('Error loading students:', err);
       setStudents(DEFAULT_STUDENTS);
@@ -423,7 +421,25 @@ export default function AdminStudentsPage() {
   };
 
   const filteredStudents = students.filter((s) => {
-    if (roleFilter !== 'all' && s.role !== roleFilter) return false;
+    // Strictly exclude instructors and admins from students directory
+    if (s.role === 'instructor' || s.role === 'super_admin' || s.role === 'admin') return false;
+
+    if (deptFilter === 'nautika') {
+      const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
+      if (!match.includes('deck') && !match.includes('nautika') && !match.includes('officer') && !match.includes('perwira') && !match.includes('seafarer') && !match.includes('rating')) {
+        return false;
+      }
+    } else if (deptFilter === 'teknika') {
+      const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
+      if (!match.includes('engine') && !match.includes('teknika') && !match.includes('mesin')) {
+        return false;
+      }
+    } else if (deptFilter === 'hospitality') {
+      const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
+      if (!match.includes('hotel') && !match.includes('hospitality') && !match.includes('cruise') && !match.includes('steward') && !match.includes('f&b')) {
+        return false;
+      }
+    }
 
     if (!search) return true;
     const q = search.toLowerCase();
@@ -442,9 +458,9 @@ export default function AdminStudentsPage() {
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-            <span className="font-bold text-slate-900">Direktori Pelaut Terdaftar</span>
+            <span className="font-bold text-slate-900">Direktori Siswa & Taruna</span>
             <span className="text-slate-300">•</span>
-            <span className="text-slate-500 font-medium">Candidate Directory</span>
+            <span className="text-slate-500 font-medium">Khusus Data Siswa</span>
           </div>
 
           <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
@@ -452,7 +468,7 @@ export default function AdminStudentsPage() {
           </h1>
 
           <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{students.length}</strong> pelaut dan taruna terdaftar. Kelola direktori siswa, akses hak ujian (*entitlements*), dan tinjau riwayat evaluasi kompetensi secara realtime.
+            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa dan taruna terdaftar. Kelola direktori siswa, akses hak ujian (*entitlements*), dan tinjau riwayat evaluasi kompetensi secara realtime.
           </p>
         </div>
 
@@ -480,51 +496,51 @@ export default function AdminStudentsPage() {
           />
         </div>
 
-        {/* Role Filter Tabs */}
+        {/* Department Track Filter Tabs */}
         <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70">
           <button
             type="button"
-            onClick={() => setRoleFilter('all')}
+            onClick={() => setDeptFilter('all')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              roleFilter === 'all'
+              deptFilter === 'all'
                 ? 'bg-black text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Semua ({students.length})
+            Semua Siswa ({students.filter((s) => s.role === 'student' || !s.role).length})
           </button>
           <button
             type="button"
-            onClick={() => setRoleFilter('student')}
+            onClick={() => setDeptFilter('nautika')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              roleFilter === 'student'
+              deptFilter === 'nautika'
                 ? 'bg-[#0284C7] text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Siswa / Taruna ({students.filter((s) => s.role === 'student').length})
+            Nautika / Deck
           </button>
           <button
             type="button"
-            onClick={() => setRoleFilter('instructor')}
+            onClick={() => setDeptFilter('teknika')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              roleFilter === 'instructor'
-                ? 'bg-amber-600 text-white shadow-xs'
+              deptFilter === 'teknika'
+                ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Instruktur ({students.filter((s) => s.role === 'instructor').length})
+            Teknika / Engine
           </button>
           <button
             type="button"
-            onClick={() => setRoleFilter('super_admin')}
+            onClick={() => setDeptFilter('hospitality')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              roleFilter === 'super_admin'
+              deptFilter === 'hospitality'
                 ? 'bg-purple-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Super Admin ({students.filter((s) => s.role === 'super_admin' || s.role === 'admin').length})
+            Hospitality & Cruise
           </button>
         </div>
       </div>
@@ -545,17 +561,17 @@ export default function AdminStudentsPage() {
           <div className="space-y-1">
             <h3 className="font-heading font-bold text-slate-900 text-base">Tidak Ada Data Siswa</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              {search || roleFilter !== 'all'
+              {search || deptFilter !== 'all'
                 ? 'Tidak ada siswa yang sesuai dengan filter pencarian.'
                 : 'Belum ada akun siswa yang terdaftar di database.'}
             </p>
           </div>
-          {(search || roleFilter !== 'all') && (
+          {(search || deptFilter !== 'all') && (
             <button
               type="button"
               onClick={() => {
                 setSearch('');
-                setRoleFilter('all');
+                setDeptFilter('all');
               }}
               className="text-xs font-bold text-[#0284C7] hover:underline cursor-pointer"
             >

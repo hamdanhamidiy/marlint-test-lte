@@ -621,14 +621,27 @@ export default function TestTakingPage() {
       categoryScoresObj[cat] = { correct: stat.correct, total: stat.total };
     });
 
-    const studentUserId = user?.id || '00000000-0000-0000-0000-000000000001';
+    const isValidUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+    const resultUuid = isValidUuid(attemptId)
+      ? attemptId
+      : typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `8899e649-9911-44eb-845f-${Date.now().toString(16).padStart(12, '0')}`;
+    const certUuid =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `99887766-5544-3322-1100-${Date.now().toString(16).padStart(12, '0')}`;
+
+    const studentUserId = user?.id || profile?.id || '65a606b2-3074-43b1-ade6-fbbd7e00b7d6';
+    const studentEmail = (user?.email || profile?.email || 'bita@gmail.com').toLowerCase();
     const pointsEarned = Math.max(50, Math.round(finalPercentage * 1.5));
     const timeSpent = Math.max(60, Math.floor((Date.now() - getOrSetStartTime(attemptId)) / 1000));
     const nowIso = new Date().toISOString();
 
     const clientResult = {
-      id: `res-${attemptId}`,
+      id: resultUuid,
       student_id: studentUserId,
+      student_email: studentEmail,
       attempt_id: attemptId,
       test_number: attempt.test_number,
       marlint_test_number: attempt.test_number,
@@ -655,12 +668,11 @@ export default function TestTakingPage() {
     let generatedCertificate: any = null;
     if (isPassed) {
       const studentName = profile?.full_name || user?.user_metadata?.full_name || 'Budi Santoso';
-      const studentEmail = user?.email || 'siswa@marlinstest.com';
       const certNumber = `MARLINS-${attempt.test_number}-${Date.now().toString().slice(-6)}`;
       const verCode = `VER-${Date.now().toString().slice(-8)}`;
 
       generatedCertificate = {
-        id: `cert-${attemptId}`,
+        id: certUuid,
         certificate_number: certNumber,
         user_id: studentUserId,
         marlint_test_id: `test-${attempt.test_number}`,
@@ -689,6 +701,7 @@ export default function TestTakingPage() {
       // 1. Save standard result keys to localStorage
       localStorage.setItem(`test_result_${attemptId}`, JSON.stringify(clientResult));
       localStorage.setItem(`marlins_result_${attemptId}`, JSON.stringify(clientResult));
+      localStorage.setItem(`marlins_result_${resultUuid}`, JSON.stringify(clientResult));
 
       // 2. Save certificate if passed
       if (generatedCertificate) {
@@ -710,31 +723,36 @@ export default function TestTakingPage() {
       };
       localStorage.setItem(`marlins_review_${attemptId}`, JSON.stringify(reviewPayload));
 
-      // 4. Append to history list
-      const existingHistoryStr = localStorage.getItem('marlins_history_results');
-      let historyArr: any[] = [];
-      if (existingHistoryStr) {
+      // 4. Append to user-scoped history lists
+      const userHistKeys = [
+        `marlins_history_results_${studentUserId}`,
+        `marlins_history_results_${studentEmail}`,
+        'marlins_history_results',
+      ];
+      userHistKeys.forEach((key) => {
+        let historyArr: any[] = [];
         try {
-          historyArr = JSON.parse(existingHistoryStr);
+          const existingStr = localStorage.getItem(key);
+          if (existingStr) historyArr = JSON.parse(existingStr);
           if (!Array.isArray(historyArr)) historyArr = [];
         } catch (e) {
           historyArr = [];
         }
-      }
-      historyArr = historyArr.filter((item) => item.attempt_id !== attemptId && item.id !== clientResult.id);
-      historyArr.unshift(clientResult);
-      localStorage.setItem('marlins_history_results', JSON.stringify(historyArr));
+        historyArr = historyArr.filter((item) => item.attempt_id !== attemptId && item.id !== resultUuid);
+        historyArr.unshift(clientResult);
+        localStorage.setItem(key, JSON.stringify(historyArr));
+      });
     } catch (e) {
       console.warn('Failed to save result to localStorage:', e);
     }
 
     // 5. Asynchronous Dual Persistence to Supabase DB
     try {
-      // Upsert to student_results table
+      // Upsert to student_results table with pure UUID
       await supabase.from('student_results').upsert({
-        id: clientResult.id,
+        id: resultUuid,
         student_id: studentUserId,
-        attempt_id: attemptId,
+        attempt_id: isValidUuid(attemptId) ? attemptId : null,
         score: finalPercentage,
         correct_answers: totalScore,
         total_questions: attempt.questions.length,
@@ -751,15 +769,28 @@ export default function TestTakingPage() {
         created_at: nowIso,
       });
 
-      // Update attempt in test_attempts table
+      // Update student points and level in users table
       await supabase
-        .from('test_attempts')
+        .from('users')
         .update({
-          status: 'completed',
-          submitted_at: nowIso,
-          result_id: clientResult.id,
+          total_points: (profile?.total_points || 0) + pointsEarned,
+          level_code: levelCode,
+          level: levelCode,
+          updated_at: nowIso,
         })
-        .eq('id', attemptId);
+        .or(`id.eq.${studentUserId},email.eq.${studentEmail}`);
+
+      // Update attempt in test_attempts table
+      if (isValidUuid(attemptId)) {
+        await supabase
+          .from('test_attempts')
+          .update({
+            status: 'completed',
+            submitted_at: nowIso,
+            result_id: resultUuid,
+          })
+          .eq('id', attemptId);
+      }
 
       // If passed, upsert certificate
       if (generatedCertificate) {

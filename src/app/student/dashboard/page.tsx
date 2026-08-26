@@ -268,31 +268,37 @@ export default function StudentDashboardPage() {
       {/* Center Main Content Area */}
       <div className="flex-1 w-full space-y-5 sm:space-y-6 min-w-0">
 
-        {/* Modern Clean Executive Maritime Hero Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0d1629] to-slate-950 p-6 sm:p-7 text-white border border-slate-800/90 shadow-xl">
-          {/* Subtle Ambient Lighting Effects */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-400 opacity-80" />
+        {/* Modern Clean Executive Maritime Hero Card with Blue-to-Black Gradient & Watermark */}
+        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#0B192C] p-6 sm:p-8 text-white shadow-lg shadow-indigo-500/15">
+          {/* Decorative Star Watermark */}
+          <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none opacity-25 hidden sm:block">
+            <svg width="220" height="220" viewBox="0 0 100 100" fill="none">
+              <path
+                d="M50 0C50 27.6142 27.6142 50 0 50C27.6142 50 50 72.3858 50 100C50 72.3858 72.3858 50 100 50C72.3858 50 50 27.6142 50 0Z"
+                fill="white"
+                fillOpacity="0.25"
+              />
+            </svg>
+          </div>
 
           <div className="relative z-10 space-y-4">
             {/* Top Tag Row */}
-            <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-slate-200 shadow-xs">
+            <div className="flex items-center justify-between gap-2.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-slate-100 shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                 <span>LTE Cruise Training Center</span>
                 <span className="text-white/30">•</span>
-                <span className="text-slate-300 font-medium">Perhotelan & Kapal Pesiar</span>
+                <span className="text-slate-200 font-medium">Perhotelan & Kapal Pesiar</span>
               </div>
 
-              {/* Quick Spec Badges */}
-              <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-slate-200">
-                  <Clock className="w-3 h-3 text-sky-400" />
+              {/* Quick Spec Badges - Hidden on Mobile (< sm), Visible on Desktop */}
+              <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-slate-200">
+                  <Clock className="w-3 h-3 text-cyan-300" />
                   <span>Stopwatch</span>
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-slate-200">
-                  <FileCheck2 className="w-3 h-3 text-amber-400" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-slate-200">
+                  <FileCheck2 className="w-3 h-3 text-amber-300" />
                   <span>60 Soal</span>
                 </span>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300">
@@ -304,15 +310,15 @@ export default function StudentDashboardPage() {
 
             {/* Greeting & Typewriter */}
             <div className="space-y-1.5 pt-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
                 <span>Halo, {greetingName}!</span>
                 <span className="animate-bounce inline-block text-2xl sm:text-3xl">👋</span>
               </h1>
 
               <div className="min-h-[26px] flex items-center">
-                <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed max-w-2xl">
+                <p className="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed max-w-2xl">
                   <span>{currentText}</span>
-                  <span className="font-bold text-amber-400 animate-pulse ml-0.5">|</span>
+                  <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
                 </p>
               </div>
             </div>
@@ -330,10 +336,10 @@ export default function StudentDashboardPage() {
 
               <Link
                 href="/student/history"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold transition-all backdrop-blur-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-sm"
               >
                 <span>Lihat Riwayat Nilai</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-300" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-200" />
               </Link>
             </div>
           </div>

@@ -24,12 +24,32 @@ import {
   Layers,
   ArrowRight,
   Filter,
+  Edit2,
+  Trash2,
+  Save,
+  Check,
+  CheckCheck,
+  AlertTriangle,
+  ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 import { UserProfile, UserRole } from '@/lib/supabase/types';
 import { getLevelBadge, formatDateIndo } from '@/lib/utils';
 import { useAuth } from '@/lib/context/AuthContext';
+
+const MARLINS_10_TESTS = [
+  { number: 1, name: 'Marlins Test #1', subtitle: 'Basic Maritime English - Foundation Level', isFree: true },
+  { number: 2, name: 'Marlins Test #2', subtitle: 'Elementary Maritime Communication', isFree: false },
+  { number: 3, name: 'Marlins Test #3', subtitle: 'Pre-Intermediate Maritime English', isFree: false },
+  { number: 4, name: 'Marlins Test #4', subtitle: 'Intermediate Maritime English', isFree: false },
+  { number: 5, name: 'Marlins Test #5', subtitle: 'Upper-Intermediate Operational English', isFree: false },
+  { number: 6, name: 'Marlins Test #6', subtitle: 'Advanced Maritime English & Safety', isFree: false },
+  { number: 7, name: 'Marlins Test #7', subtitle: 'Communication & Cargo Operations', isFree: false },
+  { number: 8, name: 'Marlins Test #8', subtitle: 'Technical English & Engine Operations', isFree: false },
+  { number: 9, name: 'Marlins Test #9', subtitle: 'Emergency & Distress Protocols (SMCP)', isFree: false },
+  { number: 10, name: 'Marlins Test #10', subtitle: 'Master & Chief Engineer Proficiency', isFree: false },
+];
 
 const DEFAULT_STUDENTS: UserProfile[] = [
   {
@@ -174,7 +194,22 @@ export default function AdminStudentsPage() {
   });
   const [addingStudent, setAddingStudent] = useState(false);
 
-  // Student Detail / Access Modal
+  // Edit Student Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<UserProfile | null>(null);
+  const [editForm, setEditForm] = useState({
+    full_name: '',
+    email: '',
+    phone_number: '',
+    job_title: '',
+    level_code: 'A1',
+    total_points: 0,
+    nationality: 'Indonesia',
+    about: '',
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  // Student Detail / Access Modal (1-10 Tests)
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
   const [studentAttempts, setStudentAttempts] = useState<any[]>([]);
   const [studentEntitlements, setStudentEntitlements] = useState<number[]>([]);
@@ -253,7 +288,7 @@ export default function AdminStudentsPage() {
       setAddingStudent(true);
       const newStudent: UserProfile = {
         id: `user-${Date.now()}`,
-        email: newStudentForm.email.trim(),
+        email: newStudentForm.email.trim().toLowerCase(),
         full_name: newStudentForm.full_name.trim(),
         role: 'student',
         status: 'active',
@@ -279,7 +314,11 @@ export default function AdminStudentsPage() {
         localStorage.setItem('marlins_students_list', JSON.stringify([newStudent, ...list]));
       }
 
-      setStudents((prev) => [newStudent, ...prev]);
+      const newEmail = (newStudent.email || '').toLowerCase();
+      setStudents((prev) => [
+        newStudent,
+        ...prev.filter((s) => (s.email?.toLowerCase() || '') !== newEmail),
+      ]);
 
       // Try inserting into Supabase
       try {
@@ -306,6 +345,137 @@ export default function AdminStudentsPage() {
     }
   };
 
+  const handleOpenEditModal = (st: UserProfile) => {
+    setEditingStudent(st);
+    setEditForm({
+      full_name: st.full_name || '',
+      email: st.email || '',
+      phone_number: st.phone_number || '',
+      job_title: st.job_title || 'Taruna Pelaut',
+      level_code: st.level_code || 'A1',
+      total_points: st.total_points || 0,
+      nationality: st.nationality || 'Indonesia',
+      about: st.about || '',
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingStudent) return;
+
+    try {
+      setSavingEdit(true);
+      const studentEmail = (editingStudent.email || '').toLowerCase();
+
+      const updatedStudent: UserProfile = {
+        ...editingStudent,
+        full_name: editForm.full_name.trim(),
+        phone_number: editForm.phone_number.trim() || null,
+        job_title: editForm.job_title.trim() || 'Taruna Pelaut',
+        level: editForm.level_code,
+        level_code: editForm.level_code,
+        total_points: Number(editForm.total_points) || 0,
+        nationality: editForm.nationality.trim() || 'Indonesia',
+        about: editForm.about.trim() || null,
+        updated_at: new Date().toISOString(),
+      };
+
+      // 1. Update in State
+      setStudents((prev) =>
+        prev.map((s) => ((s.email?.toLowerCase() || '') === studentEmail ? updatedStudent : s))
+      );
+
+      if (selectedStudent && (selectedStudent.email?.toLowerCase() || '') === studentEmail) {
+        setSelectedStudent(updatedStudent);
+      }
+
+      // 2. Update in Supabase
+      try {
+        await supabase
+          .from('users')
+          .update({
+            full_name: updatedStudent.full_name,
+            phone_number: updatedStudent.phone_number,
+            job_title: updatedStudent.job_title,
+            level: updatedStudent.level_code,
+            level_code: updatedStudent.level_code,
+            total_points: updatedStudent.total_points,
+            nationality: updatedStudent.nationality,
+            about: updatedStudent.about,
+            updated_at: updatedStudent.updated_at,
+          })
+          .or(`id.eq.${editingStudent.id},email.eq.${editingStudent.email}`);
+      } catch (dbErr) {
+        console.warn('Supabase update student note:', dbErr);
+      }
+
+      // 3. Update in LocalStorage
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('marlins_students_list');
+        if (stored) {
+          try {
+            const list: UserProfile[] = JSON.parse(stored);
+            const updatedList = list.map((s) => ((s.email?.toLowerCase() || '') === studentEmail ? updatedStudent : s));
+            localStorage.setItem('marlins_students_list', JSON.stringify(updatedList));
+          } catch (e) {}
+        }
+      }
+
+      setIsEditModalOpen(false);
+      setEditingStudent(null);
+      alert(`Data siswa ${updatedStudent.full_name} berhasil diperbarui!`);
+    } catch (err: any) {
+      alert('Gagal menyimpan perubahan: ' + err.message);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteStudent = async (st: UserProfile) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus data siswa "${st.full_name}" (${st.email || '-'})?\nData yang dihapus tidak dapat dikembalikan.`)) {
+      return;
+    }
+
+    try {
+      const targetEmail = (st.email || '').toLowerCase();
+
+      // 1. Remove from state
+      setStudents((prev) => prev.filter((s) => (s.email?.toLowerCase() || '') !== targetEmail));
+
+      if (selectedStudent && (selectedStudent.email?.toLowerCase() || '') === targetEmail) {
+        setSelectedStudent(null);
+      }
+
+      // 2. Delete from Supabase (clean up entitlements, attempts, and user row)
+      try {
+        if (st.id) {
+          await supabase.from('test_entitlements').delete().eq('user_id', st.id);
+          await supabase.from('test_attempts').delete().eq('user_id', st.id);
+        }
+        await supabase.from('users').delete().or(`id.eq.${st.id},email.eq.${st.email}`);
+      } catch (dbErr) {
+        console.warn('Supabase delete student note:', dbErr);
+      }
+
+      // 3. Remove from LocalStorage
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('marlins_students_list');
+        if (stored) {
+          try {
+            const list: UserProfile[] = JSON.parse(stored);
+            const filtered = list.filter((s) => (s.email?.toLowerCase() || '') !== targetEmail);
+            localStorage.setItem('marlins_students_list', JSON.stringify(filtered));
+          } catch (e) {}
+        }
+      }
+
+      alert(`Siswa ${st.full_name} berhasil dihapus dari direktori.`);
+    } catch (err: any) {
+      alert('Gagal menghapus siswa: ' + err.message);
+    }
+  };
+
   const handleOpenStudentDetail = async (st: UserProfile) => {
     setSelectedStudent(st);
     try {
@@ -329,13 +499,15 @@ export default function AdminStudentsPage() {
         .eq('user_id', st.id)
         .eq('is_active', true);
 
-      if (ents) {
+      if (ents && ents.length > 0) {
         setStudentEntitlements(ents.map((e) => e.test_number));
       } else {
-        setStudentEntitlements([]);
+        // Test #1 is default free, others default to student's saved state
+        setStudentEntitlements([1]);
       }
     } catch (err) {
       console.error('Error loading student details:', err);
+      setStudentEntitlements([1]);
     } finally {
       setLoadingDetails(false);
     }
@@ -387,6 +559,51 @@ export default function AdminStudentsPage() {
       }
     } catch (err: any) {
       alert('Gagal memperbarui akses: ' + err.message);
+    } finally {
+      setUpdatingAccess(false);
+    }
+  };
+
+  const handleGrantAllAccess = async () => {
+    if (!selectedStudent) return;
+    try {
+      setUpdatingAccess(true);
+      const allNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      
+      const records = allNums.map((num) => ({
+        user_id: selectedStudent.id,
+        marlint_test_id: `test-${num}`,
+        test_number: num,
+        source: 'super_admin_grant_all',
+        is_active: true,
+        granted_at: new Date().toISOString(),
+      }));
+
+      await supabase.from('test_entitlements').upsert(records, { onConflict: 'user_id, marlint_test_id' });
+      setStudentEntitlements(allNums);
+    } catch (err: any) {
+      console.warn('Grant all access notice:', err);
+      setStudentEntitlements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    } finally {
+      setUpdatingAccess(false);
+    }
+  };
+
+  const handleRevokeAllAccess = async () => {
+    if (!selectedStudent) return;
+    try {
+      setUpdatingAccess(true);
+      // Revoke tests 2..10 (test 1 remains free)
+      await supabase
+        .from('test_entitlements')
+        .update({ is_active: false, revoked_at: new Date().toISOString() })
+        .eq('user_id', selectedStudent.id)
+        .neq('test_number', 1);
+
+      setStudentEntitlements([1]);
+    } catch (err: any) {
+      console.warn('Revoke all notice:', err);
+      setStudentEntitlements([1]);
     } finally {
       setUpdatingAccess(false);
     }
@@ -468,7 +685,7 @@ export default function AdminStudentsPage() {
           </h1>
 
           <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa dan taruna terdaftar. Kelola direktori siswa, akses hak ujian (*entitlements*), dan tinjau riwayat evaluasi kompetensi secara realtime.
+            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa dan taruna terdaftar. Kelola direktori siswa, akses hak ujian (Test 1–10), edit biodata, atau hapus akun siswa.
           </p>
         </div>
 
@@ -551,7 +768,7 @@ export default function AdminStudentsPage() {
           <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <Users className="w-4 h-4" />
           </div>
-          <p className="font-bold text-slate-700">Memuat data siswa dari database...</p>
+          <p className="font-semibold text-slate-600">Memuat direktori siswa...</p>
         </div>
       ) : filteredStudents.length === 0 ? (
         <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
@@ -586,13 +803,13 @@ export default function AdminStudentsPage() {
 
             return (
               <div
-                key={st.id}
-                className="bg-white p-5 sm:p-6 rounded-[26px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-md transition-all"
+                key={st.email || st.id}
+                className="bg-white p-5 sm:p-6 rounded-[26px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-md transition-all group"
               >
                 {/* Left: Avatar & Candidate Information */}
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] text-white font-heading font-black text-base flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-0.5">
-                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden">
                       {st.photo_url ? (
                         <img src={st.photo_url} alt={st.full_name} className="w-full h-full object-cover" />
                       ) : (
@@ -606,14 +823,8 @@ export default function AdminStudentsPage() {
                       <h3 className="font-heading text-base sm:text-[17px] font-extrabold text-slate-950 truncate">
                         {st.full_name || 'Kandidat Pelaut'}
                       </h3>
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        st.role === 'admin' || st.role === 'super_admin'
-                          ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                          : st.role === 'instructor'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-slate-100 text-slate-700'
-                      }`}>
-                        {st.role || 'Student'}
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-sky-50 text-[#0284C7] border border-sky-200/80">
+                        Siswa Pelaut
                       </span>
                     </div>
 
@@ -621,14 +832,20 @@ export default function AdminStudentsPage() {
                       <span>{st.email}</span>
                       <span className="text-slate-300">•</span>
                       <span className="text-slate-800 font-bold">{st.job_title || 'Perwira / Rating'}</span>
+                      {st.phone_number && (
+                        <>
+                          <span className="text-slate-300">•</span>
+                          <span className="text-slate-600 font-mono text-xs">{st.phone_number}</span>
+                        </>
+                      )}
                       <span className="text-slate-300">•</span>
                       <span>{st.nationality || 'Indonesia'}</span>
                     </p>
                   </div>
                 </div>
 
-                {/* Right: Badges & Action */}
-                <div className="flex items-center gap-3 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 justify-between md:justify-end">
+                {/* Right: Badges & Action Buttons */}
+                <div className="flex items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 justify-between md:justify-end flex-wrap">
                   <div className="flex items-center gap-2">
                     <span className={`px-3 py-1 rounded-full text-xs font-extrabold ${badge.badgeBg} ${badge.badgeText} border ${badge.badgeBorder}`}>
                       Level {st.level_code || 'A1'}
@@ -640,14 +857,35 @@ export default function AdminStudentsPage() {
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleOpenStudentDetail(st)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
-                  >
-                    <span>Kelola Akses</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Actions: Edit, Delete, Kelola Akses */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditModal(st)}
+                      className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
+                      title="Edit Data Siswa"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteStudent(st)}
+                      className="p-2 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 transition-all cursor-pointer"
+                      title="Hapus Siswa"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenStudentDetail(st)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
+                    >
+                      <KeyRound className="w-3.5 h-3.5 text-[#EA580C]" />
+                      <span>Kelola Akses (1–10)</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -655,37 +893,58 @@ export default function AdminStudentsPage() {
         </div>
       )}
 
-      {/* Student Detail & Entitlements Modal */}
+      {/* Student Detail & Entitlements Modal (Tests 1 to 10) */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-200/90 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
-              <div>
-                <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                  Candidate Access Control
-                </span>
-                <h3 className="font-heading text-lg font-bold text-slate-950">
-                  {selectedStudent.full_name || 'Detail Siswa'}
-                </h3>
+          <div className="bg-white max-w-3xl w-full p-6 sm:p-8 rounded-[32px] border border-slate-200/90 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Top Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-slate-100 gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-base overflow-hidden shrink-0 shadow-xs">
+                  {selectedStudent.photo_url ? (
+                    <img src={selectedStudent.photo_url} alt={selectedStudent.full_name} className="w-full h-full object-cover" />
+                  ) : (
+                    selectedStudent.full_name?.charAt(0) || 'S'
+                  )}
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
+                    Kontrol Hak Akses Ujian (Test 1–10)
+                  </span>
+                  <h3 className="font-heading text-lg sm:text-xl font-extrabold text-slate-950">
+                    {selectedStudent.full_name || 'Detail Siswa'}
+                  </h3>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedStudent(null)}
-                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleOpenEditModal(selectedStudent)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Edit Biodata</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedStudent(null)}
+                  className="p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Profile Overview Card */}
-            <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
+            {/* Profile Overview Banner */}
+            <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Email</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Email Login</span>
                 <span className="font-bold text-slate-900 truncate block mt-0.5">{selectedStudent.email || '-'}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Jabatan</span>
-                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'Pelaut'}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Jabatan / Posisi</span>
+                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'Taruna Pelaut'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Level CEFR</span>
@@ -697,47 +956,78 @@ export default function AdminStudentsPage() {
               </div>
             </div>
 
-            {/* Test Entitlements Management (Grant/Revoke Access) */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-heading text-sm font-bold text-slate-950 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-[#EA580C]" />
-                  <span>Hak Akses Paket Ujian Marlins</span>
-                </h4>
-                <span className="text-[11px] text-slate-500 font-medium">Klik untuk buka / kunci akses ujian</span>
+            {/* Test Entitlements Management (Tests #1 to #10) */}
+            <div className="space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h4 className="font-heading text-sm sm:text-base font-extrabold text-slate-950 flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-[#EA580C]" />
+                    <span>Hak Akses Paket Ujian Marlins (1–10)</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500">
+                    Buka atau kunci hak akses simulasi ujian maritim untuk siswa ini.
+                  </p>
+                </div>
+
+                {/* Quick Batch Actions */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    disabled={updatingAccess}
+                    onClick={handleGrantAllAccess}
+                    className="px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition-colors cursor-pointer flex items-center gap-1"
+                  >
+                    <CheckCheck className="w-3.5 h-3.5" />
+                    <span>Buka Semua (1–10)</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={updatingAccess}
+                    onClick={handleRevokeAllAccess}
+                    className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Kunci Berbayar</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[1, 2, 3, 4, 5, 6].map((num) => {
-                  const isFree = num === 1;
-                  const hasAccess = isFree || studentEntitlements.includes(num);
+              {/* 10 Tests Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {MARLINS_10_TESTS.map((test) => {
+                  const hasAccess = test.isFree || studentEntitlements.includes(test.number);
 
                   return (
                     <div
-                      key={num}
-                      className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all ${
+                      key={test.number}
+                      className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 transition-all ${
                         hasAccess
-                          ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
-                          : 'bg-slate-50 border-slate-200 text-slate-700'
+                          ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
+                          : 'bg-slate-50/80 border-slate-200 text-slate-700'
                       }`}
                     >
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-black block">Marlins Test #{num}</span>
-                        <span className="text-[10px] text-slate-500 font-medium">
-                          {isFree ? 'Gratis Standard' : hasAccess ? 'Akses Terbuka' : 'Terkunci'}
-                        </span>
+                      <div className="space-y-0.5 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-black truncate">{test.name}</span>
+                          {test.isFree && (
+                            <span className="px-2 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black shrink-0">
+                              Gratis
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-slate-500 truncate">{test.subtitle}</p>
                       </div>
 
-                      {isFree ? (
-                        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
-                          Default Terbuka
+                      {test.isFree ? (
+                        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black shrink-0">
+                          Terbuka
                         </span>
                       ) : (
                         <button
                           type="button"
                           disabled={updatingAccess}
-                          onClick={() => handleToggleTestAccess(num)}
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                          onClick={() => handleToggleTestAccess(test.number)}
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
                             hasAccess
                               ? 'bg-rose-100 hover:bg-rose-200 text-rose-700'
                               : 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-xs'
@@ -763,15 +1053,15 @@ export default function AdminStudentsPage() {
               {loadingDetails ? (
                 <p className="text-xs text-slate-400 py-4 text-center">Memuat riwayat sesi...</p>
               ) : studentAttempts.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4 text-center bg-slate-50 rounded-2xl">
+                <p className="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-2xl">
                   Siswa ini belum pernah mengerjakan sesi ujian.
                 </p>
               ) : (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div className="space-y-2 max-h-40 overflow-y-auto">
                   {studentAttempts.map((att) => (
                     <div
                       key={att.id}
-                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
+                      className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
                     >
                       <div>
                         <p className="font-bold text-slate-900">
@@ -789,7 +1079,7 @@ export default function AdminStudentsPage() {
                         title="Reset sesi ujian ini"
                       >
                         <RotateCcw className="w-3 h-3" />
-                        <span>Reset Sesi</span>
+                        <span>Reset</span>
                       </button>
                     </div>
                   ))}
@@ -799,10 +1089,158 @@ export default function AdminStudentsPage() {
           </div>
         </div>
       )}
+
+      {/* Edit Student Modal */}
+      {isEditModalOpen && editingStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white max-w-lg w-full p-6 sm:p-7 rounded-[32px] border border-slate-200/90 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
+                  Perbarui Data Kandidat
+                </span>
+                <h3 className="font-heading text-lg font-bold text-slate-950">Edit Profil Siswa</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditModalOpen(false);
+                  setEditingStudent(null);
+                }}
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-800">Nama Lengkap *</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.full_name}
+                  onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Email Akun (Tetap)</label>
+                  <input
+                    type="email"
+                    disabled
+                    value={editForm.email}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs outline-none cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Nomor Telepon / WA</label>
+                  <input
+                    type="tel"
+                    placeholder="08123456789"
+                    value={editForm.phone_number}
+                    onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Jabatan / Posisi di Kapal</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Taruna Nautika / Deck Officer"
+                    value={editForm.job_title}
+                    onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Level CEFR</label>
+                  <select
+                    value={editForm.level_code}
+                    onChange={(e) => setEditForm({ ...editForm, level_code: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-[#0284C7] outline-none cursor-pointer"
+                  >
+                    <option value="A1">Level A1 (Beginner)</option>
+                    <option value="A2">Level A2 (Elementary)</option>
+                    <option value="A2+">Level A2+ (Pre-Intermediate)</option>
+                    <option value="B1">Level B1 (Intermediate)</option>
+                    <option value="B1+">Level B1+ (Upper-Intermediate)</option>
+                    <option value="B2">Level B2 (Vantage)</option>
+                    <option value="C1">Level C1 (Effective Operational)</option>
+                    <option value="C2">Level C2 (Mastery)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Akumulasi XP</label>
+                  <input
+                    type="number"
+                    value={editForm.total_points}
+                    onChange={(e) => setEditForm({ ...editForm, total_points: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-800">Kewarganegaraan</label>
+                  <input
+                    type="text"
+                    value={editForm.nationality}
+                    onChange={(e) => setEditForm({ ...editForm, nationality: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-800">Catatan / Profil Siswa</label>
+                <textarea
+                  rows={3}
+                  placeholder="Catatan kompetensi maritim siswa..."
+                  value={editForm.about}
+                  onChange={(e) => setEditForm({ ...editForm, about: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    setEditingStudent(null);
+                  }}
+                  className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  className="px-5 py-2 rounded-full font-bold text-xs text-white bg-black hover:bg-neutral-800 shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{savingEdit ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Add New Student Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-lg w-full p-6 sm:p-7 rounded-3xl border border-slate-200/90 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-lg w-full p-6 sm:p-7 rounded-[32px] border border-slate-200/90 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
@@ -821,14 +1259,14 @@ export default function AdminStudentsPage() {
 
             <form onSubmit={handleCreateStudent} className="space-y-4 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-800">Nama Lengkap & Pangkat / Jabatan *</label>
+                <label className="font-bold text-slate-800">Nama Lengkap *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: Ahmad Syahputra (Deck Cadet)"
+                  placeholder="Contoh: Ahmad Syahputra"
                   value={newStudentForm.full_name}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, full_name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
                 />
               </div>
 
@@ -841,31 +1279,31 @@ export default function AdminStudentsPage() {
                     placeholder="nama@taruna.id"
                     value={newStudentForm.email}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Nomor Telepon / WhatsApp</label>
+                  <label className="font-bold text-slate-800">Nomor Telepon / WA</label>
                   <input
                     type="tel"
                     placeholder="08123456789"
                     value={newStudentForm.phone_number}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, phone_number: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Departemen / Bidang</label>
+                  <label className="font-bold text-slate-800">Jabatan / Departemen</label>
                   <input
                     type="text"
                     placeholder="Contoh: Taruna Nautika / Deck"
                     value={newStudentForm.job_title}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, job_title: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
                   />
                 </div>
 
@@ -878,27 +1316,26 @@ export default function AdminStudentsPage() {
                   >
                     <option value="A1">Level A1 (Beginner)</option>
                     <option value="A2">Level A2 (Elementary)</option>
+                    <option value="A2+">Level A2+ (Pre-Intermediate)</option>
                     <option value="B1">Level B1 (Intermediate)</option>
-                    <option value="B1+">Level B1+ (High Intermediate)</option>
-                    <option value="B2">Level B2 (Upper Intermediate)</option>
-                    <option value="C1">Level C1 (Advanced)</option>
-                    <option value="C2">Level C2 (Mastery)</option>
+                    <option value="B1+">Level B1+ (Upper-Intermediate)</option>
+                    <option value="B2">Level B2 (Vantage)</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-800">Catatan / Bio Singkat</label>
+                <label className="font-bold text-slate-800">Catatan Tambahan</label>
                 <textarea
                   rows={2}
-                  placeholder="Catatan pendidikan maritim atau instansi pelatihan..."
+                  placeholder="Informasi taruna atau riwayat diklat..."
                   value={newStudentForm.about}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, about: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
@@ -909,9 +1346,10 @@ export default function AdminStudentsPage() {
                 <button
                   type="submit"
                   disabled={addingStudent}
-                  className="px-5 py-2 rounded-full text-xs font-bold text-white bg-black hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+                  className="px-5 py-2 rounded-full font-bold text-xs text-white bg-black hover:bg-neutral-800 shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
                 >
-                  {addingStudent ? 'Menyimpan...' : 'Daftarkan Siswa'}
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{addingStudent ? 'Menyimpan...' : 'Simpan Siswa'}</span>
                 </button>
               </div>
             </form>

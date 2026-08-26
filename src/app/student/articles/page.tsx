@@ -129,7 +129,7 @@ export default function StudentArticlesPage() {
       {/* Grid */}
       {loading ? (
         <div className="p-16 text-center bg-white border border-slate-200/80 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
-          <div className="w-7 h-7 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <div className="w-7 h-7 border-2 border-[#0284C7] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
           <p className="font-medium">Memuat modul pembelajaran...</p>
         </div>
       ) : filteredArticles.length === 0 ? (
@@ -148,7 +148,7 @@ export default function StudentArticlesPage() {
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 rounded-full bg-[#D8EEFD] text-[#0369A1] text-[11px] font-bold tracking-tight">
+                  <span className="px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-100 text-[11px] font-bold tracking-tight">
                     {art.category || 'IMO SMCP'}
                   </span>
                   <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">

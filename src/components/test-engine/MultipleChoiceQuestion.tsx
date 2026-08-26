@@ -42,7 +42,7 @@ export default function MultipleChoiceQuestion({
               <span
                 className={`w-8 h-8 rounded-xl font-mono text-xs font-black flex items-center justify-center transition-colors shrink-0 shadow-2xs ${
                   isSelected
-                    ? 'bg-[#0284C7] text-white shadow-sky-500/20'
+                    ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-sky-500/20'
                     : 'bg-slate-100 text-slate-700'
                 }`}
               >
@@ -56,7 +56,7 @@ export default function MultipleChoiceQuestion({
             <div
               className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
                 isSelected
-                  ? 'bg-[#0284C7] border-[#0284C7] text-white shadow-xs'
+                  ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] border-[#0284C7] text-white shadow-xs'
                   : 'border-slate-300 bg-white'
               }`}
             >

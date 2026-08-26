@@ -235,12 +235,12 @@ export default function StudentProfilePage() {
       <div className="bg-white rounded-[26px] p-5 sm:p-6 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         
         {/* Subtle Top Ambient Gradient Line */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
         <div className="flex items-center gap-4 sm:gap-5">
           {/* Avatar with Click-to-Upload Trigger */}
           <div className="relative group shrink-0">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#EA580C] p-0.5 shadow-sm">
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-sm">
               <div className="w-full h-full bg-amber-50 rounded-[14px] flex items-center justify-center font-heading text-2xl font-black text-slate-800 overflow-hidden relative">
                 {uploadingPhoto ? (
                   <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
@@ -275,7 +275,7 @@ export default function StudentProfilePage() {
               type="button"
               onClick={handleSelectPhoto}
               disabled={uploadingPhoto}
-              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
               title="Unggah Foto Baru"
             >
               <Camera className="w-3.5 h-3.5" />
@@ -287,7 +287,7 @@ export default function StudentProfilePage() {
               <h1 className="font-heading text-lg sm:text-xl font-bold text-slate-900 truncate">
                 {profile?.full_name || 'Siswa LTE Cruise'}
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
                 {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur Penguji' : 'Siswa LTE Cruise'}
               </span>
             </div>

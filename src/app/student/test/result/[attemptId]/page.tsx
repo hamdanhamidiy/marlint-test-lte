@@ -236,8 +236,8 @@ export default function TestResultPage() {
         }`}
       >
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black text-white shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
             <span>{result.test_name}</span>
           </div>
 
@@ -256,7 +256,7 @@ export default function TestResultPage() {
           {/* Skor Akhir */}
           <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Skor Akhir</span>
-            <span className="font-heading text-3xl font-black text-slate-950">{result.score}%</span>
+            <span className="font-heading text-3xl font-black text-[#0284C7]">{result.score}%</span>
           </div>
 
           {/* Level CEFR */}
@@ -287,7 +287,7 @@ export default function TestResultPage() {
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
           <Link
             href={`/student/test/review/${attemptId}`}
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 shadow-md shadow-black/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] shadow-md shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <BookOpen className="w-4 h-4" />
             <span>Review & Pembahasan Lengkap (60 Soal)</span>
@@ -297,7 +297,7 @@ export default function TestResultPage() {
           {result.is_passed && certificate && (
             <Link
               href={`/student/certificates/${certificate.id}`}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-[#0284C7] bg-sky-50/50 hover:bg-sky-50 border border-sky-200 shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Award className="w-4 h-4 text-emerald-600" />
               <span>Lihat & Cetak Sertifikat Resmi</span>
@@ -326,11 +326,11 @@ export default function TestResultPage() {
             return (
               <div
                 key={catKey}
-                className="p-5 rounded-2xl border border-slate-200/90 bg-white flex flex-col justify-between space-y-3.5 shadow-2xs hover:border-black transition-all"
+                className="p-5 rounded-2xl border border-slate-200/90 bg-white flex flex-col justify-between space-y-3.5 shadow-2xs hover:border-sky-300 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center shadow-2xs">
                       <CatIcon className="w-4 h-4" />
                     </div>
                     <span className="text-xs sm:text-sm font-extrabold font-heading text-slate-950">{info.name}</span>
@@ -341,7 +341,7 @@ export default function TestResultPage() {
                 <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      percent >= 70 ? 'bg-emerald-500' : 'bg-slate-900'
+                      percent >= 70 ? 'bg-emerald-500' : 'bg-[#0284C7]'
                     }`}
                     style={{ width: `${percent}%` }}
                   />
@@ -387,7 +387,7 @@ export default function TestResultPage() {
 
           <Link
             href="/student/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-extrabold text-white bg-black hover:bg-neutral-800 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] shadow-md shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Ke Dashboard</span>
             <ChevronRight className="w-4 h-4" />

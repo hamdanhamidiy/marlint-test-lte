@@ -56,8 +56,8 @@ export default function DragDropLabelQuestion({
       {/* Available Labels Pool */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-bold text-[#5046E5] uppercase tracking-wider flex items-center gap-1.5">
-            <Tag className="w-3.5 h-3.5 text-[#5046E5]" />
+          <h4 className="text-xs font-bold text-[#0284C7] uppercase tracking-wider flex items-center gap-1.5">
+            <Tag className="w-3.5 h-3.5 text-[#0284C7]" />
             <span>Label yang Tersedia:</span>
           </h4>
           <span className="text-xs text-slate-400 font-medium">
@@ -77,10 +77,10 @@ export default function DragDropLabelQuestion({
                 onClick={() => setSelectedLabel(isSelected ? null : label)}
                 className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer ${
                   isSelected
-                    ? 'bg-[#5046E5] text-white ring-2 ring-indigo-300 shadow-md shadow-indigo-500/25 scale-105'
+                    ? 'bg-[#0284C7] text-white ring-2 ring-sky-300 shadow-md shadow-sky-500/25 scale-105'
                     : isUsed
                     ? 'bg-slate-100 text-slate-400 border border-slate-200 line-through opacity-70'
-                    : 'bg-white text-slate-800 border border-slate-200/80 hover:border-indigo-300 hover:text-[#5046E5]'
+                    : 'bg-white text-slate-800 border border-slate-200/80 hover:border-sky-300 hover:text-[#0284C7]'
                 }`}
               >
                 {label}
@@ -105,8 +105,8 @@ export default function DragDropLabelQuestion({
                 onClick={() => handleZoneClick(zone.id)}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                   currentLabel
-                    ? 'bg-[#EEF0FF] border-[#5046E5] text-slate-900 shadow-2xs'
-                    : 'bg-white border-dashed border-slate-300 hover:border-indigo-300 hover:bg-slate-50/60'
+                    ? 'bg-sky-50 border-[#0284C7] text-slate-900 shadow-2xs'
+                    : 'bg-white border-dashed border-slate-300 hover:border-sky-300 hover:bg-slate-50/60'
                 }`}
               >
                 <div className="space-y-1">
@@ -120,7 +120,7 @@ export default function DragDropLabelQuestion({
 
                 <div className="shrink-0">
                   {currentLabel ? (
-                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white border border-indigo-200 text-[#5046E5] text-xs font-extrabold shadow-2xs">
+                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white border border-sky-200 text-[#0284C7] text-xs font-extrabold shadow-2xs">
                       <span>{currentLabel}</span>
                       <button
                         type="button"

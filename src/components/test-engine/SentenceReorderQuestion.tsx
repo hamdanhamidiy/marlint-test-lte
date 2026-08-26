@@ -43,7 +43,7 @@ export default function SentenceReorderQuestion({
       {/* Constructed Sentence Zone */}
       <div className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm min-h-[120px] flex flex-col justify-between space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <span className="text-xs font-bold text-[#5046E5] uppercase tracking-wider">
+          <span className="text-xs font-bold text-[#0284C7] uppercase tracking-wider">
             Susunan Kalimat Anda:
           </span>
           {selectedOrder.length > 0 && (
@@ -69,10 +69,10 @@ export default function SentenceReorderQuestion({
                 key={idx}
                 type="button"
                 onClick={() => handleRemoveWord(idx)}
-                className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#EEF0FF] text-[#5046E5] border border-indigo-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-all shadow-2xs cursor-pointer"
+                className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-50 text-[#0284C7] border border-sky-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-all shadow-2xs cursor-pointer"
               >
                 <span>{word}</span>
-                <span className="text-[10px] text-indigo-400 group-hover:text-rose-500 font-bold">✕</span>
+                <span className="text-[10px] text-sky-400 group-hover:text-rose-500 font-bold">✕</span>
               </button>
             ))
           )}
@@ -95,7 +95,7 @@ export default function SentenceReorderQuestion({
                 key={idx}
                 type="button"
                 onClick={() => handleAddWord(word)}
-                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-800 border border-slate-200/80 hover:bg-[#EEF0FF] hover:border-indigo-300 hover:text-[#5046E5] transition-all hover:scale-105 active:scale-95 shadow-2xs cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-800 border border-slate-200/80 hover:bg-sky-50 hover:border-sky-300 hover:text-[#0284C7] transition-all hover:scale-105 active:scale-95 shadow-2xs cursor-pointer"
               >
                 {word}
               </button>

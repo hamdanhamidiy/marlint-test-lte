@@ -151,7 +151,7 @@ function VerificationContent() {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 font-mono font-bold text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#5046E5] uppercase tracking-wider"
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 font-mono font-bold text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0284C7] uppercase tracking-wider"
               />
             </div>
 
@@ -182,7 +182,7 @@ function VerificationContent() {
               <button
                 type="button"
                 onClick={() => handleQuickSample('MARLINS-1-892144')}
-                className="font-mono text-[#5046E5] hover:underline cursor-pointer font-semibold"
+                className="font-mono text-[#0284C7] hover:underline cursor-pointer font-semibold"
               >
                 MARLINS-1-892144
               </button>
@@ -367,13 +367,13 @@ function VerificationContent() {
 
 export default function CertificateVerificationPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-[#5046E5] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-[#0284C7] selection:text-white font-sans">
       <PublicNavbar />
 
       <Suspense
         fallback={
           <div className="flex-1 flex items-center justify-center p-12">
-            <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[#0284C7] border-t-transparent rounded-full animate-spin" />
           </div>
         }
       >

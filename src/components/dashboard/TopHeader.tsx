@@ -72,10 +72,10 @@ export default function TopHeader({
 
       {/* Right: Actions, Token shortcut & Profile */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-        {/* Token Voucher Shortcut Button (Modern Blue-Indigo Gradient) */}
+        {/* Token Voucher Shortcut Button (Ocean Blue Gradient) */}
         <Link
           href="/student/redeem"
-          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]"
+          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all duration-200 shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
         >
           <KeyRound className="w-3.5 h-3.5 text-amber-300" />
           <span>Klaim Token</span>
@@ -84,11 +84,11 @@ export default function TopHeader({
         {/* Learning Materials Button */}
         <Link
           href="/student/articles"
-          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-blue-600 hover:bg-blue-50/70 hover:scale-105 active:scale-95 transition-all shadow-xs relative"
+          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/80 hover:scale-105 active:scale-95 transition-all shadow-xs relative"
           title="Materi SMCP"
         >
           <BookOpen className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#0284C7] ring-2 ring-white" />
         </Link>
 
         {/* Notification Bell Button */}
@@ -106,10 +106,10 @@ export default function TopHeader({
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 sm:pr-3.5 rounded-full bg-white hover:bg-blue-50/40 border border-slate-200/90 text-slate-800 transition-all duration-200 shadow-xs cursor-pointer hover:border-blue-300 hover:scale-[1.01]"
+            className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 sm:pr-3.5 rounded-full bg-white hover:bg-sky-50/40 border border-slate-200/90 text-slate-800 transition-all duration-200 shadow-xs cursor-pointer hover:border-sky-300 hover:scale-[1.01]"
           >
             {/* Avatar with Vibrant Gradient Ring */}
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-500 p-0.5 shadow-xs">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-amber-500 p-0.5 shadow-xs">
               <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-xs font-bold text-slate-800 overflow-hidden">
                 {profile?.photo_url ? (
                   <img
@@ -127,7 +127,7 @@ export default function TopHeader({
               <p className="font-bold text-xs text-slate-900 max-w-[120px] truncate leading-tight">
                 {displayName}
               </p>
-              <p className="text-[10px] font-bold text-blue-600 leading-none mt-0.5">
+              <p className="text-[10px] font-bold text-[#0284C7] leading-none mt-0.5">
                 Level {profile?.level_code || 'A1'}
               </p>
             </div>
@@ -140,7 +140,7 @@ export default function TopHeader({
             <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl p-2 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-100 z-50">
               <div className="px-3 py-2 border-b border-slate-100">
                 <p className="text-xs font-bold text-slate-900 truncate">{displayName}</p>
-                <p className="text-[11px] text-[#5046E5] font-semibold truncate">
+                <p className="text-[11px] text-[#0284C7] font-semibold truncate">
                   {profile?.job_title || 'Seafarer'} • {profile?.total_points || 0} XP
                 </p>
                 <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
@@ -152,7 +152,7 @@ export default function TopHeader({
                 <Link
                   href="/student/profile"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:text-[#5046E5] transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-sky-50/80 hover:text-[#0284C7] transition-colors"
                 >
                   <User className="w-3.5 h-3.5 text-slate-400" />
                   <span>Profil & Biodata Pelaut</span>
@@ -160,7 +160,7 @@ export default function TopHeader({
                 <Link
                   href="/student/certificates"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:text-[#5046E5] transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-sky-50/80 hover:text-[#0284C7] transition-colors"
                 >
                   <Award className="w-3.5 h-3.5 text-slate-400" />
                   <span>Sertifikat Resmi Saya</span>
@@ -168,7 +168,7 @@ export default function TopHeader({
                 <Link
                   href="/student/redeem"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:text-[#5046E5] transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-sky-50/80 hover:text-[#0284C7] transition-colors"
                 >
                   <KeyRound className="w-3.5 h-3.5 text-slate-400" />
                   <span>Klaim Token Voucher</span>
@@ -176,20 +176,21 @@ export default function TopHeader({
                 <Link
                   href="/verify"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:text-[#5046E5] transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-sky-50/80 hover:text-[#0284C7] transition-colors"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Verifikasi Keaslian Sertifikat</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Verifikasi Ijazah QR</span>
                 </Link>
               </div>
 
-              <div className="pt-1 border-t border-slate-100">
+              <div className="p-1 border-t border-slate-100">
                 <button
+                  type="button"
                   onClick={() => {
                     setDropdownOpen(false);
                     signOut();
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#FF6464] hover:bg-rose-50/70 transition-colors text-left"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Keluar Akun</span>

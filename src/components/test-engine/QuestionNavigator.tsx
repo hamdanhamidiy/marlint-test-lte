@@ -38,7 +38,7 @@ export default function QuestionNavigator({
       {/* Header Info with Mobile Toggle */}
       <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-indigo-50 text-[#5046E5] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-sky-50 text-[#0284C7] flex items-center justify-center">
             <LayoutGrid className="w-3.5 h-3.5" />
           </div>
           <h3 className="text-xs font-bold text-slate-900 tracking-tight">
@@ -47,7 +47,7 @@ export default function QuestionNavigator({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-[#5046E5] text-[11px] font-bold font-mono">
+          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[#0284C7] text-[11px] font-bold font-mono">
             {answeredCount}/{totalQuestions} ({percentCompleted}%)
           </span>
 
@@ -65,7 +65,7 @@ export default function QuestionNavigator({
       {/* Progress Bar */}
       <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
         <div
-          className="h-full bg-[#5046E5] rounded-full transition-all duration-300"
+          className="h-full bg-[#0284C7] rounded-full transition-all duration-300"
           style={{ width: `${percentCompleted}%` }}
         />
       </div>
@@ -94,7 +94,7 @@ export default function QuestionNavigator({
                   }}
                   className={`relative aspect-square rounded-lg sm:rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
                     isCurrent
-                      ? 'bg-[#5046E5] text-white shadow-sm ring-2 ring-[#5046E5] ring-offset-1 font-extrabold z-10'
+                      ? 'bg-[#0284C7] text-white shadow-sm ring-2 ring-[#0284C7] ring-offset-1 font-extrabold z-10'
                       : isFlagged
                       ? 'bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 font-semibold'
                       : hasAnswer
@@ -115,7 +115,7 @@ export default function QuestionNavigator({
         {/* Status Legend */}
         <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-medium px-1">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#5046E5]" />
+            <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
             <span>Aktif</span>
           </div>
           <div className="flex items-center gap-1.5">

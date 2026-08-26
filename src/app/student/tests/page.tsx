@@ -181,8 +181,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('all')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'all'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             Semua ({tests.length})
@@ -192,8 +192,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('free')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'free'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             Gratis
@@ -203,8 +203,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('unlocked')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'unlocked'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             Terbuka
@@ -214,8 +214,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('fb')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'fb'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             F&B Service & Bar
@@ -225,8 +225,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('housekeeping')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'housekeeping'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             Housekeeping & Laundry
@@ -236,8 +236,8 @@ export default function StudentTestsCatalogPage() {
             onClick={() => setActiveFilter('culinary')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeFilter === 'culinary'
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
             }`}
           >
             Culinary & Galley
@@ -262,7 +262,7 @@ export default function StudentTestsCatalogPage() {
               setActiveFilter('all');
               setSearchQuery('');
             }}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-black text-white hover:bg-neutral-800 font-bold text-xs transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs transition-colors cursor-pointer shadow-md shadow-sky-500/20"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Pencarian</span>
@@ -280,7 +280,7 @@ export default function StudentTestsCatalogPage() {
                 key={test.id}
                 className={`bg-white rounded-[26px] p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
                   isTest1
-                    ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.06)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
+                    ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.08)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
                     : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-slate-400 hover:-translate-y-1'
                 }`}
               >
@@ -289,7 +289,7 @@ export default function StudentTestsCatalogPage() {
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
-                        isTest1 ? 'bg-[#D8EEFD] text-[#0369A1]' : 'bg-slate-100 text-slate-700'
+                        isTest1 ? 'bg-sky-50 text-[#0284C7] border border-sky-100' : 'bg-slate-100 text-slate-700'
                       }`}>
                         Paket #{test.test_number}
                       </span>
@@ -347,8 +347,8 @@ export default function StudentTestsCatalogPage() {
                     href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
                     className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
                       hasAccess
-                        ? 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-sky-500/20'
-                        : 'bg-black hover:bg-neutral-800 text-white shadow-slate-900/10'
+                        ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white shadow-sky-500/25'
+                        : 'bg-gradient-to-r from-[#0B192C] via-[#1E293B] to-[#0B192C] hover:from-[#0369A1] hover:to-[#0284C7] text-white border border-slate-700/30'
                     }`}
                   >
                     <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>

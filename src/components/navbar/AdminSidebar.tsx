@@ -93,14 +93,14 @@ export default function AdminSidebar({
                   onClick={onCloseMobile}
                   className={`group relative flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 ease-out active:scale-[0.98] ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-md shadow-blue-500/25 translate-x-1'
-                      : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5'
+                      ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white shadow-md shadow-sky-500/25 translate-x-1'
+                      : 'text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/80 hover:translate-x-1.5'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={`w-4 h-4 transition-all duration-200 ${
-                        isActive ? 'text-cyan-200' : 'text-slate-400 group-hover:text-blue-600 group-hover:scale-110'
+                        isActive ? 'text-cyan-200' : 'text-slate-400 group-hover:text-[#0284C7] group-hover:scale-110'
                       }`}
                     />
                     <span className="tracking-tight">{item.name}</span>
@@ -121,9 +121,9 @@ export default function AdminSidebar({
         <Link
           href="/student/dashboard"
           onClick={onCloseMobile}
-          className="group flex items-center gap-2.5 px-3.5 py-2 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5 transition-all duration-200"
+          className="group flex items-center gap-2.5 px-3.5 py-2 rounded-2xl text-xs font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/80 hover:translate-x-1.5 transition-all duration-200"
         >
-          <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:-translate-x-0.5 transition-all" />
+          <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-[#0284C7] group-hover:-translate-x-0.5 transition-all" />
           <span>Lihat Portal Siswa</span>
         </Link>
 

@@ -199,15 +199,15 @@ export default function AudioListeningQuestion({
           <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-900 truncate flex items-center gap-1.5">
-                <Radio className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <Radio className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
                 <span>{isPlaying ? 'Memutar Audio Maritim...' : 'Audio Soal Listening & SMCP'}</span>
               </span>
               {isPlaying && (
                 <div className="flex items-center gap-0.5 h-3">
-                  <span className="w-1 bg-[#5046E5] rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-2.5" />
-                  <span className="w-1 bg-[#5046E5] rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-4" />
-                  <span className="w-1 bg-[#5046E5] rounded-full animate-[pulse_0.5s_ease-in-out_infinite] h-2" />
-                  <span className="w-1 bg-[#5046E5] rounded-full animate-[pulse_0.7s_ease-in-out_infinite] h-3.5" />
+                  <span className="w-1 bg-[#0284C7] rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-2.5" />
+                  <span className="w-1 bg-[#0284C7] rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-4" />
+                  <span className="w-1 bg-[#0284C7] rounded-full animate-[pulse_0.5s_ease-in-out_infinite] h-2" />
+                  <span className="w-1 bg-[#0284C7] rounded-full animate-[pulse_0.7s_ease-in-out_infinite] h-3.5" />
                 </div>
               )}
             </div>
@@ -226,7 +226,7 @@ export default function AudioListeningQuestion({
           <span
             className={`text-xs font-bold px-3 py-1 rounded-xl border font-mono ${
               remainingPlays > 0
-                ? 'bg-indigo-50 text-[#5046E5] border-indigo-200'
+                ? 'bg-sky-50 text-[#0284C7] border-sky-200'
                 : 'bg-slate-100 text-slate-500 border-slate-200'
             }`}
           >

@@ -28,7 +28,7 @@ export default function StudentLayout({
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F3F5F9] text-slate-900">
-        <div className="p-4 rounded-3xl bg-white shadow-xl shadow-indigo-500/10 border border-slate-100 flex flex-col items-center gap-3 animate-pulse">
+        <div className="p-4 rounded-3xl bg-white shadow-xl shadow-sky-500/10 border border-slate-100 flex flex-col items-center gap-3 animate-pulse">
           <Logo size="lg" showSubtitle={false} />
           <p className="text-xs font-bold text-slate-500">Loading Dashboard...</p>
         </div>

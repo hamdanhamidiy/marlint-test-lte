@@ -70,7 +70,7 @@ export default function StudentLevelPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner Hero */}
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#0B192C] p-6 sm:p-8 text-white shadow-lg shadow-indigo-500/15">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-6 sm:p-8 text-white shadow-lg shadow-sky-500/15">
         <div className="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 hidden sm:block">
           <svg width="220" height="220" viewBox="0 0 100 100" fill="none">
             <path
@@ -117,7 +117,7 @@ export default function StudentLevelPage() {
                   key={lvl.code}
                   className={`p-4 sm:p-5 rounded-[24px] border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                     isCurrent
-                      ? 'border-[#5046E5] bg-[#EEF0FF]/50 shadow-xs ring-2 ring-[#5046E5]/20'
+                      ? 'border-[#0284C7] bg-sky-50/50 shadow-xs ring-2 ring-[#0284C7]/20'
                       : 'border-slate-100 hover:border-slate-200 bg-white shadow-2xs'
                   }`}
                 >
@@ -125,7 +125,7 @@ export default function StudentLevelPage() {
                     <div
                       className={`w-11 h-11 rounded-2xl font-mono text-sm font-extrabold flex items-center justify-center shrink-0 shadow-2xs ${
                         isCurrent
-                          ? 'bg-[#5046E5] text-white shadow-indigo-500/25 scale-105'
+                          ? 'bg-[#0284C7] text-white shadow-sky-500/25 scale-105'
                           : 'bg-slate-100 text-slate-700'
                       }`}
                     >
@@ -136,7 +136,7 @@ export default function StudentLevelPage() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-heading text-sm font-extrabold text-slate-900">{lvl.name}</h3>
                         {isCurrent && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#5046E5] text-white text-[9px] font-bold uppercase tracking-wider">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#0284C7] text-white text-[9px] font-bold uppercase tracking-wider">
                             Level Anda
                           </span>
                         )}
@@ -152,7 +152,7 @@ export default function StudentLevelPage() {
                     </div>
 
                     {isCurrent && (
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-[#5046E5] flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-sky-100 text-[#0284C7] flex items-center justify-center">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                     )}
@@ -179,7 +179,7 @@ export default function StudentLevelPage() {
                   cx="50"
                   cy="50"
                   r={radius}
-                  stroke="#5046E5"
+                  stroke="#0284C7"
                   strokeWidth="6"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
@@ -191,7 +191,7 @@ export default function StudentLevelPage() {
 
               <div className="absolute flex flex-col items-center justify-center">
                 <span className="font-mono text-2xl font-black text-slate-900">{currentLevelCode}</span>
-                <span className="text-[10px] font-bold text-[#5046E5]">{currentPoints} XP</span>
+                <span className="text-[10px] font-bold text-[#0284C7]">{currentPoints} XP</span>
               </div>
             </div>
 
@@ -206,7 +206,7 @@ export default function StudentLevelPage() {
 
             <Link
               href="/student/tests"
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold text-white bg-[#5046E5] hover:bg-[#4338CA] transition-all shadow-md shadow-indigo-500/20"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-98"
             >
               <span>Tingkatkan Level Ujian</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -216,7 +216,7 @@ export default function StudentLevelPage() {
           {/* STCW Standard Matrix Card */}
           <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-2xs space-y-3">
             <h3 className="font-heading text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-              <Anchor className="w-3.5 h-3.5 text-[#5046E5]" />
+              <Anchor className="w-3.5 h-3.5 text-[#0284C7]" />
               <span>Matriks Standar Jabatan STCW</span>
             </h3>
 
@@ -225,7 +225,7 @@ export default function StudentLevelPage() {
                 <div key={idx} className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-100 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900">{item.rank}</span>
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#EEF0FF] text-[#5046E5]">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-sky-50 text-[#0284C7]">
                       {item.standard}
                     </span>
                   </div>

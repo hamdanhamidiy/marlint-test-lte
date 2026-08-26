@@ -8,6 +8,7 @@ import {
   Calendar,
   Eye,
   ArrowRight,
+  ArrowUpRight,
   CheckCircle2,
   ExternalLink,
   Sparkles,
@@ -82,59 +83,50 @@ export default function StudentCertificatesPage() {
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0369A1] text-xs font-bold border border-sky-200/80 shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
-            <span>Sertifikasi Kemahiran Resmi IMO STCW</span>
+            <span>Verifikasi QR Resmi STCW 2010</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Sertifikat Marlins Saya
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
+            Sertifikat Kelulusan Marlins Test
           </h1>
-          <p className="text-xs sm:text-[13px] text-slate-500 max-w-2xl leading-relaxed">
-            Kumpulan dokumen sertifikat kelulusan uji kecakapan Bahasa Inggris Maritim resmi berstandar internasional yang diakui secara global.
+          <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed max-w-2xl">
+            Unduh e-Sertifikat resmi berstandar internasional dan verifikasi keaslian dokumen kelulusan Anda.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-          <Link
-            href="/verify"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 text-xs font-bold shadow-xs hover:border-slate-300 transition-all"
-          >
-            <QrCode className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Verifikasi Publik</span>
-          </Link>
-          <Link
-            href="/student/tests"
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all"
-          >
-            <span>Ikuti Ujian Baru</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+        {/* Verification Link Button */}
+        <Link
+          href="/verify"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-sky-50/50 hover:border-[#0284C7] hover:text-[#0284C7] text-slate-700 text-xs font-bold transition-all shadow-2xs self-start sm:self-auto"
+        >
+          <QrCode className="w-4 h-4 text-[#0284C7]" />
+          <span>Verifikasi Sertifikat</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
-      {/* Certificates List / Modern Empty State */}
+      {/* Main Content */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-xs space-y-2.5">
+        <div className="p-16 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2.5">
           <div className="w-9 h-9 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <Award className="w-5 h-5" />
           </div>
-          <p className="font-bold text-slate-700">Memuat daftar sertifikat resmi...</p>
+          <p className="font-bold text-slate-700">Memuat sertifikat resmi Anda...</p>
         </div>
       ) : certificates.length === 0 ? (
-        <div className="bg-white border border-slate-200/90 rounded-[28px] p-7 sm:p-10 max-w-xl mx-auto text-center space-y-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative overflow-hidden">
-          
-          {/* Subtle Top Ambient Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+        <div className="bg-white border border-slate-200/90 rounded-[28px] p-8 sm:p-12 text-center space-y-5 shadow-2xs max-w-xl mx-auto relative overflow-hidden">
+          {/* Top Decorative Gradient Accent */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-slate-900 opacity-90" />
 
-          {/* Golden Badge Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#EA580C] border border-amber-200 flex items-center justify-center mx-auto shadow-2xs">
+          <div className="w-16 h-16 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto shadow-xs">
             <Award className="w-8 h-8" />
           </div>
 
-          <div className="space-y-2 max-w-md mx-auto">
-            <h2 className="font-heading text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+          <div className="space-y-1.5">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-900">
               Belum Ada Sertifikat Kelulusan
             </h2>
-            <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed font-normal">
-              Selesaikan salah satu paket ujian resmi Marlins dengan nilai minimal <strong className="text-slate-800 font-bold">70% (Passing Grade)</strong> untuk menerbitkan lembar sertifikat digital resmi berstandar IMO STCW & QR Code verifikasi.
+            <p className="text-xs text-slate-500 leading-relaxed font-normal max-w-md mx-auto">
+              Sertifikat resmi akan diterbitkan secara otomatis setelah Anda menyelesaikan dan lulus salah satu dari 10 Paket Ujian Marlins dengan nilai minimal 70%.
             </p>
           </div>
 
@@ -158,7 +150,7 @@ export default function StudentCertificatesPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
             <Link
               href="/student/tests"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-bold shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <span>Mulai Ujian Sekarang</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -190,7 +182,7 @@ export default function StudentCertificatesPage() {
                     <span>LULUS ({cert.grade || 'Merit'})</span>
                   </span>
 
-                  <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] font-bold text-[10px] border border-sky-200">
+                  <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] font-bold text-[10px] border border-sky-200">
                     Level {cert.level || 'B2'}
                   </span>
                 </div>
@@ -227,10 +219,10 @@ export default function StudentCertificatesPage() {
 
                 <Link
                   href={`/student/certificates/${cert.id}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-xs hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-bold transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <Eye className="w-3.5 h-3.5 text-white" />
-                  <span>Lihat & Cetak</span>
+                  <span>Lihat e-Sertifikat</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>

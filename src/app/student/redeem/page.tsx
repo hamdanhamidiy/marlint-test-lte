@@ -75,11 +75,11 @@ function RedeemContent() {
       <div className="bg-white p-6 sm:p-8 rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6 relative overflow-hidden text-center">
         
         {/* Subtle Top Ambient Gradient Line */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
         {/* Icon & Title */}
         <div className="space-y-2 pt-1">
-          <div className="w-13 h-13 rounded-2xl bg-amber-50 text-[#EA580C] border border-amber-200/70 flex items-center justify-center mx-auto shadow-2xs">
+          <div className="w-13 h-13 rounded-2xl bg-sky-50 text-[#0284C7] border border-sky-200/70 flex items-center justify-center mx-auto shadow-2xs">
             <KeyRound className="w-6 h-6" />
           </div>
           <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
@@ -135,11 +135,11 @@ function RedeemContent() {
             </div>
           )}
 
-          {/* Submit Button (Antigravity Solid Black Pill) */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading || !tokenCode.trim()}
-            className="w-full py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98"
+            className="w-full py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
           >
             {loading ? (
               <>

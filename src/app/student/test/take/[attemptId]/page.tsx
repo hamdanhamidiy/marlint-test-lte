@@ -834,7 +834,7 @@ export default function TestTakingPage() {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
         <div className="p-8 text-center bg-white border border-slate-200/80 rounded-3xl max-w-sm w-full space-y-3 shadow-sm">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto animate-pulse">
+          <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <Loader2 className="w-5 h-5 animate-spin" />
           </div>
           <h2 className="text-sm font-bold text-slate-800">Menyiapkan 60 Soal Ujian Marlins...</h2>
@@ -855,7 +855,7 @@ export default function TestTakingPage() {
           <p className="text-xs text-slate-500">{errorMsg || 'Data sesi telah berakhir atau sudah diselesaikan.'}</p>
           <Link
             href="/student/tests"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4F46E5] text-white font-bold text-xs"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20"
           >
             <span>Kembali ke Katalog</span>
           </Link>
@@ -931,7 +931,7 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[#0284C7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-sky-50 hover:bg-sky-100/80 border border-sky-200/80 text-[#0284C7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
               title="Daftar Soal"
               aria-label="Daftar Soal"
             >
@@ -952,51 +952,48 @@ export default function TestTakingPage() {
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden px-3.5 sm:px-8 py-4 sm:py-6 overscroll-contain bg-[#F8FAFC]">
-        <div className="max-w-3xl mx-auto space-y-4">
-          {/* Main Question Assessment Card */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden">
-            {/* Card Top Bar: Category & Flag Toggle */}
-            <div className="px-5 sm:px-7 py-3.5 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
+      {/* 2. MAIN SCROLLABLE QUESTION WORKSPACE */}
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col items-center">
+        <div className="w-full max-w-3xl space-y-4 my-auto">
+          {/* Active Question Card */}
+          <div className="bg-white rounded-[26px] p-5 sm:p-7 border border-slate-200/90 shadow-xs relative">
+            {/* Category Tag Header & Flag Toggle */}
+            <div className="flex items-center justify-between gap-3 pb-3.5 border-b border-slate-100">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-mono font-bold">
+                  Q{currentIndex + 1}
+                </span>
+
                 <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color} border ${categoryInfo.border}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color}`}
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{categoryInfo.name}</span>
                 </span>
               </div>
 
-              {/* Flag Toggle Button */}
+              {/* Ragu-Ragu / Flag Checkbox Button */}
               <button
                 type="button"
                 onClick={() => handleToggleFlag(currentIndex)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold transition-all cursor-pointer text-xs ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                   flaggedQuestions.has(currentIndex)
-                    ? 'bg-amber-50 text-[#C2410C] border border-amber-300 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200 hover:border-slate-300'
+                    ? 'bg-amber-400 text-amber-950 hover:bg-amber-500 scale-102 ring-2 ring-amber-300'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
                 }`}
               >
-                <Flag
-                  className={`w-3.5 h-3.5 ${
-                    flaggedQuestions.has(currentIndex)
-                      ? 'text-[#EA580C] fill-amber-500'
-                      : 'text-slate-400'
-                  }`}
-                />
+                <Flag className="w-3.5 h-3.5" />
                 <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu' : 'Tandai Ragu'}</span>
               </button>
             </div>
 
-            {/* Card Body: Question Content, Audio, Image & Options */}
-            <div className="p-5 sm:p-7 space-y-4">
-              {/* Question Instruction Subtitle */}
-              <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                {getInstructionText(currentQuestion)}
-              </p>
+            {/* Question Body */}
+            <div className="pt-4 space-y-4">
+              {/* Question Instruction Header */}
+              <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 text-xs text-slate-600 font-medium">
+                <p>{getInstructionText(currentQuestion)}</p>
+              </div>
 
-              {/* Audio Listening player if audio question */}
+              {/* Optional Audio Component for Listening Questions */}
               {(currentQuestion.question_type === 'audio_listening' ||
                 currentQuestion.category === 'listening_comprehension') && (
                 <AudioListeningQuestion
@@ -1079,7 +1076,7 @@ export default function TestTakingPage() {
           {/* Progress Track */}
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -1110,7 +1107,7 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Berikutnya</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1180,7 +1177,7 @@ export default function TestTakingPage() {
                     }}
                     className={`h-8 sm:h-9 rounded-xl font-mono text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                       isCurrent
-                        ? 'ring-2 ring-[#4F46E5] bg-[#4F46E5] text-white shadow-xs'
+                        ? 'ring-2 ring-[#0284C7] bg-[#0284C7] text-white shadow-xs'
                         : isFlagged
                         ? 'bg-amber-400 text-amber-950'
                         : isAnswered
@@ -1211,7 +1208,7 @@ export default function TestTakingPage() {
       {submitModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-7 max-w-md w-full space-y-4 sm:space-y-5 shadow-2xl text-center">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center mx-auto border border-indigo-100">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
               <FileCheck2 className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
 
@@ -1220,7 +1217,7 @@ export default function TestTakingPage() {
                 Kirim Lembar Jawaban Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Anda telah menjawab <strong className="text-[#4F46E5] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800">{totalQuestionsCount}</strong> butir soal.
+                Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800">{totalQuestionsCount}</strong> butir soal.
                 {answeredCount < totalQuestionsCount && (
                   <span className="block text-amber-600 font-semibold mt-1">
                     ⚠️ Masih ada {totalQuestionsCount - answeredCount} soal yang belum dijawab.
@@ -1243,7 +1240,7 @@ export default function TestTakingPage() {
                 type="button"
                 onClick={handleFinalSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/20 cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/25 cursor-pointer disabled:opacity-50"
               >
                 {submitting ? (
                   <>

@@ -47,7 +47,7 @@ export default function ImageChoiceQuestion({
               <div className="flex items-center justify-between mb-2 w-full">
                 <span
                   className={`w-6 h-6 rounded-lg text-xs font-mono font-bold flex items-center justify-center transition-colors shadow-2xs ${
-                    isSelected ? 'bg-[#0284C7] text-white' : 'bg-slate-100 text-slate-700'
+                    isSelected ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white' : 'bg-slate-100 text-slate-700'
                   }`}
                 >
                   {optionLabel}
@@ -55,7 +55,7 @@ export default function ImageChoiceQuestion({
                 <div
                   className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
                     isSelected
-                      ? 'bg-[#0284C7] border-[#0284C7] text-white shadow-xs'
+                      ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] border-[#0284C7] text-white shadow-xs'
                       : 'border-slate-300 bg-white'
                   }`}
                 >

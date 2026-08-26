@@ -188,7 +188,7 @@ export default function TestOverviewPage() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto p-10 text-center bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-3">
-        <div className="w-9 h-9 rounded-xl bg-indigo-50 text-[#5046E5] flex items-center justify-center mx-auto animate-pulse">
+        <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
           <FileCheck2 className="w-4 h-4" />
         </div>
         <p className="text-xs font-semibold text-slate-800">Menyiapkan Informasi Ujian #{testNumber}...</p>
@@ -207,7 +207,7 @@ export default function TestOverviewPage() {
         <p className="text-xs text-slate-500">{errorMsg || 'Ujian yang Anda cari tidak tersedia.'}</p>
         <Link
           href="/student/tests"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5046E5] text-white font-semibold text-xs transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0284C7] text-white font-semibold text-xs transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Kembali ke Katalog</span>
@@ -269,30 +269,30 @@ export default function TestOverviewPage() {
       <div className="bg-white rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden divide-y divide-slate-100 relative">
         
         {/* Top Ambient Line */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-900 opacity-90" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
         {/* Header Section */}
         <div className="p-6 sm:p-7 space-y-4 pt-7">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-2 min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#D8EEFD] text-[#0369A1] text-[11px] font-extrabold">
+                <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] border border-sky-100 text-[11px] font-extrabold">
                   Paket #{test.test_number}
                 </span>
 
                 {test.is_free ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-2xs">
-                    <Unlock className="w-3 h-3 text-emerald-600" />
+                    <Unlock className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Akses Gratis</span>
                   </span>
                 ) : hasEntitlement ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-2xs">
-                    <Unlock className="w-3 h-3 text-emerald-600" />
+                    <Unlock className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Sudah Diaktivasi</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shadow-2xs">
-                    <Lock className="w-3 h-3 text-[#EA580C]" />
+                    <Lock className="w-3.5 h-3.5 text-[#EA580C]" />
                     <span>{formatPriceIDR(test.price)}</span>
                   </span>
                 )}
@@ -331,7 +331,7 @@ export default function TestOverviewPage() {
         <div className="p-5 sm:p-6 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#5046E5]" />
+              <Layers className="w-3.5 h-3.5 text-[#0284C7]" />
               <span>Komposisi Kategori Soal:</span>
             </h3>
             <span className="text-[11px] font-medium text-slate-400">
@@ -371,31 +371,33 @@ export default function TestOverviewPage() {
         {/* Instructions */}
         <div className="p-5 sm:p-6 space-y-3 bg-[#F9FAFC]/60">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#5046E5]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
             <span>Petunjuk Pelaksanaan Ujian:</span>
           </h3>
 
           <ul className="space-y-2 text-xs text-slate-600 font-normal leading-relaxed">
             <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-              <span>Stopwatch pencatat waktu pengerjaan akan langsung berjalan setelah Anda menekan tombol mulai ujian.</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+              <span>
+                Tes berlangsung dengan <strong className="text-slate-800">Stopwatch</strong>. Catatan waktu selesai digunakan untuk verifikasi kelulusan.
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-              <span>Gunakan earphone/headphone untuk soal audio listening komunikasi radio VHF.</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+              <span>
+                Pertanyaan tipe audio (Listening) dapat diputar ulang hingga <strong className="text-slate-800">2 kali putar</strong>.
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-indigo-50 text-[#5046E5] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-              <span>Jawaban tersimpan otomatis secara realtime dan Anda dapat mengirim lembar ujian kapan saja setelah selesai menjawab seluruh soal.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
-              <span>Sertifikat resmi kompetensi diterbitkan otomatis apabila mencapai nilai kelulusan minimal <strong>{test.passing_grade}%</strong>.</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+              <span>
+                Hasil evaluasi, analisis sub-kategori kompetensi, dan sertifikat resmi akan diterbitkan secara otomatis setelah sesi diselesaikan.
+              </span>
             </li>
           </ul>
         </div>
 
-        {/* Error notification if any */}
+        {/* Error Alert */}
         {errorMsg && (
           <div className="p-4 bg-rose-50 border-t border-b border-rose-100 text-rose-800 text-xs flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 font-medium">
@@ -433,9 +435,9 @@ export default function TestOverviewPage() {
 
                 <Link
                   href={`/student/checkout/${test.test_number}`}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all cursor-pointer shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-98"
                 >
-                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <Lock className="w-3.5 h-3.5 text-amber-300" />
                   <span>Beli Akses Ujian ({formatPriceIDR(test.price)})</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -446,15 +448,15 @@ export default function TestOverviewPage() {
                 type="button"
                 onClick={handleStartAttempt}
                 disabled={starting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all cursor-pointer shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-98 disabled:opacity-50"
               >
                 {starting ? (
                   <span>Menyiapkan Ujian...</span>
                 ) : (
                   <>
-                    <Unlock className="w-4 h-4 text-emerald-400" />
+                    <Unlock className="w-4 h-4 text-cyan-200" />
                     <span>Mulai Ujian Sekarang</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </>
                 )}
               </button>

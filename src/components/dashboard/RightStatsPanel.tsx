@@ -27,7 +27,7 @@ export default function RightStatsPanel({
   // Competency score bars for maritime English skills
   const chartBars = [
     { label: 'Grammar', value: 75, color: 'from-slate-700 to-slate-900' },
-    { label: 'Listen', value: 85, color: 'from-blue-600 to-blue-800', isKey: true },
+    { label: 'Listen', value: 85, color: 'from-[#0284C7] to-[#0369A1]', isKey: true },
     { label: 'Vocab', value: 65, color: 'from-slate-700 to-slate-900' },
     { label: 'SMCP', value: 90, color: 'from-emerald-500 to-emerald-700', isKey: true },
     { label: 'Read', value: 70, color: 'from-slate-700 to-slate-900' },
@@ -39,7 +39,7 @@ export default function RightStatsPanel({
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3 shadow-xs">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+            <TrendingUp className="w-3.5 h-3.5 text-[#0284C7]" />
             <span className="text-xs font-extrabold text-slate-950 tracking-tight">Kompetensi Maritim</span>
           </div>
           <span className="text-[10px] text-emerald-700 font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
@@ -106,7 +106,7 @@ export default function RightStatsPanel({
           </h3>
           <Link
             href="/student/certificates"
-            className="text-[11px] font-bold text-blue-600 hover:text-blue-700"
+            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1]"
           >
             Sertifikat Saya ➔
           </Link>
@@ -130,19 +130,19 @@ export default function RightStatsPanel({
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
             <span className="text-slate-500 text-[11px]">Jenjang Kemahiran:</span>
-            <span className="font-extrabold text-blue-600">Level {levelCode} Operational</span>
+            <span className="font-extrabold text-[#0284C7]">Level {levelCode} Operational</span>
           </div>
         </div>
 
         <Link
           href="/student/level"
-          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl border border-slate-200/90 hover:bg-blue-50/50 hover:border-blue-300 transition-all text-xs font-bold text-slate-800 shadow-2xs group"
+          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl border border-slate-200/90 hover:bg-sky-50/50 hover:border-sky-300 transition-all text-xs font-bold text-slate-800 shadow-2xs group"
         >
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span className="group-hover:text-blue-600 transition-colors">Matriks Jenjang CEFR Maritim</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
+            <span className="group-hover:text-[#0284C7] transition-colors">Matriks Jenjang CEFR Maritim</span>
           </div>
-          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-all" />
         </Link>
       </div>
     </aside>

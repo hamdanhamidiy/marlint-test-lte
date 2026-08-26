@@ -70,7 +70,7 @@ export default function LoginPage() {
         <div className="bg-white p-7 sm:p-9 rounded-[28px] border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 relative overflow-hidden">
           
           {/* Subtle Top Accent Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-950 opacity-90" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
           {/* Heading */}
           <div className="text-center space-y-1.5 pt-1">
@@ -138,7 +138,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-full font-semibold text-xs text-white bg-black hover:bg-neutral-800 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] mt-2"
+              className="w-full py-3 rounded-full font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-[0.99] mt-2"
             >
               <span>{loading ? 'Memverifikasi...' : 'Masuk ke Portal'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -157,10 +157,10 @@ export default function LoginPage() {
                   setEmail('hamdan@gmail.com');
                   setPassword('password123');
                 }}
-                className="p-2 rounded-2xl bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-sky-800 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                className="p-2 rounded-2xl bg-sky-50 hover:bg-sky-100/80 border border-sky-200/80 text-sky-950 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
               >
                 <span>🎓 Siswa</span>
-                <span className="text-[9px] font-normal text-sky-600 truncate w-full">hamdan@...</span>
+                <span className="text-[9px] font-normal text-[#0284C7] truncate w-full">hamdan@...</span>
               </button>
 
               <button
@@ -181,10 +181,10 @@ export default function LoginPage() {
                   setEmail('superadmin@marlinstest.com');
                   setPassword('admin123');
                 }}
-                className="p-2 rounded-2xl bg-purple-50 hover:bg-purple-100 border border-purple-200/80 text-purple-900 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                className="p-2 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-900 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
               >
                 <span>🛡️ Super Admin</span>
-                <span className="text-[9px] font-normal text-purple-700 truncate w-full">superadmin@...</span>
+                <span className="text-[9px] font-normal text-slate-600 truncate w-full">superadmin@...</span>
               </button>
             </div>
           </div>

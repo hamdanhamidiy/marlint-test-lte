@@ -154,7 +154,7 @@ function ReviewAudioPlayer({ audioUrl, transcript }: { audioUrl?: string | null;
     <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
-          <Headphones className="w-4 h-4 text-[#5046E5]" />
+          <Headphones className="w-4 h-4 text-[#0284C7]" />
           <span>Audio Komunikasi VHF</span>
         </div>
 
@@ -163,7 +163,7 @@ function ReviewAudioPlayer({ audioUrl, transcript }: { audioUrl?: string | null;
             <button
               type="button"
               onClick={() => setShowTranscript(!showTranscript)}
-              className="text-[11px] font-medium text-[#5046E5] hover:underline cursor-pointer"
+              className="text-[11px] font-medium text-[#0284C7] hover:underline cursor-pointer"
             >
               {showTranscript ? 'Tutup Transkrip' : 'Lihat Transkrip'}
             </button>
@@ -172,7 +172,7 @@ function ReviewAudioPlayer({ audioUrl, transcript }: { audioUrl?: string | null;
           <button
             type="button"
             onClick={handlePlayAudio}
-            className="flex items-center gap-1 px-3 py-1 rounded-lg bg-[#5046E5] hover:bg-[#4338CA] text-white text-xs font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
           >
             {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
             <span>{isPlaying ? 'Jeda' : 'Putar Audio'}</span>
@@ -631,8 +631,8 @@ export default function TestReviewPage() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
         <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl max-w-sm w-full mx-auto space-y-3 shadow-xs">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto">
-            <BookOpen className="w-6 h-6 animate-pulse text-[#5046E5]" />
+          <div className="w-12 h-12 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto">
+            <BookOpen className="w-6 h-6 animate-pulse text-[#0284C7]" />
           </div>
           <h2 className="font-heading text-base font-bold text-slate-900">Memuat Pembahasan...</h2>
           <p className="text-xs text-slate-500">Menyiapkan ulasan soal dan referensi IMO SMCP.</p>
@@ -647,7 +647,7 @@ export default function TestReviewPage() {
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-            <Link href={`/student/test/result/${attemptId}`} className="hover:text-[#5046E5] flex items-center gap-1 transition-colors">
+            <Link href={`/student/test/result/${attemptId}`} className="hover:text-[#0284C7] flex items-center gap-1 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Lembar Nilai</span>
             </Link>
@@ -690,7 +690,7 @@ export default function TestReviewPage() {
 
           <Link
             href={`/student/test/${testNumber}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#5046E5] hover:bg-[#4338CA] text-white text-xs font-semibold transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-semibold transition-all shadow-md shadow-sky-500/25"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Ulangi Ujian</span>
@@ -711,7 +711,7 @@ export default function TestReviewPage() {
                 onClick={() => setStatusFilter('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   statusFilter === 'all'
-                    ? 'bg-slate-900 text-white'
+                    ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
                     : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
@@ -761,8 +761,8 @@ export default function TestReviewPage() {
                   onClick={() => setStatusFilter('flagged')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
                     statusFilter === 'flagged'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200'
                   }`}
                 >
                   <Flag className="w-3 h-3" />
@@ -776,7 +776,7 @@ export default function TestReviewPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-[#5046E5]"
+                className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-[#0284C7]"
               >
                 <option value="all">Semua Kategori</option>
                 <option value="grammar">Grammar</option>
@@ -793,7 +793,7 @@ export default function TestReviewPage() {
                   placeholder="Cari kata..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5046E5]"
+                  className="w-full pl-8 pr-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0284C7]"
                 />
               </div>
             </div>
@@ -811,7 +811,7 @@ export default function TestReviewPage() {
                   setCategoryFilter('all');
                   setSearchQuery('');
                 }}
-                className="text-[#5046E5] hover:underline font-semibold cursor-pointer"
+                className="text-[#0284C7] hover:underline font-semibold cursor-pointer"
               >
                 Reset Filter
               </button>
@@ -850,8 +850,8 @@ export default function TestReviewPage() {
                         </span>
 
                         {item.isFlagged && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 text-[11px] font-semibold border border-purple-200">
-                            <Flag className="w-3 h-3 text-purple-600" />
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-semibold border border-amber-200">
+                            <Flag className="w-3 h-3 text-amber-600" />
                             <span>Ragu</span>
                           </span>
                         )}
@@ -1061,7 +1061,7 @@ export default function TestReviewPage() {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1 text-[11px] font-semibold text-[#5046E5] hover:text-[#4338CA] shrink-0">
+                        <div className="flex items-center gap-1 text-[11px] font-semibold text-[#0284C7] hover:text-[#0369A1] shrink-0">
                           <span>{isExpanded ? 'Tutup' : 'Lihat Pembahasan'}</span>
                           {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                         </div>
@@ -1111,7 +1111,7 @@ export default function TestReviewPage() {
                           {expl.maritimeContext && (
                             <div className="space-y-1 pt-1">
                               <span className="font-bold text-slate-700 text-[11px] uppercase tracking-wider flex items-center gap-1">
-                                <Anchor className="w-3.5 h-3.5 text-[#5046E5]" />
+                                <Anchor className="w-3.5 h-3.5 text-[#0284C7]" />
                                 <span>Konteks Maritim:</span>
                               </span>
                               <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 leading-relaxed">
@@ -1134,7 +1134,7 @@ export default function TestReviewPage() {
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs sticky top-20 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <Compass className="w-4 h-4 text-[#5046E5]" />
+                <Compass className="w-4 h-4 text-[#0284C7]" />
                 <span>Navigator (1–{questions.length})</span>
               </h3>
             </div>
@@ -1142,15 +1142,15 @@ export default function TestReviewPage() {
             {/* Compact Legend */}
             <div className="flex items-center gap-3 text-[10px] font-medium pb-2 border-b border-slate-100 text-slate-600 flex-wrap">
               <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 <span>Benar</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-rose-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                 <span>Salah</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                 <span>Kosong</span>
               </div>
             </div>
@@ -1186,7 +1186,7 @@ export default function TestReviewPage() {
             <div className="space-y-1.5 pt-2 border-t border-slate-100">
               <Link
                 href={`/student/test/result/${attemptId}`}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-bold transition-all shadow-md shadow-sky-500/20"
               >
                 <span>Lembar Hasil Ujian</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -1194,7 +1194,7 @@ export default function TestReviewPage() {
 
               <Link
                 href="/student/history"
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors"
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors"
               >
                 <span>Riwayat Ujian</span>
               </Link>

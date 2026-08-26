@@ -269,7 +269,7 @@ export default function StudentDashboardPage() {
       <div className="flex-1 w-full space-y-4 sm:space-y-5 min-w-0">
 
         {/* Executive Maritime Hero Card - Well-Proportioned, Elegant & Spacious */}
-        <div className="relative overflow-hidden rounded-[26px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#0B192C] p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-indigo-500/15">
+        <div className="relative overflow-hidden rounded-[26px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-sky-500/15">
           {/* Decorative Star Watermark */}
           <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none opacity-25 hidden sm:block">
             <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
@@ -297,12 +297,12 @@ export default function StudentDashboardPage() {
                 <span className="animate-wave inline-block text-2xl sm:text-3xl ml-0.5">👋</span>
               </h1>
 
-              <div className="min-h-[24px] flex items-center">
-                <p className="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed max-w-2xl">
-                  <span>{currentText}</span>
-                  <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
-                </p>
-              </div>
+            <div className="min-h-[24px] flex items-center">
+              <p className="text-xs sm:text-sm text-slate-100 font-normal leading-relaxed max-w-2xl">
+                <span>{currentText}</span>
+                <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
+              </p>
+            </div>
             </div>
 
             {/* Quick Action Buttons */}
@@ -311,7 +311,7 @@ export default function StudentDashboardPage() {
                 href="/student/tests"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
               >
-                <Compass className="w-3.5 h-3.5 text-blue-600" />
+                <Compass className="w-3.5 h-3.5 text-[#0284C7]" />
                 <span>Pilih Paket Ujian Marlins</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               </Link>
@@ -343,7 +343,7 @@ export default function StudentDashboardPage() {
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors shrink-0"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0"
             >
               <span>Lihat Semua (10)</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -353,7 +353,7 @@ export default function StudentDashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
             {loading ? (
               <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-2xl text-slate-400 text-xs shadow-xs space-y-2">
-                <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto animate-spin">
+                <div className="w-7 h-7 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-spin">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
                 <p className="font-semibold text-slate-700">Memuat paket ujian resmi...</p>
@@ -367,13 +367,13 @@ export default function StudentDashboardPage() {
                 return (
                   <div
                     key={test.id}
-                    className="bg-white rounded-2xl p-4 sm:p-4.5 border border-slate-200/80 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-150 flex flex-col justify-between h-full group"
+                    className="bg-white rounded-2xl p-4 sm:p-4.5 border border-slate-200/80 hover:border-sky-300/80 shadow-xs hover:shadow-md transition-all duration-150 flex flex-col justify-between h-full group"
                   >
                     {/* Top Tag & Access Indicator */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2">
                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-tight ${
-                          isTest1 ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-slate-100 text-slate-700'
+                          isTest1 ? 'bg-sky-50 text-[#0284C7] border border-sky-100' : 'bg-slate-100 text-slate-700'
                         }`}>
                           Paket #{test.test_number}
                         </span>
@@ -393,7 +393,7 @@ export default function StudentDashboardPage() {
 
                       {/* Title & Description */}
                       <div className="space-y-1">
-                        <h3 className="font-extrabold text-slate-950 text-sm leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
+                        <h3 className="font-extrabold text-slate-950 text-sm leading-snug group-hover:text-[#0284C7] transition-colors line-clamp-1">
                           {formattedTestName}
                         </h3>
                         <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[2rem]">
@@ -414,10 +414,10 @@ export default function StudentDashboardPage() {
 
                       <Link
                         href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                        className={`w-full flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] ${
+                        className={`w-full flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99] ${
                           hasAccess
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
-                            : 'bg-slate-950 hover:bg-black text-white'
+                            ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white shadow-sky-500/25'
+                            : 'bg-gradient-to-r from-[#0B192C] via-[#1E293B] to-[#0B192C] hover:from-[#0369A1] hover:to-[#0284C7] text-white border border-slate-700/30'
                         }`}
                       >
                         <span>{hasAccess ? 'Mulai Ujian' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
@@ -442,7 +442,7 @@ export default function StudentDashboardPage() {
             </div>
             <Link
               href="/student/history"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
+              className="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
             >
               Lihat Semua
             </Link>
@@ -465,7 +465,7 @@ export default function StudentDashboardPage() {
                     <tr key={res.id || res.attempt_id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <FileCheck2 className="w-4 h-4" />
                           </div>
                           <div>
@@ -475,13 +475,13 @@ export default function StudentDashboardPage() {
                         </div>
                       </td>
                       <td className="py-3.5 pr-4">
-                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-wider">
+                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
                           STANDAR CEFR
                         </span>
                       </td>
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-blue-600 text-xs">{res.score}%</span>
+                          <span className="font-mono font-bold text-[#0284C7] text-xs">{res.score}%</span>
                           <span
                             className={`px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${
                               res.is_passed
@@ -496,7 +496,7 @@ export default function StudentDashboardPage() {
                       <td className="py-3.5 text-right">
                         <Link
                           href={`/student/test/result/${res.attempt_id || res.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-blue-600 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-2xs"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-[#0284C7] text-slate-400 hover:text-[#0284C7] hover:bg-sky-50 transition-all shadow-2xs"
                           title="Lihat Rincian Hasil"
                         >
                           <ArrowUpRight className="w-4 h-4" />

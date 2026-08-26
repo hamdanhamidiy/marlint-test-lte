@@ -90,7 +90,7 @@ export default function SingleCertificatePage() {
         <p className="text-xs text-slate-600">{errorMsg || 'Data sertifikat tidak valid.'}</p>
         <Link
           href="/student/certificates"
-          className="inline-block px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs"
+          className="inline-block px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white font-bold text-xs shadow-md shadow-sky-500/20"
         >
           Kembali ke Daftar Sertifikat
         </Link>
@@ -103,7 +103,7 @@ export default function SingleCertificatePage() {
       <div className="no-print">
         <Link
           href="/student/certificates"
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#0284C7] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Koleksi Sertifikat</span>

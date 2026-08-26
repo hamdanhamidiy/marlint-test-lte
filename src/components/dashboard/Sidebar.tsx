@@ -85,7 +85,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
             <span className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">
               Menu Utama
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7]/40" />
           </div>
 
           <nav className="space-y-1">
@@ -103,8 +103,8 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                   onClick={onCloseMobile}
                   className={`group relative flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 ease-out active:scale-[0.98] ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-md shadow-blue-500/25 translate-x-1'
-                      : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5'
+                      ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white shadow-md shadow-sky-500/25 translate-x-1'
+                      : 'text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/80 hover:translate-x-1.5'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -112,7 +112,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                       className={`w-4 h-4 transition-all duration-200 ${
                         isActive
                           ? 'text-cyan-200'
-                          : 'text-slate-400 group-hover:text-blue-600 group-hover:scale-110'
+                          : 'text-slate-400 group-hover:text-[#0284C7] group-hover:scale-110'
                       }`}
                     />
                     <span className="tracking-tight">{item.name}</span>
@@ -153,9 +153,9 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         <Link
           href="/student/profile"
           onClick={onCloseMobile}
-          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/70 hover:translate-x-1.5 transition-all duration-200 ease-out"
+          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/80 hover:translate-x-1.5 transition-all duration-200 ease-out"
         >
-          <User className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:scale-110 transition-all" />
+          <User className="w-4 h-4 text-slate-400 group-hover:text-[#0284C7] group-hover:scale-110 transition-all" />
           <span>Profil Pelaut</span>
         </Link>
 

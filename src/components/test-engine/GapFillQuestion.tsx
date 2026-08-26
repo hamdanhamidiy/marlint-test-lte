@@ -43,8 +43,8 @@ export default function GapFillQuestion({
                     onChange={(e) => handleGapChange(gapIndex, e.target.value)}
                     className={`appearance-none font-bold px-4 py-2 pr-8 rounded-xl border text-xs sm:text-sm transition-all cursor-pointer outline-none shadow-2xs ${
                       currentVal
-                        ? 'bg-[#EEF0FF] border-[#5046E5] text-[#5046E5] shadow-xs ring-2 ring-[#5046E5]/20'
-                        : 'bg-slate-50 border-dashed border-slate-300 text-slate-500 hover:border-indigo-400'
+                        ? 'bg-sky-50 border-[#0284C7] text-[#0284C7] shadow-xs ring-2 ring-[#0284C7]/20'
+                        : 'bg-slate-50 border-dashed border-slate-300 text-slate-500 hover:border-sky-400'
                     }`}
                   >
                     <option value="" disabled className="bg-white text-slate-400">
@@ -56,7 +56,7 @@ export default function GapFillQuestion({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#5046E5] absolute right-2.5 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-[#0284C7] absolute right-2.5 pointer-events-none" />
                 </span>
               </span>
             );
@@ -67,7 +67,7 @@ export default function GapFillQuestion({
       </div>
 
       <p className="text-xs text-slate-500 flex items-center gap-2 font-medium">
-        <span className="w-2 h-2 rounded-full bg-[#5046E5]" />
+        <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
         <span>Pilih kata yang tepat dari menu dropdown pada setiap bagian rumpang di atas.</span>
       </p>
     </div>

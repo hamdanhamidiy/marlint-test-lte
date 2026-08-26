@@ -82,9 +82,9 @@ export function getCategoryInfo(category: string): {
     case 'reading_comprehension':
       return {
         name: 'Reading',
-        color: 'text-indigo-800',
-        bg: 'bg-indigo-50',
-        border: 'border-indigo-200',
+        color: 'text-sky-800',
+        bg: 'bg-sky-50',
+        border: 'border-sky-200',
         iconName: 'FileSearch',
       };
     case 'time_and_numbers':

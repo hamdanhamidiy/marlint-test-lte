@@ -69,7 +69,7 @@ export default function RegisterPage() {
         <div className="bg-white p-7 sm:p-9 rounded-[28px] border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 relative overflow-hidden">
           
           {/* Subtle Top Accent Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#EA580C] to-slate-950 opacity-90" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
           {/* Heading */}
           <div className="text-center space-y-1.5 pt-1">
@@ -165,7 +165,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-full font-semibold text-xs text-white bg-black hover:bg-neutral-800 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] mt-2"
+              className="w-full py-3 rounded-full font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-[0.99] mt-2"
             >
               <span>{loading ? 'Mendaftarkan Akun...' : 'Daftar Akun Sekarang'}</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -97,7 +97,7 @@ export default function CertificateTemplate({
             <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">
               CEFR Level
             </span>
-            <span className="font-mono text-2xl sm:text-3xl font-extrabold text-indigo-700">
+            <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[#0369A1]">
               {certificate.level}
             </span>
           </div>

@@ -20,19 +20,19 @@ import { MarlintTest } from '@/lib/supabase/types';
 import { formatPriceIDR } from '@/lib/utils';
 
 export default function StudentTestsCatalogPage() {
-  const { user } = useAuth();
+  const { user, profile, isSuperAdmin, isInstructor } = useAuth();
   const [tests, setTests] = useState<MarlintTest[]>([]);
   const [entitlements, setEntitlements] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'unlocked' | 'deck' | 'engine'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'unlocked' | 'fb' | 'housekeeping' | 'culinary'>('all');
 
   useEffect(() => {
     async function loadTestsAndEntitlements() {
       try {
         setLoading(true);
 
-        const { data: testData, error: testError } = await supabase
+        const { data: testData } = await supabase
           .from('marlint_tests')
           .select('*')
           .eq('is_active', true)
@@ -42,32 +42,54 @@ export default function StudentTestsCatalogPage() {
           setTests(testData as MarlintTest[]);
         }
 
-        if (user) {
-          const { data: entData } = await supabase
-            .from('test_entitlements')
-            .select('test_number')
-            .eq('user_id', user.id)
-            .eq('is_active', true);
+        const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
+        if (isStaff) {
+          setEntitlements(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
+          return;
+        }
 
-          const entSet = new Set<number>();
-          if (entData) {
-            entData.forEach((e) => entSet.add(e.test_number));
-          }
+        const entSet = new Set<number>([1]); // Test 1 is default free
+
+        if (user || profile) {
+          const userIds = [user?.id, profile?.id].filter(Boolean);
+          const userEmails = [user?.email, profile?.email].filter(Boolean);
+
+          try {
+            if (userIds.length > 0) {
+              const { data: entData } = await supabase
+                .from('test_entitlements')
+                .select('test_number, is_active')
+                .in('user_id', userIds)
+                .eq('is_active', true);
+
+              if (entData) {
+                entData.forEach((e) => entSet.add(e.test_number));
+              }
+            }
+          } catch (e) {}
 
           if (typeof window !== 'undefined') {
-            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
-            if (localEnt) {
-              try {
-                const arr = JSON.parse(localEnt);
-                if (Array.isArray(arr)) {
-                  arr.forEach((num) => entSet.add(Number(num)));
-                }
-              } catch (e) {}
-            }
-          }
+            const checkKeys = [
+              ...userIds.map((id) => `marlins_entitlements_${id}`),
+              ...userEmails.map((em) => `marlins_entitlements_${em?.toLowerCase()}`),
+              'marlins_entitlements_all',
+            ];
 
-          setEntitlements(entSet);
+            checkKeys.forEach((k) => {
+              const localEnt = localStorage.getItem(k);
+              if (localEnt) {
+                try {
+                  const arr = JSON.parse(localEnt);
+                  if (Array.isArray(arr)) {
+                    arr.forEach((num) => entSet.add(Number(num)));
+                  }
+                } catch (e) {}
+              }
+            });
+          }
         }
+
+        setEntitlements(entSet);
       } catch (err) {
         console.error('Error loading tests catalog:', err);
       } finally {
@@ -76,7 +98,7 @@ export default function StudentTestsCatalogPage() {
     }
 
     loadTestsAndEntitlements();
-  }, [user]);
+  }, [user, profile, isSuperAdmin, isInstructor]);
 
   const filteredTests = tests.filter((t) => {
     const isFree = t.is_free;
@@ -86,8 +108,9 @@ export default function StudentTestsCatalogPage() {
     let matchesFilter = true;
     if (activeFilter === 'free') matchesFilter = isFree;
     else if (activeFilter === 'unlocked') matchesFilter = isUnlocked;
-    else if (activeFilter === 'deck') matchesFilter = t.deck_type === 'deck' || formattedName.toLowerCase().includes('deck') || t.test_number <= 5;
-    else if (activeFilter === 'engine') matchesFilter = t.deck_type === 'engine' || formattedName.toLowerCase().includes('engine') || t.test_number > 5;
+    else if (activeFilter === 'fb') matchesFilter = [1, 2, 3, 7].includes(t.test_number);
+    else if (activeFilter === 'housekeeping') matchesFilter = [4, 5, 9].includes(t.test_number);
+    else if (activeFilter === 'culinary') matchesFilter = [6, 8, 10].includes(t.test_number);
 
     const matchesSearch =
       formattedName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -101,15 +124,15 @@ export default function StudentTestsCatalogPage() {
     <div className="space-y-5 sm:space-y-6 min-w-0 max-w-7xl mx-auto font-sans pb-12">
       {/* Page Header */}
       <div className="space-y-1.5 pt-1">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0369A1] text-xs font-bold border border-sky-200/80 shadow-2xs">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
-          <span>Standar Resmi IMO STCW & SMCP</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black text-white text-xs font-bold shadow-2xs">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Sekolah Perhotelan & Kapal Pesiar LTE Cruise</span>
         </div>
-        <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Katalog Paket Ujian Marlins
+        <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
+          Katalog Paket Ujian Marlins (Test 1–10)
         </h1>
         <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed max-w-xl">
-          Daftar 10 paket asesmen kompetensi Bahasa Inggris Maritim berstandar internasional untuk perwira dan rating kapal.
+          Daftar 10 paket simulasi asesmen Bahasa Inggris standar perhotelan internasional & kru kapal pesiar LTE Cruise.
         </p>
       </div>
 
@@ -123,7 +146,7 @@ export default function StudentTestsCatalogPage() {
             placeholder="Cari nomor atau judul paket ujian..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white border border-slate-200/90 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all shadow-2xs"
+            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white border border-slate-200/90 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-2xs"
           />
         </div>
 
@@ -164,25 +187,36 @@ export default function StudentTestsCatalogPage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveFilter('deck')}
+            onClick={() => setActiveFilter('fb')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeFilter === 'deck'
+              activeFilter === 'fb'
                 ? 'bg-black text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
-            Deck (ANT)
+            F&B Service & Bar
           </button>
           <button
             type="button"
-            onClick={() => setActiveFilter('engine')}
+            onClick={() => setActiveFilter('housekeeping')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeFilter === 'engine'
+              activeFilter === 'housekeeping'
                 ? 'bg-black text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
-            Engine (ATT)
+            Housekeeping & Laundry
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveFilter('culinary')}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeFilter === 'culinary'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
+            }`}
+          >
+            Culinary & Galley
           </button>
         </div>
       </div>

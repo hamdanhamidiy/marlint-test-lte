@@ -30,7 +30,7 @@ import { getCategoryInfo, formatPriceIDR } from '@/lib/utils';
 export default function TestOverviewPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, profile, isSuperAdmin, isInstructor } = useAuth();
   const testNumber = parseInt(params.testNumber as string, 10);
 
   const [test, setTest] = useState<MarlintTest | null>(null);
@@ -57,34 +57,53 @@ export default function TestOverviewPage() {
 
         setTest(data as MarlintTest);
 
-        if (user) {
-          let hasAccess = data.is_free;
-          try {
-            const { data: entData } = await supabase
-              .from('test_entitlements')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('test_number', testNumber)
-              .eq('is_active', true)
-              .maybeSingle();
+        const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
+        if (isStaff) {
+          setHasEntitlement(true);
+          return;
+        }
 
-            if (entData) hasAccess = true;
+        let hasAccess = data.is_free || testNumber === 1;
+
+        if (user || profile) {
+          const userIds = [user?.id, profile?.id].filter(Boolean);
+          const userEmails = [user?.email, profile?.email].filter(Boolean);
+
+          try {
+            if (userIds.length > 0) {
+              const { data: entData } = await supabase
+                .from('test_entitlements')
+                .select('id, test_number, is_active')
+                .in('user_id', userIds)
+                .eq('test_number', testNumber)
+                .eq('is_active', true);
+
+              if (entData && entData.length > 0) hasAccess = true;
+            }
           } catch (e) {}
 
           if (typeof window !== 'undefined') {
-            const localEnt = localStorage.getItem(`marlins_entitlements_${user.id}`);
-            if (localEnt) {
-              try {
-                const arr = JSON.parse(localEnt);
-                if (Array.isArray(arr) && arr.map(Number).includes(Number(testNumber))) {
-                  hasAccess = true;
-                }
-              } catch (e) {}
-            }
-          }
+            const checkKeys = [
+              ...userIds.map((id) => `marlins_entitlements_${id}`),
+              ...userEmails.map((em) => `marlins_entitlements_${em?.toLowerCase()}`),
+              'marlins_entitlements_all',
+            ];
 
-          setHasEntitlement(hasAccess);
+            checkKeys.forEach((k) => {
+              const localEnt = localStorage.getItem(k);
+              if (localEnt) {
+                try {
+                  const arr = JSON.parse(localEnt);
+                  if (Array.isArray(arr) && arr.map(Number).includes(Number(testNumber))) {
+                    hasAccess = true;
+                  }
+                } catch (e) {}
+              }
+            });
+          }
         }
+
+        setHasEntitlement(hasAccess);
       } catch (e: any) {
         setErrorMsg(e.message || 'Gagal memuat detail tes.');
       } finally {
@@ -95,7 +114,7 @@ export default function TestOverviewPage() {
     if (testNumber) {
       loadTest();
     }
-  }, [testNumber, user]);
+  }, [testNumber, user, profile, isSuperAdmin, isInstructor]);
 
   const handleStartAttempt = async () => {
     if (!user || !test) return;
@@ -368,7 +387,7 @@ export default function TestOverviewPage() {
         {/* Action Button Bar */}
         <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-500 font-normal">
-            Sistem Stopwatch Pencatat Waktu Pengerjaan • Standar IMO STCW & SMCP
+            Sistem Stopwatch Pencatat Waktu Pengerjaan • Evaluasi Perhotelan & Kapal Pesiar LTE Cruise
           </p>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -377,7 +396,7 @@ export default function TestOverviewPage() {
               <>
                 <Link
                   href="/student/redeem"
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full font-bold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-full font-bold text-xs bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors border border-slate-200"
                 >
                   <KeyRound className="w-3.5 h-3.5 text-amber-600" />
                   <span>Punya Token?</span>
@@ -398,13 +417,13 @@ export default function TestOverviewPage() {
                 type="button"
                 onClick={handleStartAttempt}
                 disabled={starting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-[#0284C7] hover:bg-[#0369A1] transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-98 disabled:opacity-50"
               >
                 {starting ? (
                   <span>Menyiapkan Ujian...</span>
                 ) : (
                   <>
-                    <Unlock className="w-4 h-4 text-white" />
+                    <Unlock className="w-4 h-4 text-emerald-400" />
                     <span>Mulai Ujian Sekarang</span>
                     <ArrowRight className="w-4 h-4" />
                   </>

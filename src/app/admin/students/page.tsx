@@ -31,11 +31,15 @@ import {
   CheckCheck,
   AlertTriangle,
   ExternalLink,
+  BookOpen,
+  TrendingUp,
+  BarChart3,
+  Flame,
 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
-import { UserProfile, UserRole } from '@/lib/supabase/types';
-import { getLevelBadge, formatDateIndo } from '@/lib/utils';
+import { UserProfile, UserRole, StudentResult } from '@/lib/supabase/types';
+import { getLevelBadge, formatDateIndo, formatDuration } from '@/lib/utils';
 import { useAuth } from '@/lib/context/AuthContext';
 
 const MARLINS_10_TESTS = [
@@ -140,43 +144,23 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     status: 'active',
     level: 'A1',
     level_code: 'A1',
-    total_points: 240,
+    total_points: 120,
     phone_number: null,
     photo_url: null,
-    job_title: 'Culinary / Galley Commis Cook',
+    job_title: 'Culinary / Galley Cook',
     date_of_birth: null,
     nationality: 'Indonesia',
-    about: 'Siswa divisi Culinary & Kitchen perhotelan kapal pesiar.',
+    about: 'Siswa jurusan Tata Boga & Culinary untuk dapur kapal pesiar internasional.',
     placement_test_taken: true,
-    placement_test_date: '2026-02-13T00:00:00.000Z',
-    created_at: '2026-02-13T00:00:00.000Z',
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000001',
-    email: 'siswa@marlinstest.com',
-    full_name: 'Budi Santoso',
-    role: 'student',
-    status: 'active',
-    level: 'B1+',
-    level_code: 'B1+',
-    total_points: 540,
-    phone_number: '081234567890',
-    photo_url: null,
-    job_title: 'Restaurant Head Waiter / F&B Staff',
-    date_of_birth: '1995-04-12',
-    nationality: 'Indonesia',
-    about: 'Staf restoran kapal pesiar berpengalaman di hotel & cruise line internasional.',
-    placement_test_taken: true,
-    placement_test_date: '2026-01-10T00:00:00.000Z',
-    created_at: '2026-01-10T00:00:00.000Z',
+    placement_test_date: '2026-02-12T00:00:00.000Z',
+    created_at: '2026-02-12T00:00:00.000Z',
     updated_at: new Date().toISOString(),
   },
 ];
 
 export default function AdminStudentsPage() {
-  const { isSuperAdmin, isInstructor, profile } = useAuth();
-  const [students, setStudents] = useState<UserProfile[]>(DEFAULT_STUDENTS);
+  const { user } = useAuth();
+  const [students, setStudents] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState<'all' | 'fb' | 'housekeeping' | 'culinary' | 'frontoffice'>('all');
@@ -209,10 +193,11 @@ export default function AdminStudentsPage() {
   });
   const [savingEdit, setSavingEdit] = useState(false);
 
-  // Student Detail / Access Modal (1-10 Tests)
+  // Student Detail / Access / Scores Modal
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
-  const [studentAttempts, setStudentAttempts] = useState<any[]>([]);
-  const [studentEntitlements, setStudentEntitlements] = useState<number[]>([]);
+  const [modalTab, setModalTab] = useState<'access' | 'scores'>('access');
+  const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
+  const [studentEntitlements, setStudentEntitlements] = useState<number[]>([1]);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [updatingAccess, setUpdatingAccess] = useState(false);
 
@@ -244,20 +229,17 @@ export default function AdminStudentsPage() {
       const map = new Map<string, UserProfile>();
 
       if (data && data.length > 0) {
-        // Priority 1: Live Supabase database student records
         data.forEach((s: any) => {
           if (s.email && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
             map.set(s.email.toLowerCase(), s as UserProfile);
           }
         });
       } else {
-        // Fallback only if database returned 0 rows
         DEFAULT_STUDENTS.forEach((s) => {
           if (s.email) map.set(s.email.toLowerCase(), s);
         });
       }
 
-      // Only add custom students that do not already exist in database
       localCustom.forEach((s) => {
         if (s.email && !map.has(s.email.toLowerCase()) && s.role !== 'instructor' && s.role !== 'super_admin' && s.role !== 'admin') {
           map.set(s.email.toLowerCase(), s);
@@ -286,8 +268,9 @@ export default function AdminStudentsPage() {
 
     try {
       setAddingStudent(true);
+      const newId = `user-${Date.now()}`;
       const newStudent: UserProfile = {
-        id: `user-${Date.now()}`,
+        id: newId,
         email: newStudentForm.email.trim().toLowerCase(),
         full_name: newStudentForm.full_name.trim(),
         role: 'student',
@@ -307,7 +290,6 @@ export default function AdminStudentsPage() {
         updated_at: new Date().toISOString(),
       };
 
-      // Save to local storage
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_students_list');
         const list: UserProfile[] = stored ? JSON.parse(stored) : [];
@@ -320,7 +302,6 @@ export default function AdminStudentsPage() {
         ...prev.filter((s) => (s.email?.toLowerCase() || '') !== newEmail),
       ]);
 
-      // Try inserting into Supabase
       try {
         await supabase.from('users').insert([newStudent]);
       } catch (dbErr) {
@@ -337,7 +318,7 @@ export default function AdminStudentsPage() {
         nationality: 'Indonesia',
         about: '',
       });
-      alert(`Siswa ${newStudent.full_name} berhasil ditambahkan ke direktori!`);
+      alert(`Siswa ${newStudent.full_name} berhasil didaftarkan ke direktori!`);
     } catch (err: any) {
       alert('Gagal menambah siswa: ' + err.message);
     } finally {
@@ -381,7 +362,6 @@ export default function AdminStudentsPage() {
         updated_at: new Date().toISOString(),
       };
 
-      // 1. Update in State
       setStudents((prev) =>
         prev.map((s) => ((s.email?.toLowerCase() || '') === studentEmail ? updatedStudent : s))
       );
@@ -390,7 +370,6 @@ export default function AdminStudentsPage() {
         setSelectedStudent(updatedStudent);
       }
 
-      // 2. Update in Supabase
       try {
         await supabase
           .from('users')
@@ -410,7 +389,6 @@ export default function AdminStudentsPage() {
         console.warn('Supabase update student note:', dbErr);
       }
 
-      // 3. Update in LocalStorage
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_students_list');
         if (stored) {
@@ -433,32 +411,29 @@ export default function AdminStudentsPage() {
   };
 
   const handleDeleteStudent = async (st: UserProfile) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus data siswa "${st.full_name}" (${st.email || '-'})?\nData yang dihapus tidak dapat dikembalikan.`)) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus data siswa "${st.full_name}" (${st.email || '-'})?\nSeluruh data dan riwayat nilai siswa ini akan dihapus.`)) {
       return;
     }
 
     try {
       const targetEmail = (st.email || '').toLowerCase();
 
-      // 1. Remove from state
       setStudents((prev) => prev.filter((s) => (s.email?.toLowerCase() || '') !== targetEmail));
 
       if (selectedStudent && (selectedStudent.email?.toLowerCase() || '') === targetEmail) {
         setSelectedStudent(null);
       }
 
-      // 2. Delete from Supabase (clean up entitlements, attempts, and user row)
       try {
         if (st.id) {
-          await supabase.from('test_entitlements').delete().eq('user_id', st.id);
-          await supabase.from('test_attempts').delete().eq('user_id', st.id);
+          await supabase.from('test_entitlements').delete().or(`user_id.eq.${st.id},user_id.eq.${st.email}`);
+          await supabase.from('student_results').delete().or(`student_id.eq.${st.id},student_id.eq.${st.email}`);
         }
         await supabase.from('users').delete().or(`id.eq.${st.id},email.eq.${st.email}`);
       } catch (dbErr) {
         console.warn('Supabase delete student note:', dbErr);
       }
 
-      // 3. Remove from LocalStorage
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('marlins_students_list');
         if (stored) {
@@ -470,41 +445,98 @@ export default function AdminStudentsPage() {
         }
       }
 
-      alert(`Siswa ${st.full_name} berhasil dihapus dari direktori.`);
+      alert(`Siswa ${st.full_name} berhasil dihapus.`);
     } catch (err: any) {
       alert('Gagal menghapus siswa: ' + err.message);
     }
   };
 
-  const handleOpenStudentDetail = async (st: UserProfile) => {
+  const handleOpenStudentDetail = async (st: UserProfile, defaultTab: 'access' | 'scores' = 'access') => {
     setSelectedStudent(st);
+    setModalTab(defaultTab);
     try {
       setLoadingDetails(true);
 
-      // Load attempts
-      const { data: attempts } = await supabase
-        .from('test_attempts')
-        .select('*, marlint_tests(test_name)')
-        .eq('user_id', st.id)
+      // 1. Load results from Supabase student_results
+      const { data: resultsData } = await supabase
+        .from('student_results')
+        .select('*')
+        .or(`student_id.eq.${st.id},student_id.eq.${st.email}`)
         .order('created_at', { ascending: false });
 
-      if (attempts) {
-        setStudentAttempts(attempts);
+      let resultsList: StudentResult[] = [];
+      if (resultsData && resultsData.length > 0) {
+        resultsList = resultsData as StudentResult[];
       }
 
-      // Load entitlements from canonical test_entitlements table
+      // Also check local storage for this student
+      if (typeof window !== 'undefined') {
+        const found = new Set(resultsList.map((r) => r.attempt_id || r.id));
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('marlins_result_') || k.startsWith('test_result_'))) {
+            try {
+              const item = JSON.parse(localStorage.getItem(k) || '');
+              if (item.student_id === st.id || item.student_email === st.email) {
+                const aid = item.attempt_id || item.id;
+                if (aid && !found.has(aid)) {
+                  resultsList.push({
+                    id: aid,
+                    student_id: st.id,
+                    attempt_id: aid,
+                    score: item.overall_score !== undefined ? item.overall_score : item.score || 0,
+                    correct_answers: item.total_score !== undefined ? item.total_score : item.correct_answers || 0,
+                    total_questions: item.total_questions || 60,
+                    level: item.level || 'A2',
+                    category_scores: item.category_scores || {},
+                    time_spent_seconds: item.time_spent_seconds || 1800,
+                    is_passed: item.is_passed,
+                    start_time: item.start_time || new Date().toISOString(),
+                    end_time: item.end_time || new Date().toISOString(),
+                    created_at: item.completed_at || item.created_at || new Date().toISOString(),
+                    test_name: item.test_name || `Marlins Test #${item.marlint_test_number || 1}`,
+                    marlint_test_number: item.test_number || 1,
+                    test_mode: 'standard',
+                    points_earned: 50,
+                  });
+                  found.add(aid);
+                }
+              }
+            } catch (e) {}
+          }
+        }
+      }
+
+      resultsList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
+      setStudentResults(resultsList);
+
+      // 2. Load entitlements from Supabase
+      const entSet = new Set<number>([1]); // Test 1 free by default
       const { data: ents } = await supabase
         .from('test_entitlements')
-        .select('test_number')
-        .eq('user_id', st.id)
+        .select('test_number, is_active')
+        .or(`user_id.eq.${st.id},user_id.eq.${st.email}`)
         .eq('is_active', true);
 
       if (ents && ents.length > 0) {
-        setStudentEntitlements(ents.map((e) => e.test_number));
-      } else {
-        // Test #1 is default free, others default to student's saved state
-        setStudentEntitlements([1]);
+        ents.forEach((e) => entSet.add(e.test_number));
       }
+
+      // Check localStorage entitlements
+      if (typeof window !== 'undefined') {
+        const keys = [`marlins_entitlements_${st.id}`, `marlins_entitlements_${st.email?.toLowerCase()}`];
+        keys.forEach((k) => {
+          const val = localStorage.getItem(k);
+          if (val) {
+            try {
+              const arr = JSON.parse(val);
+              if (Array.isArray(arr)) arr.forEach((num) => entSet.add(Number(num)));
+            } catch (e) {}
+          }
+        });
+      }
+
+      setStudentEntitlements(Array.from(entSet));
     } catch (err) {
       console.error('Error loading student details:', err);
       setStudentEntitlements([1]);
@@ -520,32 +552,25 @@ export default function AdminStudentsPage() {
       setUpdatingAccess(true);
       const hasAccess = studentEntitlements.includes(testNumber);
 
+      let nextEnts: number[] = [];
       if (hasAccess) {
         // Revoke access
         await supabase
           .from('test_entitlements')
-          .update({ is_active: false, revoked_at: new Date().toISOString() })
-          .eq('user_id', selectedStudent.id)
+          .update({ is_active: false })
+          .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
           .eq('test_number', testNumber);
 
-        setStudentEntitlements((prev) => prev.filter((t) => t !== testNumber));
+        nextEnts = studentEntitlements.filter((t) => t !== testNumber);
       } else {
         // Grant access
-        const { data: tData } = await supabase
-          .from('marlint_tests')
-          .select('id')
-          .eq('test_number', testNumber)
-          .maybeSingle();
-
-        const marlintTestId = tData?.id || `test-${testNumber}`;
-
         await supabase
           .from('test_entitlements')
           .upsert(
             [
               {
                 user_id: selectedStudent.id,
-                marlint_test_id: marlintTestId,
+                marlint_test_id: `test-${testNumber}`,
                 test_number: testNumber,
                 source: 'super_admin_grant',
                 is_active: true,
@@ -555,7 +580,17 @@ export default function AdminStudentsPage() {
             { onConflict: 'user_id, marlint_test_id' }
           );
 
-        setStudentEntitlements((prev) => [...prev, testNumber]);
+        nextEnts = Array.from(new Set([...studentEntitlements, testNumber]));
+      }
+
+      setStudentEntitlements(nextEnts);
+
+      // Save to local storage for cross-session fallback
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify(nextEnts));
+        if (selectedStudent.email) {
+          localStorage.setItem(`marlins_entitlements_${selectedStudent.email.toLowerCase()}`, JSON.stringify(nextEnts));
+        }
       }
     } catch (err: any) {
       alert('Gagal memperbarui akses: ' + err.message);
@@ -569,7 +604,7 @@ export default function AdminStudentsPage() {
     try {
       setUpdatingAccess(true);
       const allNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      
+
       const records = allNums.map((num) => ({
         user_id: selectedStudent.id,
         marlint_test_id: `test-${num}`,
@@ -581,8 +616,14 @@ export default function AdminStudentsPage() {
 
       await supabase.from('test_entitlements').upsert(records, { onConflict: 'user_id, marlint_test_id' });
       setStudentEntitlements(allNums);
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify(allNums));
+        if (selectedStudent.email) {
+          localStorage.setItem(`marlins_entitlements_${selectedStudent.email.toLowerCase()}`, JSON.stringify(allNums));
+        }
+      }
     } catch (err: any) {
-      console.warn('Grant all access notice:', err);
       setStudentEntitlements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     } finally {
       setUpdatingAccess(false);
@@ -593,52 +634,42 @@ export default function AdminStudentsPage() {
     if (!selectedStudent) return;
     try {
       setUpdatingAccess(true);
-      // Revoke tests 2..10 (test 1 remains free)
       await supabase
         .from('test_entitlements')
-        .update({ is_active: false, revoked_at: new Date().toISOString() })
-        .eq('user_id', selectedStudent.id)
+        .update({ is_active: false })
+        .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
         .neq('test_number', 1);
 
       setStudentEntitlements([1]);
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify([1]));
+        if (selectedStudent.email) {
+          localStorage.setItem(`marlins_entitlements_${selectedStudent.email.toLowerCase()}`, JSON.stringify([1]));
+        }
+      }
     } catch (err: any) {
-      console.warn('Revoke all notice:', err);
       setStudentEntitlements([1]);
     } finally {
       setUpdatingAccess(false);
     }
   };
 
-  const handleResetAttempts = async (testNumber: number) => {
-    if (!selectedStudent) return;
-    if (!confirm(`Reset sesi pengerjaan Test #${testNumber} untuk siswa ini?`)) return;
-
+  const handleDeleteStudentResult = async (resultId: string) => {
+    if (!confirm('Hapus rekaman sesi ujian ini? Sesi yang dihapus tidak dapat dipulihkan.')) return;
     try {
       setUpdatingAccess(true);
-      await supabase
-        .from('test_attempts')
-        .delete()
-        .eq('user_id', selectedStudent.id)
-        .eq('test_number', testNumber);
-
-      // Refresh attempts
-      const { data: attempts } = await supabase
-        .from('test_attempts')
-        .select('*, marlint_tests(test_name)')
-        .eq('user_id', selectedStudent.id)
-        .order('created_at', { ascending: false });
-
-      if (attempts) setStudentAttempts(attempts);
-      alert(`Sesi pengerjaan Test #${testNumber} berhasil di-reset.`);
+      await supabase.from('student_results').delete().eq('id', resultId);
+      setStudentResults((prev) => prev.filter((r) => r.id !== resultId && r.attempt_id !== resultId));
+      alert('Rekaman sesi ujian berhasil dihapus.');
     } catch (err: any) {
-      alert('Gagal reset sesi: ' + err.message);
+      alert('Gagal menghapus hasil ujian: ' + err.message);
     } finally {
       setUpdatingAccess(false);
     }
   };
 
   const filteredStudents = students.filter((s) => {
-    // Strictly exclude instructors and admins from students directory
     if (s.role === 'instructor' || s.role === 'super_admin' || s.role === 'admin') return false;
 
     if (deptFilter === 'fb') {
@@ -674,7 +705,7 @@ export default function AdminStudentsPage() {
   });
 
   return (
-    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-12 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-16 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
         <div className="space-y-1.5">
@@ -686,11 +717,11 @@ export default function AdminStudentsPage() {
           </div>
 
           <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
-            Data Siswa Sekolah Perhotelan & Kapal Pesiar
+            Data Siswa & Manajemen Nilai
           </h1>
 
           <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa terdaftar di LTE Cruise Training Center. Kelola direktori siswa, akses hak ujian Marlins (Test 1–10), edit biodata, atau hapus akun siswa.
+            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa terdaftar. Kelola akses ujian Marlins (Test 1–10), pantau rekapitulasi nilai ujian, edit biodata, atau hapus akun siswa.
           </p>
         </div>
 
@@ -704,40 +735,39 @@ export default function AdminStudentsPage() {
         </button>
       </div>
 
-      {/* Modern Filter & Search Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-        {/* Search Input */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+      {/* Search and Category Filters */}
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Cari nama siswa, email, departemen, atau kebangsaan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white border border-slate-200/90 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-2xs font-normal"
           />
         </div>
 
-        {/* Cruise Hospitality Department Track Filter Tabs */}
-        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70">
+        {/* Clean Modern Filter Pills (No ugly scrollbar) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <button
             type="button"
             onClick={() => setDeptFilter('all')}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               deptFilter === 'all'
                 ? 'bg-black text-white shadow-xs'
-                : 'text-slate-600 hover:text-black hover:bg-white/70'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
-            Semua Siswa ({students.filter((s) => s.role === 'student' || !s.role).length})
+            Semua Siswa ({students.length})
           </button>
           <button
             type="button"
             onClick={() => setDeptFilter('fb')}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               deptFilter === 'fb'
-                ? 'bg-[#0284C7] text-white shadow-xs'
-                : 'text-slate-600 hover:text-black hover:bg-white/70'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
             F&B Service & Bar
@@ -745,10 +775,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setDeptFilter('housekeeping')}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               deptFilter === 'housekeeping'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-black hover:bg-white/70'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
             Housekeeping & Laundry
@@ -756,10 +786,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setDeptFilter('culinary')}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               deptFilter === 'culinary'
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-black hover:bg-white/70'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
             Culinary & Galley
@@ -767,10 +797,10 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setDeptFilter('frontoffice')}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               deptFilter === 'frontoffice'
-                ? 'bg-purple-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-black hover:bg-white/70'
+                ? 'bg-black text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-black hover:bg-slate-100 border border-slate-200/90'
             }`}
           >
             Front Office & Guest Service
@@ -778,128 +808,121 @@ export default function AdminStudentsPage() {
         </div>
       </div>
 
-      {/* Students List Cards */}
+      {/* Student List */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2">
-          <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
+        <div className="bg-white p-12 text-center rounded-[28px] border border-slate-200/90 space-y-2 shadow-2xs">
+          <div className="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center mx-auto animate-pulse">
             <Users className="w-4 h-4" />
           </div>
-          <p className="font-semibold text-slate-600">Memuat direktori siswa...</p>
+          <p className="font-bold text-slate-800 text-xs">Memuat direktori siswa...</p>
         </div>
       ) : filteredStudents.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
-            <Users className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-heading font-bold text-slate-900 text-base">Tidak Ada Data Siswa</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              {search || deptFilter !== 'all'
-                ? 'Tidak ada siswa yang sesuai dengan filter departemen / pencarian.'
-                : 'Belum ada akun siswa yang terdaftar di database.'}
-            </p>
-          </div>
-          {(search || deptFilter !== 'all') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearch('');
-                setDeptFilter('all');
-              }}
-              className="text-xs font-bold text-[#0284C7] hover:underline cursor-pointer"
-            >
-              Reset Filter Pencarian
-            </button>
-          )}
+        <div className="bg-white p-12 text-center rounded-[28px] border border-slate-200/90 space-y-3 shadow-2xs">
+          <Users className="w-10 h-10 text-slate-300 mx-auto" />
+          <p className="font-bold text-slate-900 text-sm">Tidak ada siswa ditemukan</p>
+          <p className="text-xs text-slate-500">Coba ubah kata kunci pencarian atau filter departemen.</p>
         </div>
       ) : (
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           {filteredStudents.map((st) => {
-            const badge = getLevelBadge(st.level_code || 'A1');
+            const initial = (st.full_name || 'S').charAt(0).toUpperCase();
 
             return (
               <div
-                key={st.email || st.id}
-                className="bg-white p-5 sm:p-6 rounded-[26px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 hover:shadow-md transition-all group"
+                key={st.id || st.email}
+                className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-4 group"
               >
-                {/* Left: Avatar & Candidate Information */}
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0284C7] via-slate-900 to-[#EA580C] text-white font-heading font-black text-base flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-0.5">
-                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden">
-                      {st.photo_url ? (
-                        <img src={st.photo_url} alt={st.full_name} className="w-full h-full object-cover" />
-                      ) : (
-                        st.full_name?.charAt(0)?.toUpperCase() || 'S'
-                      )}
+                {/* Student Info */}
+                <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+                  {st.photo_url ? (
+                    <img
+                      src={st.photo_url}
+                      alt={st.full_name}
+                      className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-2xs"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center font-heading font-black text-base shrink-0 shadow-2xs">
+                      {initial}
                     </div>
-                  </div>
+                  )}
 
-                  <div className="space-y-1 min-w-0">
+                  <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-heading text-base sm:text-[17px] font-extrabold text-slate-950 truncate">
-                        {st.full_name || 'Siswa LTE Cruise'}
+                      <h3 className="font-heading font-extrabold text-slate-950 text-sm sm:text-base group-hover:text-black transition-colors truncate">
+                        {st.full_name}
                       </h3>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-sky-50 text-[#0284C7] border border-sky-200/80">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-extrabold text-[9px] uppercase tracking-wider border border-slate-200">
                         Siswa LTE Cruise
                       </span>
                     </div>
 
-                    <p className="text-xs sm:text-[13px] text-slate-500 font-medium truncate flex items-center gap-2 flex-wrap">
-                      <span>{st.email}</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap font-medium">
+                      <span>{st.email || '-'}</span>
                       <span className="text-slate-300">•</span>
-                      <span className="text-slate-800 font-bold">{st.job_title || 'F&B Service / Waiter'}</span>
+                      <span className="font-bold text-slate-700">{st.job_title || 'F&B Service / Waiter'}</span>
                       {st.phone_number && (
                         <>
                           <span className="text-slate-300">•</span>
-                          <span className="text-slate-600 font-mono text-xs">{st.phone_number}</span>
+                          <span>{st.phone_number}</span>
                         </>
                       )}
-                      <span className="text-slate-300">•</span>
-                      <span>{st.nationality || 'Indonesia'}</span>
-                    </p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Right: Badges & Action Buttons */}
-                <div className="flex items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 justify-between md:justify-end flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-extrabold ${badge.badgeBg} ${badge.badgeText} border ${badge.badgeBorder}`}>
+                {/* Badges & Actions */}
+                <div className="flex flex-wrap items-center justify-between lg:justify-end gap-2.5 pt-3 lg:pt-0 border-t lg:border-0 border-slate-100">
+                  {/* Badges */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-900 font-extrabold text-[10px] border border-slate-200/90">
                       Level {st.level_code || 'A1'}
                     </span>
-
-                    <span className="font-mono text-xs font-black text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/80 flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      {st.total_points || 0} XP
+                    <span className="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 font-extrabold text-[10px] border border-amber-200/80 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <span>{st.total_points || 0} XP</span>
                     </span>
                   </div>
 
-                  {/* Actions: Edit, Delete, Kelola Akses */}
+                  {/* Buttons */}
                   <div className="flex items-center gap-1.5">
+                    {/* Riwayat Nilai Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleOpenStudentDetail(st, 'scores')}
+                      className="px-3 py-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200/90 text-slate-900 font-bold text-xs transition-all shadow-2xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <BarChart3 className="w-3.5 h-3.5 text-slate-700" />
+                      <span>Riwayat Nilai</span>
+                    </button>
+
+                    {/* Kelola Akses Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleOpenStudentDetail(st, 'access')}
+                      className="px-3.5 py-1.5 rounded-full bg-black hover:bg-neutral-800 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Kelola Akses (1–10)</span>
+                    </button>
+
+                    {/* Edit Button */}
                     <button
                       type="button"
                       onClick={() => handleOpenEditModal(st)}
-                      className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
-                      title="Edit Data Siswa"
+                      title="Edit Biodata Siswa"
+                      className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
 
+                    {/* Delete Button */}
                     <button
                       type="button"
                       onClick={() => handleDeleteStudent(st)}
-                      className="p-2 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 transition-all cursor-pointer"
                       title="Hapus Siswa"
+                      className="p-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleOpenStudentDetail(st)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
-                    >
-                      <KeyRound className="w-3.5 h-3.5 text-[#EA580C]" />
-                      <span>Kelola Akses (1–10)</span>
                     </button>
                   </div>
                 </div>
@@ -909,199 +932,272 @@ export default function AdminStudentsPage() {
         </div>
       )}
 
-      {/* Student Detail & Entitlements Modal (Tests 1 to 10) */}
+      {/* Student Detail Modal: Access & Score Management */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-3xl w-full p-6 sm:p-8 rounded-[32px] border border-slate-200/90 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            {/* Modal Top Header */}
-            <div className="flex items-start justify-between pb-4 border-b border-slate-100 gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-base overflow-hidden shrink-0 shadow-xs">
-                  {selectedStudent.photo_url ? (
-                    <img src={selectedStudent.photo_url} alt={selectedStudent.full_name} className="w-full h-full object-cover" />
-                  ) : (
-                    selectedStudent.full_name?.charAt(0) || 'S'
-                  )}
-                </div>
-                <div>
-                  <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                    Kontrol Hak Akses Ujian Marlins (Test 1–10)
-                  </span>
-                  <h3 className="font-heading text-lg sm:text-xl font-extrabold text-slate-950">
-                    {selectedStudent.full_name || 'Detail Siswa'}
+          <div className="bg-white max-w-2xl w-full p-5 sm:p-7 rounded-[32px] border border-slate-200/90 space-y-5 shadow-2xl max-h-[92vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-3 min-w-0">
+                {selectedStudent.photo_url ? (
+                  <img
+                    src={selectedStudent.photo_url}
+                    alt={selectedStudent.full_name}
+                    className="w-11 h-11 rounded-2xl object-cover border border-slate-200 shrink-0"
+                  />
+                ) : (
+                  <div className="w-11 h-11 rounded-2xl bg-black text-white flex items-center justify-center font-black text-base shrink-0">
+                    {(selectedStudent.full_name || 'S').charAt(0)}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <h3 className="font-heading font-extrabold text-base sm:text-lg text-slate-950 truncate">
+                    {selectedStudent.full_name}
                   </h3>
+                  <p className="text-xs text-slate-500 font-medium truncate">
+                    {selectedStudent.email} • {selectedStudent.job_title}
+                  </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => handleOpenEditModal(selectedStudent)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                  onClick={() => {
+                    handleOpenEditModal(selectedStudent);
+                  }}
+                  className="px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-100 text-xs font-bold text-slate-800 transition-colors flex items-center gap-1 cursor-pointer"
                 >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Edit Biodata</span>
+                  <Edit2 className="w-3 h-3" />
+                  <span>Edit Biodata</span>
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setSelectedStudent(null)}
-                  className="p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+                  className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Profile Overview Banner */}
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Email Login</span>
-                <span className="font-bold text-slate-900 truncate block mt-0.5">{selectedStudent.email || '-'}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Departemen & Posisi</span>
-                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'F&B Service / Waiter'}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Level CEFR</span>
-                <span className="font-black text-[#0284C7] block mt-0.5">Level {selectedStudent.level_code || 'A1'}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Akumulasi XP</span>
-                <span className="font-black text-amber-600 block mt-0.5">{selectedStudent.total_points || 0} XP</span>
-              </div>
+            {/* Modal Tab Switcher */}
+            <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full text-xs font-bold text-slate-600">
+              <button
+                type="button"
+                onClick={() => setModalTab('access')}
+                className={`flex-1 py-2 rounded-full transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer ${
+                  modalTab === 'access' ? 'bg-black text-white shadow-xs' : 'hover:text-black'
+                }`}
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span>Hak Akses Ujian (1–10)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setModalTab('scores')}
+                className={`flex-1 py-2 rounded-full transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer ${
+                  modalTab === 'scores' ? 'bg-black text-white shadow-xs' : 'hover:text-black'
+                }`}
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                <span>Riwayat Nilai ({studentResults.length})</span>
+              </button>
             </div>
 
-            {/* Test Entitlements Management (Tests #1 to #10) */}
-            <div className="space-y-3.5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            {/* Tab 1: Access Control */}
+            {modalTab === 'access' && (
+              <div className="space-y-4">
+                {/* Action Bar */}
+                <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
+                  <div>
+                    <h4 className="font-heading font-extrabold text-slate-950 text-sm">
+                      Hak Akses Paket Ujian Marlins (1–10)
+                    </h4>
+                    <p className="text-[11px] text-slate-500 font-normal">
+                      Buka atau kunci hak akses simulasi ujian perhotelan kapal pesiar untuk siswa ini.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleGrantAllAccess}
+                      disabled={updatingAccess}
+                      className="px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Buka Semua (1–10)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRevokeAllAccess}
+                      disabled={updatingAccess}
+                      className="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                    >
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Kunci Berbayar</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 10 Test Packages Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {MARLINS_10_TESTS.map((t) => {
+                    const isUnlocked = studentEntitlements.includes(t.number) || t.isFree;
+
+                    return (
+                      <div
+                        key={t.number}
+                        className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                          isUnlocked
+                            ? 'bg-emerald-50/40 border-emerald-200/90'
+                            : 'bg-slate-50/60 border-slate-200'
+                        }`}
+                      >
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-heading font-extrabold text-xs text-slate-950">
+                              {t.name}
+                            </span>
+                            {t.isFree ? (
+                              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">
+                                Gratis
+                              </span>
+                            ) : null}
+                          </div>
+                          <p className="text-[10px] text-slate-500 truncate">{t.subtitle}</p>
+                        </div>
+
+                        {t.isFree ? (
+                          <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-[11px] shrink-0">
+                            Terbuka
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleTestAccess(t.number)}
+                            disabled={updatingAccess}
+                            className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1 ${
+                              isUnlocked
+                                ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                : 'bg-black text-white hover:bg-neutral-800 shadow-2xs'
+                            }`}
+                          >
+                            {isUnlocked ? (
+                              <>
+                                <Unlock className="w-3 h-3" />
+                                <span>Terbuka</span>
+                              </>
+                            ) : (
+                              <>
+                                <Lock className="w-3 h-3 text-amber-400" />
+                                <span>Buka Akses</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Scores & Results History */}
+            {modalTab === 'scores' && (
+              <div className="space-y-4">
                 <div>
-                  <h4 className="font-heading text-sm sm:text-base font-extrabold text-slate-950 flex items-center gap-2">
-                    <KeyRound className="w-4 h-4 text-[#EA580C]" />
-                    <span>Hak Akses Paket Ujian Marlins (1–10)</span>
+                  <h4 className="font-heading font-extrabold text-slate-950 text-sm">
+                    Rekapitulasi Nilai & Sesi Ujian Siswa
                   </h4>
-                  <p className="text-[11px] text-slate-500">
-                    Buka atau kunci hak akses simulasi ujian perhotelan kapal pesiar untuk siswa ini.
+                  <p className="text-[11px] text-slate-500 font-normal">
+                    Daftar seluruh simulasi ujian yang telah diselesaikan oleh {selectedStudent.full_name}.
                   </p>
                 </div>
 
-                {/* Quick Batch Actions */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    disabled={updatingAccess}
-                    onClick={handleGrantAllAccess}
-                    className="px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <CheckCheck className="w-3.5 h-3.5" />
-                    <span>Buka Semua (1–10)</span>
-                  </button>
-                  <button
-                    type="button"
-                    disabled={updatingAccess}
-                    onClick={handleRevokeAllAccess}
-                    className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>Kunci Berbayar</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 10 Tests Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {MARLINS_10_TESTS.map((test) => {
-                  const hasAccess = test.isFree || studentEntitlements.includes(test.number);
-
-                  return (
-                    <div
-                      key={test.number}
-                      className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 transition-all ${
-                        hasAccess
-                          ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
-                          : 'bg-slate-50/80 border-slate-200 text-slate-700'
-                      }`}
-                    >
-                      <div className="space-y-0.5 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-black truncate">{test.name}</span>
-                          {test.isFree && (
-                            <span className="px-2 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black shrink-0">
-                              Gratis
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[10px] text-slate-500 truncate">{test.subtitle}</p>
-                      </div>
-
-                      {test.isFree ? (
-                        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black shrink-0">
-                          Terbuka
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={updatingAccess}
-                          onClick={() => handleToggleTestAccess(test.number)}
-                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                            hasAccess
-                              ? 'bg-rose-100 hover:bg-rose-200 text-rose-700'
-                              : 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-xs'
-                          }`}
-                        >
-                          {hasAccess ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-                          <span>{hasAccess ? 'Kunci' : 'Buka Akses'}</span>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Test Attempts History */}
-            <div className="space-y-3 pt-3 border-t border-slate-100">
-              <h4 className="font-heading text-sm font-bold text-slate-950 flex items-center gap-2">
-                <FileCheck2 className="w-4 h-4 text-[#0284C7]" />
-                <span>Riwayat Sesi Ujian Siswa</span>
-              </h4>
-
-              {loadingDetails ? (
-                <p className="text-xs text-slate-400 py-4 text-center">Memuat riwayat sesi...</p>
-              ) : studentAttempts.length === 0 ? (
-                <p className="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-2xl">
-                  Siswa ini belum pernah mengerjakan sesi ujian.
-                </p>
-              ) : (
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {studentAttempts.map((att) => (
-                    <div
-                      key={att.id}
-                      className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
-                    >
-                      <div>
-                        <p className="font-bold text-slate-900">
-                          {att.marlint_tests?.test_name || `Marlins Test #${att.test_number}`}
-                        </p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">
-                          Skor: <strong className="text-emerald-700 font-bold">{att.score ?? '-'}%</strong> • Status: <span className="font-bold">{att.status}</span> • {formatDateIndo(att.created_at)}
-                        </p>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleResetAttempts(att.test_number)}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-50 hover:bg-orange-100 text-[#C2410C] text-[10px] font-bold border border-orange-200 transition-all cursor-pointer"
-                        title="Reset sesi ujian ini"
+                {loadingDetails ? (
+                  <div className="p-8 text-center bg-slate-50 rounded-2xl text-slate-400 text-xs">
+                    Memuat riwayat nilai...
+                  </div>
+                ) : studentResults.length === 0 ? (
+                  <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2">
+                    <FileCheck2 className="w-8 h-8 text-slate-300 mx-auto" />
+                    <p className="font-bold text-slate-800 text-xs">Belum ada riwayat ujian tercatat.</p>
+                    <p className="text-[11px] text-slate-400">
+                      Siswa ini belum menyelesaikan simulasi ujian Marlins.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {studentResults.map((res) => (
+                      <div
+                        key={res.id || res.attempt_id}
+                        className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 bg-white hover:border-black transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                       >
-                        <RotateCcw className="w-3 h-3" />
-                        <span>Reset</span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div
+                            className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold text-xs shrink-0 ${
+                              res.is_passed ? 'bg-black text-white' : 'bg-slate-900 text-white'
+                            }`}
+                          >
+                            <span className="font-heading text-sm font-black">{res.score}%</span>
+                            <span className={`text-[8px] font-extrabold ${res.is_passed ? 'text-emerald-400' : 'text-rose-400'}`}>
+                              {res.is_passed ? 'LULUS' : 'REMED'}
+                            </span>
+                          </div>
+
+                          <div className="space-y-0.5 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-heading font-extrabold text-xs sm:text-sm text-slate-950 truncate">
+                                {res.test_name || `Marlins Test #${res.marlint_test_number || 1}`}
+                              </span>
+                              <span className={`px-2 py-0.2 rounded text-[9px] font-bold ${
+                                res.is_passed ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'
+                              }`}>
+                                {res.is_passed ? 'Lulus' : 'Remedial'}
+                              </span>
+                              <span className="px-2 py-0.2 rounded bg-slate-100 text-slate-800 text-[9px] font-bold">
+                                Level {res.level || 'A1'}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+                              <span>{formatDateIndo(res.created_at)}</span>
+                              <span>•</span>
+                              <span>Benar: <strong className="text-slate-900">{res.correct_answers}/{res.total_questions}</strong></span>
+                              <span>•</span>
+                              <span>{formatDuration(res.time_spent_seconds || 1800)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                          <Link
+                            href={`/student/test/review/${res.attempt_id || res.id}`}
+                            target="_blank"
+                            className="px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold transition-all flex items-center gap-1 shadow-2xs"
+                          >
+                            <BookOpen className="w-3 h-3 text-slate-600" />
+                            <span>Review</span>
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStudentResult(res.id)}
+                            className="p-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors cursor-pointer"
+                            title="Reset / Hapus Sesi Ujian"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1113,9 +1209,9 @@ export default function AdminStudentsPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                  Perbarui Data Siswa
+                  Perbarui Informasi Siswa
                 </span>
-                <h3 className="font-heading text-lg font-bold text-slate-950">Edit Profil Siswa LTE Cruise</h3>
+                <h3 className="font-heading text-lg font-bold text-slate-950">Edit Biodata Siswa</h3>
               </div>
               <button
                 type="button"
@@ -1131,48 +1227,46 @@ export default function AdminStudentsPage() {
 
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-800">Nama Lengkap *</label>
+                <label className="font-bold text-slate-800">Nama Lengkap</label>
                 <input
                   type="text"
                   required
                   value={editForm.full_name}
                   onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Email Akun (Tetap)</label>
+                  <label className="font-bold text-slate-800">Email Akun</label>
                   <input
                     type="email"
                     disabled
                     value={editForm.email}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs outline-none cursor-not-allowed"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs cursor-not-allowed font-medium"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Nomor Telepon / WA</label>
+                  <label className="font-bold text-slate-800">Nomor Telepon / WhatsApp</label>
                   <input
                     type="tel"
-                    placeholder="08123456789"
                     value={editForm.phone_number}
                     onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Departemen & Posisi di Kapal Pesiar</label>
+                  <label className="font-bold text-slate-800">Departemen & Posisi di Kapal</label>
                   <input
                     type="text"
-                    placeholder="Contoh: F&B Service / Waiter, Housekeeping / Cabin Steward, Culinary, dsb."
                     value={editForm.job_title}
                     onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
 
@@ -1181,7 +1275,7 @@ export default function AdminStudentsPage() {
                   <select
                     value={editForm.level_code}
                     onChange={(e) => setEditForm({ ...editForm, level_code: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-[#0284C7] outline-none cursor-pointer"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-black outline-none cursor-pointer"
                   >
                     <option value="A1">Level A1 (Beginner)</option>
                     <option value="A2">Level A2 (Elementary)</option>
@@ -1189,8 +1283,6 @@ export default function AdminStudentsPage() {
                     <option value="B1">Level B1 (Intermediate)</option>
                     <option value="B1+">Level B1+ (Upper-Intermediate)</option>
                     <option value="B2">Level B2 (Vantage)</option>
-                    <option value="C1">Level C1 (Effective Operational)</option>
-                    <option value="C2">Level C2 (Mastery)</option>
                   </select>
                 </div>
               </div>
@@ -1202,7 +1294,7 @@ export default function AdminStudentsPage() {
                     type="number"
                     value={editForm.total_points}
                     onChange={(e) => setEditForm({ ...editForm, total_points: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
 
@@ -1212,7 +1304,7 @@ export default function AdminStudentsPage() {
                     type="text"
                     value={editForm.nationality}
                     onChange={(e) => setEditForm({ ...editForm, nationality: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
               </div>
@@ -1224,7 +1316,7 @@ export default function AdminStudentsPage() {
                   placeholder="Catatan keahlian, minat departemen perhotelan kapal pesiar..."
                   value={editForm.about}
                   onChange={(e) => setEditForm({ ...editForm, about: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none resize-none font-medium"
                 />
               </div>
 
@@ -1282,7 +1374,7 @@ export default function AdminStudentsPage() {
                   placeholder="Contoh: Ahmad Syahputra"
                   value={newStudentForm.full_name}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, full_name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                 />
               </div>
 
@@ -1295,7 +1387,7 @@ export default function AdminStudentsPage() {
                     placeholder="nama@student.lte.id"
                     value={newStudentForm.email}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
 
@@ -1306,7 +1398,7 @@ export default function AdminStudentsPage() {
                     placeholder="08123456789"
                     value={newStudentForm.phone_number}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, phone_number: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
               </div>
@@ -1319,7 +1411,7 @@ export default function AdminStudentsPage() {
                     placeholder="Contoh: F&B Service / Waiter"
                     value={newStudentForm.job_title}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, job_title: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
                   />
                 </div>
 
@@ -1328,7 +1420,7 @@ export default function AdminStudentsPage() {
                   <select
                     value={newStudentForm.level_code}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, level_code: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-[#0284C7] outline-none cursor-pointer"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-black outline-none cursor-pointer"
                   >
                     <option value="A1">Level A1 (Beginner)</option>
                     <option value="A2">Level A2 (Elementary)</option>
@@ -1347,7 +1439,7 @@ export default function AdminStudentsPage() {
                   placeholder="Informasi pelatihan di LTE Cruise atau minat kerja perhotelan kapal pesiar..."
                   value={newStudentForm.about}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, about: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none resize-none font-medium"
                 />
               </div>
 

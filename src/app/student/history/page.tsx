@@ -50,18 +50,21 @@ export default function StudentHistoryPage() {
 
         // 1. Fetch from Supabase student_results table for THIS USER ONLY
         try {
-          const userFilters: string[] = [];
-          if (activeId) userFilters.push(`student_id.eq.${activeId}`);
-          if (activeEmail) userFilters.push(`student_id.eq.${activeEmail}`);
+          const isValidUuid = (str?: string | null): boolean =>
+            !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-          let query = supabase.from('student_results').select('*').order('created_at', { ascending: false });
-          if (userFilters.length > 0) {
-            query = query.or(userFilters.join(','));
-          }
+          const targetUuid = isValidUuid(activeId) ? activeId : null;
 
-          const { data: dbData } = await query;
-          if (dbData && dbData.length > 0) {
-            resList = dbData.map((d: any) => normalizeHistoryItem(d, activeId || ''));
+          if (targetUuid) {
+            const { data: dbData } = await supabase
+              .from('student_results')
+              .select('*')
+              .eq('student_id', targetUuid)
+              .order('created_at', { ascending: false });
+
+            if (dbData && dbData.length > 0) {
+              resList = dbData.map((d: any) => normalizeHistoryItem(d, targetUuid));
+            }
           }
         } catch (err) {
           console.warn('Supabase load history note:', err);

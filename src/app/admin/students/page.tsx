@@ -470,30 +470,46 @@ export default function AdminStudentsPage() {
     try {
       setLoadingDetails(true);
 
-      let studentRecord = st;
-      try {
-        const { data: freshUser } = await supabase
-          .from('users')
-          .select('*')
-          .or(`id.eq.${st.id},email.eq.${st.email}`)
-          .maybeSingle();
+      const isValidUuid = (str?: string | null): boolean =>
+        !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
+      let studentRecord = st;
+      let targetUuid: string | null = isValidUuid(st.id) ? st.id : null;
+
+      try {
+        let uQuery = supabase.from('users').select('*');
+        if (isValidUuid(st.id) && st.email) {
+          uQuery = uQuery.or(`id.eq.${st.id},email.eq.${st.email}`);
+        } else if (st.email) {
+          uQuery = uQuery.eq('email', st.email);
+        } else if (isValidUuid(st.id)) {
+          uQuery = uQuery.eq('id', st.id);
+        }
+
+        const { data: freshUser } = await uQuery.maybeSingle();
         if (freshUser) {
           studentRecord = { ...st, ...freshUser };
+          if (isValidUuid(freshUser.id)) targetUuid = freshUser.id;
           setSelectedStudent(studentRecord);
         }
       } catch (e) {}
 
-      // 1. Load results from Supabase student_results
-      const { data: resultsData } = await supabase
-        .from('student_results')
-        .select('*')
-        .or(`student_id.eq.${studentRecord.id},student_id.eq.${studentRecord.email}`)
-        .order('created_at', { ascending: false });
-
+      // 1. Load results from Supabase student_results using valid UUID ONLY
       let resultsList: StudentResult[] = [];
-      if (resultsData && resultsData.length > 0) {
-        resultsList = resultsData as StudentResult[];
+      if (targetUuid) {
+        try {
+          const { data: resultsData } = await supabase
+            .from('student_results')
+            .select('*')
+            .eq('student_id', targetUuid)
+            .order('created_at', { ascending: false });
+
+          if (resultsData && resultsData.length > 0) {
+            resultsList = resultsData as StudentResult[];
+          }
+        } catch (err) {
+          console.warn('Load student results error:', err);
+        }
       }
 
       // Also check local storage for this student

@@ -29,41 +29,41 @@ interface AuthContextType {
 }
 
 export const REAL_STUDENT_PROFILE: UserProfile = {
-  id: '00000000-0000-0000-0000-000000000001',
-  email: 'siswa@marlinstest.com',
-  full_name: 'Budi Santoso (Perwira Pelaut)',
+  id: 'a1c181cd-4d43-49b7-9814-d724ba27ea2e',
+  email: 'hamdan@gmail.com',
+  full_name: 'Ahmad Hamdan Hamidiy',
   role: 'student',
   status: 'active',
-  level: 'B1+',
-  level_code: 'B1+',
-  total_points: 540,
-  phone_number: '081234567890',
-  photo_url: null,
-  job_title: 'Chief Officer / Deck Officer',
-  date_of_birth: '1995-04-12',
+  level: 'A1',
+  level_code: 'A1',
+  total_points: 320,
+  phone_number: '0813318044694',
+  photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/a1c181cd-4d43-49b7-9814-d724ba27ea2e-1770544970243.jpg',
+  job_title: 'Taruna Nautika / Deck Officer',
+  date_of_birth: '1998-08-14',
   nationality: 'Indonesia',
-  about: 'Perwira pelaut Deck Officer berpengalaman di kapal tanker dan kontainer internasional.',
+  about: 'Taruna pelayaran persiapan evaluasi standar Marlins Test & perhotelan kapal pesiar.',
   placement_test_taken: true,
-  placement_test_date: '2026-01-10T00:00:00.000Z',
-  created_at: '2026-01-10T00:00:00.000Z',
+  placement_test_date: '2026-02-10T00:00:00.000Z',
+  created_at: '2026-02-10T00:00:00.000Z',
   updated_at: new Date().toISOString(),
 };
 
 export const REAL_INSTRUCTOR_PROFILE: UserProfile = {
-  id: '00000000-0000-0000-0000-000000000002',
-  email: 'instruktur@marlinstest.com',
-  full_name: 'Capt. Hendra Wijaya, M.Mar',
+  id: 'f1e178ba-78d7-46dc-a982-9df5736c21e6',
+  email: 'hamdan1@gmail.com',
+  full_name: 'Hamdan Guru',
   role: 'instructor',
   status: 'active',
   level: 'C1',
   level_code: 'C1',
-  total_points: 1800,
-  phone_number: '081122334455',
+  total_points: 1500,
+  phone_number: '0813318044694',
   photo_url: null,
   job_title: 'Lead Maritime English Instructor & Assessor IMO 6.09',
   date_of_birth: '1982-08-20',
   nationality: 'Indonesia',
-  about: 'Master Mariner dan penguji resmi Marlins Test bersertifikasi IMO Model Course 6.09 (Training for Instructors) dan 3.12 (Assessment of Seafarers).',
+  about: 'Pengajar & penilai resmi evaluasi Marlins Test LTE Cruise.',
   placement_test_taken: true,
   placement_test_date: '2026-01-01T00:00:00.000Z',
   created_at: '2026-01-01T00:00:00.000Z',
@@ -156,19 +156,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(initialSession);
           setUser(initialSession.user);
           await fetchProfile(initialSession.user.id);
-        } else if (savedDemo && restoreDemoUser(savedDemo)) {
-          // Demo user restored
+        } else if (savedDemo) {
+          try {
+            const parsed = JSON.parse(savedDemo) as UserProfile;
+            // Always refresh live data & photo from Supabase users table
+            const { data: liveUser } = await supabase
+              .from('users')
+              .select('*')
+              .or(`id.eq.${parsed.id},email.eq.${parsed.email}`)
+              .maybeSingle();
+
+            const activeProfile = (liveUser as UserProfile) || parsed;
+            setProfile(activeProfile);
+            setUser({
+              id: activeProfile.id,
+              email: activeProfile.email,
+              app_metadata: {},
+              user_metadata: { full_name: activeProfile.full_name, role: activeProfile.role },
+              aud: 'authenticated',
+              created_at: activeProfile.created_at,
+            } as User);
+            if (liveUser && typeof window !== 'undefined') {
+              localStorage.setItem('marlins_demo_user', JSON.stringify(liveUser));
+            }
+          } catch {
+            restoreDemoUser(savedDemo);
+          }
         } else {
-          // Default to active student profile so user can immediately browse smoothly
-          setProfile(REAL_STUDENT_PROFILE);
-          setUser({
-            id: REAL_STUDENT_PROFILE.id,
-            email: REAL_STUDENT_PROFILE.email,
-            app_metadata: {},
-            user_metadata: { full_name: REAL_STUDENT_PROFILE.full_name, role: REAL_STUDENT_PROFILE.role },
-            aud: 'authenticated',
-            created_at: REAL_STUDENT_PROFILE.created_at,
-          } as User);
+          // Default to live Ahmad Hamdan Hamidiy profile from Supabase
+          try {
+            const { data: liveStudent } = await supabase
+              .from('users')
+              .select('*')
+              .eq('email', 'hamdan@gmail.com')
+              .maybeSingle();
+
+            const activeProf = (liveStudent as UserProfile) || REAL_STUDENT_PROFILE;
+            setProfile(activeProf);
+            setUser({
+              id: activeProf.id,
+              email: activeProf.email,
+              app_metadata: {},
+              user_metadata: { full_name: activeProf.full_name, role: activeProf.role },
+              aud: 'authenticated',
+              created_at: activeProf.created_at,
+            } as User);
+          } catch {
+            setProfile(REAL_STUDENT_PROFILE);
+            setUser({
+              id: REAL_STUDENT_PROFILE.id,
+              email: REAL_STUDENT_PROFILE.email,
+              app_metadata: {},
+              user_metadata: { full_name: REAL_STUDENT_PROFILE.full_name, role: REAL_STUDENT_PROFILE.role },
+              aud: 'authenticated',
+              created_at: REAL_STUDENT_PROFILE.created_at,
+            } as User);
+          }
         }
       } catch (err) {
         console.error('Auth initialization error:', err);
@@ -504,13 +547,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        await supabase
-          .from('users')
-          .update({
-            ...updates,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', user.id);
+        if (updated.id) {
+          await supabase
+            .from('users')
+            .update({
+              ...updates,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', updated.id);
+        }
+        if (updated.email) {
+          await supabase
+            .from('users')
+            .update({
+              ...updates,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('email', updated.email);
+        }
       } catch (dbErr) {
         console.warn('Supabase profile update warning:', dbErr);
       }

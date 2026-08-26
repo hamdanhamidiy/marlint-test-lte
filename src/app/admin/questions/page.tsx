@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   FileQuestion,
   Image as ImageIcon,
-  Copy,
   ChevronLeft,
   ChevronRight,
   Shield,
@@ -108,12 +107,32 @@ export default function AdminQuestionsPage() {
         const stored = localStorage.getItem('marlins_custom_questions');
         if (stored) {
           try {
-            customAdditions = JSON.parse(stored);
-          } catch (e) {}
+            const parsed: Question[] = JSON.parse(stored);
+            // Bersihkan dan hapus semua butir soal duplikat / salinan yang tersimpan
+            customAdditions = parsed.filter(
+              (q) =>
+                q.question_text &&
+                !q.question_text.toLowerCase().includes('(salinan)') &&
+                !q.question_text.toLowerCase().includes('(copy)')
+            );
+            if (customAdditions.length > 0) {
+              localStorage.setItem('marlins_custom_questions', JSON.stringify(customAdditions));
+            } else {
+              localStorage.removeItem('marlins_custom_questions');
+            }
+          } catch (e) {
+            localStorage.removeItem('marlins_custom_questions');
+          }
         }
       }
 
-      setAllQuestions([...customAdditions, ...STANDARD_QUESTIONS_BANK]);
+      const combined = [...customAdditions, ...STANDARD_QUESTIONS_BANK].filter(
+        (q) =>
+          q.question_text &&
+          !q.question_text.toLowerCase().includes('(salinan)') &&
+          !q.question_text.toLowerCase().includes('(copy)')
+      );
+      setAllQuestions(combined);
     } catch (err) {
       setAllQuestions(STANDARD_QUESTIONS_BANK);
     } finally {
@@ -196,24 +215,6 @@ export default function AdminQuestionsPage() {
     });
     setFormError(null);
     setModalMode('edit');
-  };
-
-  const handleDuplicateQuestion = (q: Question) => {
-    const duplicated: Question = {
-      ...q,
-      id: `custom-q-${Date.now()}`,
-      question_text: `${q.question_text} (Salinan)`,
-      order_number: (q.order_number || 0) + 1,
-      created_at: new Date().toISOString(),
-    };
-
-    setAllQuestions((prev) => [duplicated, ...prev]);
-
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('marlins_custom_questions');
-      const list = stored ? JSON.parse(stored) : [];
-      localStorage.setItem('marlins_custom_questions', JSON.stringify([duplicated, ...list]));
-    }
   };
 
   const handleToggleActive = async (q: Question) => {
@@ -372,7 +373,7 @@ export default function AdminQuestionsPage() {
           </h1>
 
           <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, duplikasi, dan uji interaktif secara realtime.
+            Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, kelola status, dan uji interaktif secara realtime.
           </p>
         </div>
 
@@ -599,16 +600,6 @@ export default function AdminQuestionsPage() {
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>Preview</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDuplicateQuestion(q)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
-                      title="Duplikasi Butir Soal"
-                    >
-                      <Copy className="w-3.5 h-3.5 text-slate-500" />
-                      <span className="hidden md:inline">Salin</span>
                     </button>
 
                     <button

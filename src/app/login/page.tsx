@@ -145,8 +145,52 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* 3 Roles Quick Selector */}
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">
+              Pilihan Akun Cepat (3 Role):
+            </p>
+            <div className="grid grid-cols-3 gap-1.5 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('hamdan@gmail.com');
+                  setPassword('password123');
+                }}
+                className="p-2 rounded-2xl bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-sky-800 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+              >
+                <span>🎓 Siswa</span>
+                <span className="text-[9px] font-normal text-sky-600 truncate w-full">hamdan@...</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('hamdan1@gmail.com');
+                  setPassword('password123');
+                }}
+                className="p-2 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+              >
+                <span>👨‍🏫 Instruktur</span>
+                <span className="text-[9px] font-normal text-amber-700 truncate w-full">hamdan1@...</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('superadmin@marlinstest.com');
+                  setPassword('admin123');
+                }}
+                className="p-2 rounded-2xl bg-purple-50 hover:bg-purple-100 border border-purple-200/80 text-purple-900 text-[10px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+              >
+                <span>🛡️ Super Admin</span>
+                <span className="text-[9px] font-normal text-purple-700 truncate w-full">superadmin@...</span>
+              </button>
+            </div>
+          </div>
+
           {/* Bottom Switch Link */}
-          <div className="text-center pt-3 border-t border-slate-100 text-xs text-slate-500 font-normal">
+          <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500 font-normal">
             Belum memiliki akun pelaut?{' '}
             <Link href="/register" className="font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors">
               Daftar Akun Baru

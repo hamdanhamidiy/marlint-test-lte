@@ -45,6 +45,19 @@ interface InstructorItem {
 
 const DEFAULT_INSTRUCTORS: InstructorItem[] = [
   {
+    id: 'f1e178ba-78d7-46dc-a982-9df72295faeb',
+    full_name: 'Hamdan Guru',
+    email: 'hamdan1@gmail.com',
+    phone_number: '0813318044694',
+    role: 'instructor',
+    status: 'active',
+    job_title: 'Instruktur Bahasa Inggris Maritim',
+    specialization: 'nautika',
+    certificate_number: 'IMO-6.09-ID-2026-001',
+    about: 'Instruktur & Penguji Resmi Marlins Test LTE Cruise.',
+    created_at: '2026-01-01T08:00:00.000Z',
+  },
+  {
     id: '00000000-0000-0000-0000-000000000002',
     full_name: 'Capt. Hendra Wijaya, M.Mar',
     email: 'instructor@marlins.com',

@@ -285,15 +285,15 @@ export default function StudentProfilePage() {
           <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="font-heading text-lg sm:text-xl font-bold text-slate-900 truncate">
-                {profile?.full_name || 'Pelaut Indonesia'}
+                {profile?.full_name || 'Siswa LTE Cruise'}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
-                {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur' : 'Siswa Pelaut'}
+                {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur Penguji' : 'Siswa LTE Cruise'}
               </span>
             </div>
 
             <p className="text-xs text-slate-500 font-normal truncate">
-              {profile?.job_title || 'Chief Officer'} • <span className="text-slate-400 font-mono">{profile?.email}</span>
+              {profile?.job_title || 'F&B Service / Waiter'} • <span className="text-slate-400 font-mono">{profile?.email}</span>
             </p>
 
             {/* Action Buttons & Badges Row */}
@@ -321,7 +321,7 @@ export default function StudentProfilePage() {
               )}
 
               <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
-                Level {profile?.level_code || 'B1+'}
+                Level {profile?.level_code || 'A1'}
               </span>
 
               <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200 text-[11px] font-bold flex items-center gap-1">
@@ -360,15 +360,15 @@ export default function StudentProfilePage() {
       {/* Profile Edit Form */}
       <div className="bg-white p-5 sm:p-7 rounded-[26px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-5">
         <div>
-          <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">Data Diri & Posisi Kapal</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Informasi ini akan tercantum pada sertifikat kelulusan Marlins resmi Anda.</p>
+          <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">Data Diri & Departemen Kapal Pesiar</h2>
+          <p className="text-xs text-slate-500 mt-0.5">Informasi ini akan tercantum pada sertifikat kelulusan Marlins resmi Anda di LTE Cruise Training Center.</p>
         </div>
 
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Nama Lengkap (Sesuai Paspor / Buku Pelaut):</label>
+              <label className="block text-xs font-semibold text-slate-700">Nama Lengkap (Sesuai Paspor / KTP):</label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -395,14 +395,14 @@ export default function StudentProfilePage() {
               </div>
             </div>
 
-            {/* Job Title / Rank */}
+            {/* Job Title / Cruise Hospitality Department */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Jabatan / Rank di Kapal:</label>
+              <label className="block text-xs font-semibold text-slate-700">Departemen & Posisi Kerja di Kapal Pesiar:</label>
               <div className="relative">
                 <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Contoh: Chief Officer, 2nd Engineer, Able Seaman, Cadet"
+                  placeholder="Contoh: F&B Service / Waiter, Housekeeping / Cabin Steward, Culinary, Guest Service"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
@@ -457,10 +457,10 @@ export default function StudentProfilePage() {
 
           {/* About / Bio */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Tentang / Pengalaman Berlayar:</label>
+            <label className="block text-xs font-semibold text-slate-700">Tentang / Minat Bidang Perhotelan & Kapal Pesiar:</label>
             <textarea
               rows={3}
-              placeholder="Ceritakan singkat latar belakang atau sertifikat kepelautan yang Anda miliki..."
+              placeholder="Ceritakan pelatihan perhotelan di LTE Cruise, keahlian bahasa Inggris perhotelan, atau posisi kerja kapal pesiar yang diminati..."
               value={about}
               onChange={(e) => setAbout(e.target.value)}
               className="w-full p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"

@@ -111,7 +111,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
-              Platform resmi evaluasi dan asesmen Bahasa Inggris standar Marlins Test untuk taruna sekolah perhotelan, kru kapal pesiar (Food & Beverage, Housekeeping, Guest Service), serta perwira & rating maritim LTE Cruise.
+              Platform resmi evaluasi dan asesmen Bahasa Inggris standar Marlins Test untuk siswa sekolah perhotelan & kapal pesiar LTE Cruise Training Center (divisi Food & Beverage, Housekeeping, Culinary, dan Guest Service).
             </p>
           </div>
 

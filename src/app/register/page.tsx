@@ -95,12 +95,12 @@ export default function RegisterPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700">Nama Lengkap (Sesuai Paspor / STCW)</label>
+              <label className="block text-xs font-bold text-slate-700">Nama Lengkap (Sesuai Paspor / KTP)</label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Contoh: Capt. Budi Santoso"
+                  placeholder="Contoh: Ahmad Syahputra"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -110,12 +110,12 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700">Jabatan / Rank di Kapal</label>
+              <label className="block text-xs font-bold text-slate-700">Departemen & Posisi Minat di Kapal Pesiar</label>
               <div className="relative">
                 <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Contoh: Deck Officer, Able Seaman, Cadet"
+                  placeholder="Contoh: F&B Service, Cabin Steward, Culinary, Guest Service"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-[#0284C7] transition-all font-normal"
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
-                  placeholder="pelaut@maritim.com"
+                  placeholder="nama@student.lte.id"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

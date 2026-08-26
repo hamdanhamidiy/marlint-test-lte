@@ -63,10 +63,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 320,
     phone_number: '0813318044694',
     photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/a1c181cd-4d43-49b7-9814-d724ba27ea2e-1770544970243.jpg',
-    job_title: 'Taruna Nautika / Deck Officer',
+    job_title: 'F&B Service / Restaurant Waiter - Cruise Ship',
     date_of_birth: '1998-08-14',
     nationality: 'Indonesia',
-    about: 'Taruna pelayaran persiapan ujian kompetensi Marlins Test standar internasional.',
+    about: 'Siswa sekolah perhotelan & kapal pesiar LTE Cruise Training Center spesialis F&B Service dan pelayanan tamu internasional.',
     placement_test_taken: true,
     placement_test_date: '2026-02-10T00:00:00.000Z',
     created_at: '2026-02-10T00:00:00.000Z',
@@ -83,10 +83,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 150,
     phone_number: null,
     photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/3f5812ac-0a1b-48e3-9a5d-6dfb73c52611-1768089944358.jpg',
-    job_title: 'Taruna Pelaut',
+    job_title: 'Housekeeping / Cabin Steward',
     date_of_birth: null,
     nationality: 'Indonesia',
-    about: 'Kandidat siswa evaluasi bahasa Inggris maritim.',
+    about: 'Siswa perhotelan kapal pesiar divisi Housekeeping & Cabin Attendant.',
     placement_test_taken: true,
     placement_test_date: '2026-02-10T00:00:00.000Z',
     created_at: '2026-02-10T00:00:00.000Z',
@@ -103,10 +103,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 210,
     phone_number: null,
     photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/65a606b2-3074-43b1-ade6-fbbd7e00b7d6-1768119018128.jpg',
-    job_title: 'Hospitality & Cruise Staff',
+    job_title: 'Guest Relations & Front Office Staff',
     date_of_birth: null,
     nationality: 'Indonesia',
-    about: 'Kandidat perhotelan kapal pesiar internasional.',
+    about: 'Siswa perhotelan kapal pesiar bidang Front Office & Guest Service.',
     placement_test_taken: true,
     placement_test_date: '2026-02-11T00:00:00.000Z',
     created_at: '2026-02-11T00:00:00.000Z',
@@ -123,10 +123,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 180,
     phone_number: null,
     photo_url: null,
-    job_title: 'Deck Rating / Seafarer',
+    job_title: 'Bar & Beverage Staff / Bartender',
     date_of_birth: null,
     nationality: 'Indonesia',
-    about: 'Kandidat pelaut niaga.',
+    about: 'Siswa perhotelan spesialisasi bar & beverage service kapal pesiar.',
     placement_test_taken: true,
     placement_test_date: '2026-02-12T00:00:00.000Z',
     created_at: '2026-02-12T00:00:00.000Z',
@@ -143,10 +143,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 240,
     phone_number: null,
     photo_url: null,
-    job_title: 'Taruna Teknika / Engine',
+    job_title: 'Culinary / Galley Commis Cook',
     date_of_birth: null,
     nationality: 'Indonesia',
-    about: 'Taruna permesinan kapal niaga.',
+    about: 'Siswa divisi Culinary & Kitchen perhotelan kapal pesiar.',
     placement_test_taken: true,
     placement_test_date: '2026-02-13T00:00:00.000Z',
     created_at: '2026-02-13T00:00:00.000Z',
@@ -155,7 +155,7 @@ const DEFAULT_STUDENTS: UserProfile[] = [
   {
     id: '00000000-0000-0000-0000-000000000001',
     email: 'siswa@marlinstest.com',
-    full_name: 'Budi Santoso (Perwira Pelaut)',
+    full_name: 'Budi Santoso',
     role: 'student',
     status: 'active',
     level: 'B1+',
@@ -163,10 +163,10 @@ const DEFAULT_STUDENTS: UserProfile[] = [
     total_points: 540,
     phone_number: '081234567890',
     photo_url: null,
-    job_title: 'Chief Officer / Deck Officer',
+    job_title: 'Restaurant Head Waiter / F&B Staff',
     date_of_birth: '1995-04-12',
     nationality: 'Indonesia',
-    about: 'Perwira pelaut Deck Officer berpengalaman di kapal tanker dan kontainer internasional.',
+    about: 'Staf restoran kapal pesiar berpengalaman di hotel & cruise line internasional.',
     placement_test_taken: true,
     placement_test_date: '2026-01-10T00:00:00.000Z',
     created_at: '2026-01-10T00:00:00.000Z',
@@ -179,7 +179,7 @@ export default function AdminStudentsPage() {
   const [students, setStudents] = useState<UserProfile[]>(DEFAULT_STUDENTS);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [deptFilter, setDeptFilter] = useState<'all' | 'nautika' | 'teknika' | 'hospitality'>('all');
+  const [deptFilter, setDeptFilter] = useState<'all' | 'fb' | 'housekeeping' | 'culinary' | 'frontoffice'>('all');
 
   // Add Student Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -187,7 +187,7 @@ export default function AdminStudentsPage() {
     full_name: '',
     email: '',
     phone_number: '',
-    job_title: 'Taruna Pelaut',
+    job_title: 'F&B Service / Waiter',
     level_code: 'A2',
     nationality: 'Indonesia',
     about: '',
@@ -297,7 +297,7 @@ export default function AdminStudentsPage() {
         total_points: 100,
         phone_number: newStudentForm.phone_number.trim() || null,
         photo_url: null,
-        job_title: newStudentForm.job_title.trim() || 'Taruna Pelaut',
+        job_title: newStudentForm.job_title.trim() || 'F&B Service / Waiter',
         date_of_birth: null,
         nationality: newStudentForm.nationality.trim() || 'Indonesia',
         about: newStudentForm.about.trim() || null,
@@ -332,7 +332,7 @@ export default function AdminStudentsPage() {
         full_name: '',
         email: '',
         phone_number: '',
-        job_title: 'Taruna Pelaut',
+        job_title: 'F&B Service / Waiter',
         level_code: 'A2',
         nationality: 'Indonesia',
         about: '',
@@ -351,7 +351,7 @@ export default function AdminStudentsPage() {
       full_name: st.full_name || '',
       email: st.email || '',
       phone_number: st.phone_number || '',
-      job_title: st.job_title || 'Taruna Pelaut',
+      job_title: st.job_title || 'F&B Service / Waiter',
       level_code: st.level_code || 'A1',
       total_points: st.total_points || 0,
       nationality: st.nationality || 'Indonesia',
@@ -372,7 +372,7 @@ export default function AdminStudentsPage() {
         ...editingStudent,
         full_name: editForm.full_name.trim(),
         phone_number: editForm.phone_number.trim() || null,
-        job_title: editForm.job_title.trim() || 'Taruna Pelaut',
+        job_title: editForm.job_title.trim() || 'F&B Service / Waiter',
         level: editForm.level_code,
         level_code: editForm.level_code,
         total_points: Number(editForm.total_points) || 0,
@@ -641,19 +641,24 @@ export default function AdminStudentsPage() {
     // Strictly exclude instructors and admins from students directory
     if (s.role === 'instructor' || s.role === 'super_admin' || s.role === 'admin') return false;
 
-    if (deptFilter === 'nautika') {
+    if (deptFilter === 'fb') {
       const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
-      if (!match.includes('deck') && !match.includes('nautika') && !match.includes('officer') && !match.includes('perwira') && !match.includes('seafarer') && !match.includes('rating')) {
+      if (!match.includes('f&b') && !match.includes('waiter') && !match.includes('bar') && !match.includes('beverage') && !match.includes('restaurant') && !match.includes('sommelier') && !match.includes('dining')) {
         return false;
       }
-    } else if (deptFilter === 'teknika') {
+    } else if (deptFilter === 'housekeeping') {
       const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
-      if (!match.includes('engine') && !match.includes('teknika') && !match.includes('mesin')) {
+      if (!match.includes('housekeeping') && !match.includes('cabin') && !match.includes('steward') && !match.includes('cleaner') && !match.includes('laundry')) {
         return false;
       }
-    } else if (deptFilter === 'hospitality') {
+    } else if (deptFilter === 'culinary') {
       const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
-      if (!match.includes('hotel') && !match.includes('hospitality') && !match.includes('cruise') && !match.includes('steward') && !match.includes('f&b')) {
+      if (!match.includes('culinary') && !match.includes('cook') && !match.includes('chef') && !match.includes('kitchen') && !match.includes('galley') && !match.includes('baker') && !match.includes('pastry')) {
+        return false;
+      }
+    } else if (deptFilter === 'frontoffice') {
+      const match = (s.job_title + ' ' + (s.about || '')).toLowerCase();
+      if (!match.includes('front') && !match.includes('office') && !match.includes('guest') && !match.includes('reception') && !match.includes('concierge')) {
         return false;
       }
     }
@@ -675,17 +680,17 @@ export default function AdminStudentsPage() {
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-            <span className="font-bold text-slate-900">Direktori Siswa & Taruna</span>
+            <span className="font-bold text-slate-900">Direktori Siswa LTE Cruise</span>
             <span className="text-slate-300">•</span>
-            <span className="text-slate-500 font-medium">Khusus Data Siswa</span>
+            <span className="text-slate-500 font-medium">Sekolah Perhotelan & Kapal Pesiar</span>
           </div>
 
           <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
-            Data Siswa & Pelaut
+            Data Siswa Sekolah Perhotelan & Kapal Pesiar
           </h1>
 
           <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa dan taruna terdaftar. Kelola direktori siswa, akses hak ujian (Test 1–10), edit biodata, atau hapus akun siswa.
+            Total <strong className="text-slate-900 font-bold">{filteredStudents.length}</strong> siswa terdaftar di LTE Cruise Training Center. Kelola direktori siswa, akses hak ujian Marlins (Test 1–10), edit biodata, atau hapus akun siswa.
           </p>
         </div>
 
@@ -706,14 +711,14 @@ export default function AdminStudentsPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            placeholder="Cari nama kandidat, email, jabatan, atau kebangsaan..."
+            placeholder="Cari nama siswa, email, departemen, atau kebangsaan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
           />
         </div>
 
-        {/* Department Track Filter Tabs */}
+        {/* Cruise Hospitality Department Track Filter Tabs */}
         <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-[#F1F3F5] p-1 rounded-full border border-slate-200/70">
           <button
             type="button"
@@ -728,36 +733,47 @@ export default function AdminStudentsPage() {
           </button>
           <button
             type="button"
-            onClick={() => setDeptFilter('nautika')}
+            onClick={() => setDeptFilter('fb')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              deptFilter === 'nautika'
+              deptFilter === 'fb'
                 ? 'bg-[#0284C7] text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Nautika / Deck
+            F&B Service & Bar
           </button>
           <button
             type="button"
-            onClick={() => setDeptFilter('teknika')}
+            onClick={() => setDeptFilter('housekeeping')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              deptFilter === 'teknika'
+              deptFilter === 'housekeeping'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Teknika / Engine
+            Housekeeping & Laundry
           </button>
           <button
             type="button"
-            onClick={() => setDeptFilter('hospitality')}
+            onClick={() => setDeptFilter('culinary')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              deptFilter === 'hospitality'
+              deptFilter === 'culinary'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-black hover:bg-white/70'
+            }`}
+          >
+            Culinary & Galley
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeptFilter('frontoffice')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              deptFilter === 'frontoffice'
                 ? 'bg-purple-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-black hover:bg-white/70'
             }`}
           >
-            Hospitality & Cruise
+            Front Office & Guest Service
           </button>
         </div>
       </div>
@@ -779,7 +795,7 @@ export default function AdminStudentsPage() {
             <h3 className="font-heading font-bold text-slate-900 text-base">Tidak Ada Data Siswa</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               {search || deptFilter !== 'all'
-                ? 'Tidak ada siswa yang sesuai dengan filter pencarian.'
+                ? 'Tidak ada siswa yang sesuai dengan filter departemen / pencarian.'
                 : 'Belum ada akun siswa yang terdaftar di database.'}
             </p>
           </div>
@@ -821,17 +837,17 @@ export default function AdminStudentsPage() {
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-heading text-base sm:text-[17px] font-extrabold text-slate-950 truncate">
-                        {st.full_name || 'Kandidat Pelaut'}
+                        {st.full_name || 'Siswa LTE Cruise'}
                       </h3>
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-sky-50 text-[#0284C7] border border-sky-200/80">
-                        Siswa Pelaut
+                        Siswa LTE Cruise
                       </span>
                     </div>
 
                     <p className="text-xs sm:text-[13px] text-slate-500 font-medium truncate flex items-center gap-2 flex-wrap">
                       <span>{st.email}</span>
                       <span className="text-slate-300">•</span>
-                      <span className="text-slate-800 font-bold">{st.job_title || 'Perwira / Rating'}</span>
+                      <span className="text-slate-800 font-bold">{st.job_title || 'F&B Service / Waiter'}</span>
                       {st.phone_number && (
                         <>
                           <span className="text-slate-300">•</span>
@@ -909,7 +925,7 @@ export default function AdminStudentsPage() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                    Kontrol Hak Akses Ujian (Test 1–10)
+                    Kontrol Hak Akses Ujian Marlins (Test 1–10)
                   </span>
                   <h3 className="font-heading text-lg sm:text-xl font-extrabold text-slate-950">
                     {selectedStudent.full_name || 'Detail Siswa'}
@@ -943,8 +959,8 @@ export default function AdminStudentsPage() {
                 <span className="font-bold text-slate-900 truncate block mt-0.5">{selectedStudent.email || '-'}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Jabatan / Posisi</span>
-                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'Taruna Pelaut'}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Departemen & Posisi</span>
+                <span className="font-bold text-slate-900 block mt-0.5">{selectedStudent.job_title || 'F&B Service / Waiter'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Level CEFR</span>
@@ -965,7 +981,7 @@ export default function AdminStudentsPage() {
                     <span>Hak Akses Paket Ujian Marlins (1–10)</span>
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    Buka atau kunci hak akses simulasi ujian maritim untuk siswa ini.
+                    Buka atau kunci hak akses simulasi ujian perhotelan kapal pesiar untuk siswa ini.
                   </p>
                 </div>
 
@@ -1097,9 +1113,9 @@ export default function AdminStudentsPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                  Perbarui Data Kandidat
+                  Perbarui Data Siswa
                 </span>
-                <h3 className="font-heading text-lg font-bold text-slate-950">Edit Profil Siswa</h3>
+                <h3 className="font-heading text-lg font-bold text-slate-950">Edit Profil Siswa LTE Cruise</h3>
               </div>
               <button
                 type="button"
@@ -1150,10 +1166,10 @@ export default function AdminStudentsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Jabatan / Posisi di Kapal</label>
+                  <label className="font-bold text-slate-800">Departemen & Posisi di Kapal Pesiar</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Taruna Nautika / Deck Officer"
+                    placeholder="Contoh: F&B Service / Waiter, Housekeeping / Cabin Steward, Culinary, dsb."
                     value={editForm.job_title}
                     onChange={(e) => setEditForm({ ...editForm, job_title: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
@@ -1202,10 +1218,10 @@ export default function AdminStudentsPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-800">Catatan / Profil Siswa</label>
+                <label className="font-bold text-slate-800">Catatan / Minat Bidang Kerja Siswa</label>
                 <textarea
                   rows={3}
-                  placeholder="Catatan kompetensi maritim siswa..."
+                  placeholder="Catatan keahlian, minat departemen perhotelan kapal pesiar..."
                   value={editForm.about}
                   onChange={(e) => setEditForm({ ...editForm, about: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"
@@ -1244,7 +1260,7 @@ export default function AdminStudentsPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                  Registrasi Taruna & Siswa Baru
+                  Registrasi Siswa Baru LTE Cruise
                 </span>
                 <h3 className="font-heading text-lg font-bold text-slate-950">Tambah Data Siswa</h3>
               </div>
@@ -1276,7 +1292,7 @@ export default function AdminStudentsPage() {
                   <input
                     type="email"
                     required
-                    placeholder="nama@taruna.id"
+                    placeholder="nama@student.lte.id"
                     value={newStudentForm.email}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
@@ -1297,10 +1313,10 @@ export default function AdminStudentsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-800">Jabatan / Departemen</label>
+                  <label className="font-bold text-slate-800">Departemen & Posisi Kerja</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Taruna Nautika / Deck"
+                    placeholder="Contoh: F&B Service / Waiter"
                     value={newStudentForm.job_title}
                     onChange={(e) => setNewStudentForm({ ...newStudentForm, job_title: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none font-medium"
@@ -1325,10 +1341,10 @@ export default function AdminStudentsPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-800">Catatan Tambahan</label>
+                <label className="font-bold text-slate-800">Catatan Minat / Pelatihan</label>
                 <textarea
                   rows={2}
-                  placeholder="Informasi taruna atau riwayat diklat..."
+                  placeholder="Informasi pelatihan di LTE Cruise atau minat kerja perhotelan kapal pesiar..."
                   value={newStudentForm.about}
                   onChange={(e) => setNewStudentForm({ ...newStudentForm, about: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] outline-none resize-none font-medium"

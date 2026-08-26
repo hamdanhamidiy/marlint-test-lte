@@ -72,10 +72,10 @@ export default function AdminTokensPage() {
       setDescription('Voucher Mandiri Siswa');
     } else if (preset === 'class') {
       setMaxUsage(30);
-      setDescription('Batch Ujian Kelas Taruna (30 Siswa)');
+      setDescription('Batch Ujian Kelas Siswa LTE Cruise (30 Siswa)');
     } else if (preset === 'institution') {
       setMaxUsage(100);
-      setDescription('Lisensi Akademi / Instansi Maritim (100 Siswa)');
+      setDescription('Lisensi Lembaga Sekolah Perhotelan & Kapal Pesiar (100 Siswa)');
     }
   };
 

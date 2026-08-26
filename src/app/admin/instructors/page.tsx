@@ -368,18 +368,18 @@ export default function AdminInstructorsPage() {
   const activeCount = instructors.filter((i) => i.status === 'active').length;
 
   return (
-    <div className="space-y-6 sm:space-y-7 max-w-7xl mx-auto font-sans pb-16">
+    <div className="space-y-5 sm:space-y-7 max-w-7xl mx-auto font-sans pb-16 min-w-0">
       {/* Header with Title and Add Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3 border-b border-slate-200/70">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-[11px] font-bold border border-purple-200/80 shadow-2xs">
             <Shield className="w-3.5 h-3.5" />
             <span>Hak Akses Super Administrator</span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="font-heading text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
             Manajemen Instruktur & Penguji Marlins
           </h1>
-          <p className="text-xs sm:text-[14px] text-slate-500 leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed max-w-2xl">
             Kelola data staf pengajar perhotelan & kapal pesiar di LTE Cruise Training Center, nomor sertifikasi penguji IMO 6.09, hak akses bank soal, dan status keaktifan.
           </p>
         </div>
@@ -387,87 +387,85 @@ export default function AdminInstructorsPage() {
         <button
           type="button"
           onClick={handleOpenAddModal}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-4.5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Instruktur Baru</span>
         </button>
       </div>
 
-      {/* Top Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-        <div className="p-4.5 rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Instruktur</span>
-          <p className="font-heading text-2xl font-black text-slate-900">{totalCount}</p>
-          <span className="text-xs text-slate-500 font-medium">Staf Pengajar Terdaftar</span>
+      {/* Top Metric Cards (Responsive: 2-column on mobile, 4-column on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="p-3.5 sm:p-4.5 rounded-2xl sm:rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-0.5 sm:space-y-1">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Instruktur</span>
+          <p className="font-heading text-xl sm:text-2xl font-black text-slate-900">{totalCount}</p>
+          <span className="text-[11px] sm:text-xs text-slate-500 font-medium truncate block">Staf Pengajar Terdaftar</span>
         </div>
 
-        <div className="p-4.5 rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Instruktur Aktif</span>
-          <p className="font-heading text-2xl font-black text-emerald-600">{activeCount}</p>
-          <span className="text-xs text-slate-500 font-medium">Memiliki Hak Kelola Soal</span>
+        <div className="p-3.5 sm:p-4.5 rounded-2xl sm:rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-0.5 sm:space-y-1">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-600">Instruktur Aktif</span>
+          <p className="font-heading text-xl sm:text-2xl font-black text-emerald-600">{activeCount}</p>
+          <span className="text-[11px] sm:text-xs text-slate-500 font-medium truncate block">Memiliki Hak Kelola Soal</span>
         </div>
 
-        <div className="p-4.5 rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0284C7]">F&B & Hospitality</span>
-          <p className="font-heading text-2xl font-black text-[#0284C7]">
+        <div className="p-3.5 sm:p-4.5 rounded-2xl sm:rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-0.5 sm:space-y-1">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#0284C7]">F&B & Hospitality</span>
+          <p className="font-heading text-xl sm:text-2xl font-black text-[#0284C7]">
             {instructors.filter((i) => i.specialization === 'fb' || i.specialization === 'frontoffice' || i.specialization === 'general').length}
           </p>
-          <span className="text-xs text-slate-500 font-medium">Penguji Standar Cruise Line</span>
+          <span className="text-[11px] sm:text-xs text-slate-500 font-medium truncate block">Penguji Standar Cruise Line</span>
         </div>
 
-        <div className="p-4.5 rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600">Culinary & Housekeeping</span>
-          <p className="font-heading text-2xl font-black text-amber-600">
+        <div className="p-3.5 sm:p-4.5 rounded-2xl sm:rounded-[22px] bg-white border border-slate-200/90 shadow-2xs space-y-0.5 sm:space-y-1">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-600">Culinary & Rooms</span>
+          <p className="font-heading text-xl sm:text-2xl font-black text-amber-600">
             {instructors.filter((i) => i.specialization === 'culinary' || i.specialization === 'housekeeping').length}
           </p>
-          <span className="text-xs text-slate-500 font-medium">Divisi Operasional Hotel</span>
+          <span className="text-[11px] sm:text-xs text-slate-500 font-medium truncate block">Divisi Operasional Hotel</span>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white p-4 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-        <div className="relative flex-1 max-w-md">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Cari nama pengajar, email, no. sertifikat..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] font-medium transition-all"
           />
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-bold text-slate-600">
-            <button
-              type="button"
-              onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                statusFilter === 'all' ? 'bg-black text-white shadow-xs' : 'hover:text-black'
-              }`}
-            >
-              Semua ({totalCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter('active')}
-              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-xs' : 'hover:text-black'
-              }`}
-            >
-              Aktif ({activeCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter('inactive')}
-              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                statusFilter === 'inactive' ? 'bg-rose-600 text-white shadow-xs' : 'hover:text-black'
-              }`}
-            >
-              Nonaktif ({totalCount - activeCount})
-            </button>
-          </div>
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-bold text-slate-600 shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'all' ? 'bg-black text-white shadow-xs' : 'hover:text-black'
+            }`}
+          >
+            Semua ({totalCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('active')}
+            className={`px-3 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-xs' : 'hover:text-black'
+            }`}
+          >
+            Aktif ({activeCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('inactive')}
+            className={`px-3 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'inactive' ? 'bg-rose-600 text-white shadow-xs' : 'hover:text-black'
+            }`}
+          >
+            Nonaktif ({totalCount - activeCount})
+          </button>
         </div>
       </div>
 
@@ -492,11 +490,11 @@ export default function AdminInstructorsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
           {filteredInstructors.map((inst) => (
             <div
               key={inst.id || inst.email}
-              className={`bg-white p-5 rounded-[26px] border transition-all duration-150 flex flex-col justify-between space-y-4 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md ${
+              className={`bg-white p-4.5 sm:p-5 rounded-2xl sm:rounded-[26px] border transition-all duration-150 flex flex-col justify-between space-y-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md ${
                 inst.status === 'inactive'
                   ? 'border-slate-200 bg-slate-50/70 opacity-75'
                   : 'border-slate-200/90 hover:border-slate-300'

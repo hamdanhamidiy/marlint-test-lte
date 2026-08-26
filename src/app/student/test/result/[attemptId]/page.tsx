@@ -134,8 +134,8 @@ export default function TestResultPage() {
                     user_id: user?.id || '00000000-0000-0000-0000-000000000001',
                     marlint_test_id: `test-${normalized.marlint_test_number}`,
                     result_id: normalized.id,
-                    student_name: user?.user_metadata?.full_name || 'Capt. Budi Santoso',
-                    student_email: user?.email || 'student@marlins.com',
+                    student_name: user?.user_metadata?.full_name || 'Ahmad Syahputra',
+                    student_email: user?.email || 'student@lte.id',
                     test_name: normalized.test_name,
                     test_number: normalized.marlint_test_number,
                     score: normalized.score,
@@ -176,27 +176,27 @@ export default function TestResultPage() {
 
   if (loading) {
     return (
-      <div className="p-16 text-center bg-white border border-slate-100 rounded-[32px] max-w-md mx-auto space-y-4 shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-[#5046E5] flex items-center justify-center mx-auto animate-pulse">
-          <Award className="w-7 h-7 animate-bounce" />
+      <div className="p-16 text-center bg-white border border-slate-200/90 rounded-2xl max-w-md mx-auto space-y-4 shadow-sm font-sans">
+        <div className="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto animate-pulse">
+          <Award className="w-7 h-7" />
         </div>
-        <h2 className="font-heading text-base font-extrabold text-slate-900">Mengkalkulasi Hasil Ujian...</h2>
-        <p className="text-xs text-slate-400">Menghitung level CEFR dan evaluasi kompetensi maritim...</p>
+        <h2 className="font-heading text-lg font-black text-slate-950">Mengkalkulasi Hasil Ujian...</h2>
+        <p className="text-xs text-slate-500 font-medium">Menghitung level CEFR dan evaluasi kompetensi perhotelan & kapal pesiar...</p>
       </div>
     );
   }
 
   if (!result) {
     return (
-      <div className="p-10 text-center bg-white border border-slate-100 rounded-[32px] max-w-lg mx-auto space-y-4 shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
+      <div className="p-10 text-center bg-white border border-slate-200/90 rounded-2xl max-w-lg mx-auto space-y-4 shadow-sm font-sans">
+        <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto">
           <XCircle className="w-7 h-7" />
         </div>
-        <h2 className="font-heading text-base font-extrabold text-slate-900">Hasil Ujian Tidak Ditemukan</h2>
-        <p className="text-xs text-slate-500">Data hasil untuk sesi ini belum tersedia.</p>
+        <h2 className="font-heading text-lg font-black text-slate-950">Hasil Ujian Tidak Ditemukan</h2>
+        <p className="text-xs text-slate-500 font-medium">Data hasil untuk sesi ini belum tersedia.</p>
         <Link
           href="/student/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#5046E5] text-white font-bold text-xs shadow-md shadow-indigo-500/20 hover:bg-[#4338CA] transition-all"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-black text-white font-bold text-xs shadow-xs hover:bg-neutral-800 transition-all"
         >
           <span>Kembali ke Dashboard</span>
         </Link>
@@ -226,53 +226,57 @@ export default function TestResultPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 font-sans pb-16">
       {/* Top Banner Hero Card */}
       <div
-        className={`p-6 sm:p-10 rounded-[32px] border text-center space-y-6 shadow-sm relative overflow-hidden ${
+        className={`p-6 sm:p-10 rounded-[28px] border text-center space-y-6 shadow-sm relative overflow-hidden bg-white ${
           result.is_passed
-            ? 'border-emerald-100 bg-gradient-to-b from-emerald-50/70 via-white to-white'
-            : 'border-rose-100 bg-gradient-to-b from-rose-50/70 via-white to-white'
+            ? 'border-slate-200/90'
+            : 'border-slate-200/90'
         }`}
       >
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold font-mono uppercase tracking-wider bg-white border border-slate-200/80 shadow-2xs text-slate-800">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#5046E5]" />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black text-white shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>{result.test_name}</span>
           </div>
 
-          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 tracking-tight leading-tight">
             {result.is_passed ? '🎉 Selamat, Anda Lulus Ujian Marlins!' : 'Hasil Ujian Belum Memenuhi Passing Grade'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-medium leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
             {result.is_passed
-              ? 'Anda berhasil mencapai passing grade standar Marlins English Language Test for Seafarers IMO STCW 2010.'
-              : 'Jangan berkecil hati. Pelajari kembali materi modul maritim dan ikuti kembali tes untuk meningkatkan skor kompetensi Anda.'}
+              ? 'Anda berhasil mencapai passing grade standar Marlins English Language Test for Cruise Ship & Hospitality LTE Cruise.'
+              : 'Jangan berkecil hati. Pelajari kembali materi modul perhotelan kapal pesiar dan ikuti kembali tes untuk meningkatkan skor kompetensi Anda.'}
           </p>
         </div>
 
-        {/* 4 Score & Badges Cards */}
+        {/* 4 Score & Badges Cards - Uniform Outfit Typography */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto pt-2">
-          <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-2xs">
-            <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Skor Akhir</span>
-            <span className="font-mono text-3xl font-extrabold text-[#5046E5]">{result.score}%</span>
+          {/* Skor Akhir */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Skor Akhir</span>
+            <span className="font-heading text-3xl font-black text-slate-950">{result.score}%</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-2xs">
-            <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Level CEFR</span>
-            <span className="font-mono text-3xl font-extrabold text-indigo-700">{result.level}</span>
+          {/* Level CEFR */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Level CEFR</span>
+            <span className="font-heading text-3xl font-black text-slate-950">{result.level}</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-2xs">
-            <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Jawaban Benar</span>
-            <span className="font-mono text-2xl font-extrabold text-emerald-600">
+          {/* Jawaban Benar */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Jawaban Benar</span>
+            <span className="font-heading text-2xl sm:text-3xl font-black text-emerald-600">
               {result.correct_answers} / {result.total_questions}
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-2xs">
-            <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Poin Kemahiran</span>
-            <span className="font-mono text-2xl font-extrabold text-amber-600 flex items-center justify-center gap-1">
+          {/* Poin Kemahiran */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Poin Kemahiran</span>
+            <span className="font-heading text-2xl sm:text-3xl font-black text-amber-600 flex items-center justify-center gap-1">
               <Sparkles className="w-4 h-4 text-amber-500" />
               +{result.points_earned} XP
             </span>
@@ -283,7 +287,7 @@ export default function TestResultPage() {
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
           <Link
             href={`/student/test/review/${attemptId}`}
-            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-extrabold text-xs sm:text-sm text-white bg-[#5046E5] hover:bg-[#4338CA] shadow-lg shadow-indigo-500/25 transition-all hover:scale-105"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-black hover:bg-neutral-800 shadow-md shadow-black/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <BookOpen className="w-4 h-4" />
             <span>Review & Pembahasan Lengkap (60 Soal)</span>
@@ -293,9 +297,9 @@ export default function TestResultPage() {
           {result.is_passed && certificate && (
             <Link
               href={`/student/certificates/${certificate.id}`}
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-lg shadow-amber-500/25 transition-all hover:scale-105"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Award className="w-4 h-4" />
+              <Award className="w-4 h-4 text-emerald-600" />
               <span>Lihat & Cetak Sertifikat Resmi</span>
             </Link>
           )}
@@ -303,13 +307,13 @@ export default function TestResultPage() {
       </div>
 
       {/* Competency Breakdown by Category */}
-      <div className="bg-white p-6 sm:p-8 rounded-[32px] border border-slate-100 shadow-sm space-y-6">
+      <div className="bg-white p-6 sm:p-8 rounded-[28px] border border-slate-200/90 shadow-sm space-y-6">
         <div>
-          <h2 className="font-heading text-base sm:text-lg font-extrabold text-slate-900">
-            Analisis Penguasaan Kategori Bahasa Inggris Maritim
+          <h2 className="font-heading text-lg sm:text-xl font-extrabold text-slate-950 tracking-tight">
+            Analisis Penguasaan Kategori Bahasa Inggris Marlins
           </h2>
-          <p className="text-xs text-slate-400 font-medium mt-0.5">
-            Rincian performa kompetensi pada setiap modul pengujian standar Marlins
+          <p className="text-xs sm:text-[13px] text-slate-500 font-normal mt-0.5">
+            Rincian performa kompetensi pada setiap modul pengujian standar Marlins Perhotelan & Kapal Pesiar LTE Cruise
           </p>
         </div>
 
@@ -322,28 +326,30 @@ export default function TestResultPage() {
             return (
               <div
                 key={catKey}
-                className={`p-5 rounded-2xl border flex flex-col justify-between space-y-3.5 ${info.bg} ${info.border}`}
+                className="p-5 rounded-2xl border border-slate-200/90 bg-white flex flex-col justify-between space-y-3.5 shadow-2xs hover:border-black transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center shadow-2xs">
-                      <CatIcon className={`w-4 h-4 ${info.color}`} />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shadow-2xs">
+                      <CatIcon className="w-4 h-4" />
                     </div>
-                    <span className={`text-xs sm:text-sm font-extrabold ${info.color}`}>{info.name}</span>
+                    <span className="text-xs sm:text-sm font-extrabold font-heading text-slate-950">{info.name}</span>
                   </div>
-                  <span className="font-mono text-base font-extrabold text-slate-900">{percent}%</span>
+                  <span className="font-heading text-base font-black text-slate-950">{percent}%</span>
                 </div>
 
-                <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#5046E5] rounded-full transition-all duration-500"
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      percent >= 70 ? 'bg-emerald-500' : 'bg-slate-900'
+                    }`}
                     style={{ width: `${percent}%` }}
                   />
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                  <span>Skor: <strong>{scoreDetail.correct}</strong> dari {scoreDetail.total} benar</span>
-                  <span className={`font-bold ${percent >= 70 ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  <span>Skor: <strong className="text-slate-900 font-bold">{scoreDetail.correct}</strong> dari {scoreDetail.total} benar</span>
+                  <span className={`font-bold ${percent >= 70 ? 'text-emerald-700' : 'text-slate-600'}`}>
                     {percent >= 70 ? '✓ Menguasai' : 'Perlu Peningkatan'}
                   </span>
                 </div>
@@ -366,7 +372,7 @@ export default function TestResultPage() {
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <Link
             href={`/student/test/review/${attemptId}`}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-[#5046E5] bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all"
           >
             <BookOpen className="w-4 h-4" />
             <span>Review Jawaban</span>
@@ -381,7 +387,7 @@ export default function TestResultPage() {
 
           <Link
             href="/student/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-extrabold text-white bg-slate-900 hover:bg-slate-800 shadow-md shadow-slate-900/20 transition-all hover:scale-105"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-extrabold text-white bg-black hover:bg-neutral-800 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Ke Dashboard</span>
             <ChevronRight className="w-4 h-4" />

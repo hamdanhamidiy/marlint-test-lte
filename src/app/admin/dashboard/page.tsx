@@ -149,6 +149,28 @@ export default function AdminDashboardPage() {
     }
 
     loadAdminData();
+
+    const channel = supabase
+      .channel('admin_dashboard_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'student_results' },
+        () => {
+          loadAdminData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'users' },
+        () => {
+          loadAdminData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (

@@ -304,6 +304,21 @@ export default function AdminTestsPage() {
 
   useEffect(() => {
     loadTests();
+
+    const channel = supabase
+      .channel('admin_tests_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'marlint_tests' },
+        () => {
+          loadTests();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Filter & Search Logic

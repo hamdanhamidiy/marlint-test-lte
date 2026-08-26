@@ -270,6 +270,21 @@ export default function AdminStudentsPage() {
 
   useEffect(() => {
     loadStudents();
+
+    const channel = supabase
+      .channel('admin_students_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'users' },
+        () => {
+          loadStudents();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
@@ -512,44 +527,7 @@ export default function AdminStudentsPage() {
         }
       }
 
-      // Also check local storage for this student
-      if (typeof window !== 'undefined') {
-        const found = new Set(resultsList.map((r) => r.attempt_id || r.id));
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && (k.startsWith('marlins_result_') || k.startsWith('test_result_'))) {
-            try {
-              const item = JSON.parse(localStorage.getItem(k) || '');
-              if (item.student_id === studentRecord.id || item.student_email === studentRecord.email) {
-                const aid = item.attempt_id || item.id;
-                if (aid && !found.has(aid)) {
-                  resultsList.push({
-                    id: aid,
-                    student_id: studentRecord.id,
-                    attempt_id: aid,
-                    score: item.overall_score !== undefined ? item.overall_score : item.score || 0,
-                    correct_answers: item.total_score !== undefined ? item.total_score : item.correct_answers || 0,
-                    total_questions: item.total_questions || 60,
-                    level: item.level || 'A2',
-                    category_scores: item.category_scores || {},
-                    time_spent_seconds: item.time_spent_seconds || 1800,
-                    is_passed: item.is_passed,
-                    start_time: item.start_time || new Date().toISOString(),
-                    end_time: item.end_time || new Date().toISOString(),
-                    created_at: item.completed_at || item.created_at || new Date().toISOString(),
-                    test_name: item.test_name || `Marlins Test #${item.marlint_test_number || 1}`,
-                    marlint_test_number: item.test_number || 1,
-                    test_mode: 'standard',
-                    points_earned: 50,
-                  });
-                  found.add(aid);
-                }
-              }
-            } catch (e) {}
-          }
-        }
-      }
-
+      // Results strictly from Supabase
       resultsList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
       setStudentResults(resultsList);
 
@@ -784,11 +762,87 @@ export default function AdminStudentsPage() {
     if (!confirm('Hapus rekaman sesi ujian ini? Sesi yang dihapus tidak dapat dipulihkan.')) return;
     try {
       setUpdatingAccess(true);
-      await supabase.from('student_results').delete().eq('id', resultId);
-      setStudentResults((prev) => prev.filter((r) => r.id !== resultId && r.attempt_id !== resultId));
+
+      // Find the result being deleted to get attempt_id for cache cleanup
+      const deletedResult = studentResults.find((r) => r.id === resultId);
+      const attemptId = deletedResult?.attempt_id || resultId;
+
+      // 1. Delete related certificates first (foreign key: result_id)
+      try {
+        await supabase.from('certificates').delete().eq('result_id', resultId);
+      } catch (certErr) {
+        console.warn('Certificate cleanup note:', certErr);
+      }
+
+      // 2. Delete the student result from Supabase
+      const { error } = await supabase.from('student_results').delete().eq('id', resultId);
+      if (error) {
+        // Also try deleting by attempt_id in case id doesn't match
+        const { error: error2 } = await supabase.from('student_results').delete().eq('attempt_id', attemptId);
+        if (error2) {
+          throw new Error(error.message || error2.message);
+        }
+      }
+
+      // 3. Update local UI state
+      setStudentResults((prev) => prev.filter((r) => r.id !== resultId && r.attempt_id !== resultId && r.attempt_id !== attemptId));
+
+      // 4. Clean ALL localStorage caches that might contain this result
+      if (typeof window !== 'undefined') {
+        // Remove individual result keys
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (!key) continue;
+          if (
+            key === `marlins_result_${attemptId}` ||
+            key === `test_result_${attemptId}` ||
+            key === `marlins_result_${resultId}` ||
+            key === `test_result_${resultId}`
+          ) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+        // Clean history array caches for this student
+        const studentId = deletedResult?.student_id || selectedStudent?.id;
+        const studentEmail = selectedStudent?.email;
+        const historyKeys = [
+          `marlins_history_results_${studentId}`,
+          `marlins_history_results_${studentEmail}`,
+        ];
+        historyKeys.forEach((hk) => {
+          const str = localStorage.getItem(hk);
+          if (str) {
+            try {
+              const arr = JSON.parse(str);
+              if (Array.isArray(arr)) {
+                const filtered = arr.filter(
+                  (item: any) =>
+                    item.id !== resultId &&
+                    item.attempt_id !== resultId &&
+                    item.id !== attemptId &&
+                    item.attempt_id !== attemptId
+                );
+                localStorage.setItem(hk, JSON.stringify(filtered));
+              }
+            } catch (e) {}
+          }
+        });
+
+        // Track deleted IDs so student-side never re-syncs them
+        try {
+          const deletedIdsKey = 'marlins_deleted_result_ids';
+          const existing = JSON.parse(localStorage.getItem(deletedIdsKey) || '[]');
+          const updated = Array.from(new Set([...existing, resultId, attemptId]));
+          localStorage.setItem(deletedIdsKey, JSON.stringify(updated));
+        } catch (e) {}
+      }
+
       alert('Rekaman sesi ujian berhasil dihapus.');
     } catch (err: any) {
-      alert('Gagal menghapus hasil ujian: ' + err.message);
+      alert('Gagal menghapus hasil ujian: ' + (err?.message || err));
     } finally {
       setUpdatingAccess(false);
     }

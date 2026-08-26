@@ -71,75 +71,9 @@ export default function StudentHistoryPage() {
           }
         }
 
-        // 2. Discover and auto-sync any local-only attempts to Supabase
-        if (typeof window !== 'undefined' && targetUuid) {
-          const knownIds = new Set<string>(resList.map((r) => r.attempt_id || r.id));
-          const knownTimestamps = resList.map((r) => new Date(r.created_at || '').getTime());
-
-          const localCandidates: any[] = [];
-          const userHistKeys = [
-            `marlins_history_results_${activeId}`,
-            `marlins_history_results_${activeEmail}`,
-          ];
-
-          userHistKeys.forEach((key) => {
-            const str = localStorage.getItem(key);
-            if (str) {
-              try {
-                const arr = JSON.parse(str);
-                if (Array.isArray(arr)) localCandidates.push(...arr);
-              } catch (e) {}
-            }
-          });
-
-          for (const item of localCandidates) {
-            const aid = item.attempt_id || item.id;
-            const itemTime = new Date(item.created_at || item.completed_at || '').getTime();
-
-            // Check if already represented by ID or within 10 minutes with same test number and score
-            const isDuplicate =
-              (aid && knownIds.has(aid)) ||
-              (itemTime > 0 && knownTimestamps.some((kt) => Math.abs(kt - itemTime) < 10 * 60 * 1000));
-
-            if (!isDuplicate && aid) {
-              const norm = normalizeHistoryItem(item, targetUuid);
-              resList.push(norm);
-              knownIds.add(aid);
-
-              // Auto-sync this local-only result to Supabase
-              try {
-                const pureUuid = isValidUuid(aid)
-                  ? aid
-                  : typeof crypto !== 'undefined' && crypto.randomUUID
-                  ? crypto.randomUUID()
-                  : `8899e649-9911-44eb-845f-${Date.now().toString(16).padStart(12, '0')}`;
-
-                supabase
-                  .from('student_results')
-                  .upsert({
-                    id: pureUuid,
-                    student_id: targetUuid,
-                    score: norm.score,
-                    correct_answers: norm.correct_answers,
-                    total_questions: norm.total_questions,
-                    level: norm.level,
-                    category_scores: norm.category_scores,
-                    start_time: norm.start_time,
-                    end_time: norm.end_time,
-                    is_passed: norm.is_passed,
-                    test_name: norm.test_name,
-                    marlint_test_number: norm.marlint_test_number,
-                    test_mode: norm.test_mode,
-                    points_earned: norm.points_earned,
-                    time_spent_seconds: norm.time_spent_seconds,
-                    created_at: norm.created_at,
-                  })
-                  .then();
-              } catch (e) {}
-            }
-          }
-
-          // Cache sanitized list
+        // Supabase is the SINGLE SOURCE OF TRUTH
+        // Update localStorage cache to match Supabase reality (overwrite, not merge)
+        if (typeof window !== 'undefined' && activeId) {
           localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
         }
 
@@ -187,6 +121,24 @@ export default function StudentHistoryPage() {
     }
 
     loadHistory();
+
+    const activeId = user?.id || profile?.id;
+    if (activeId) {
+      const channel = supabase
+        .channel(`history_realtime_${activeId}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'student_results', filter: `student_id=eq.${activeId}` },
+          () => {
+            loadHistory();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, [user, profile]);
 
   const totalSessions = results.length;

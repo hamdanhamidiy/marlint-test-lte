@@ -158,6 +158,21 @@ export default function AdminInstructorsPage() {
 
   useEffect(() => {
     loadInstructors();
+
+    const channel = supabase
+      .channel('admin_instructors_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'users' },
+        () => {
+          loadInstructors();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const saveToStorage = (updatedList: InstructorItem[]) => {

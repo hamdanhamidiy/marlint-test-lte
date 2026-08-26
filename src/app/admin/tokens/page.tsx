@@ -64,6 +64,21 @@ export default function AdminTokensPage() {
 
   useEffect(() => {
     loadTokens();
+
+    const channel = supabase
+      .channel('admin_tokens_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'access_tokens' },
+        () => {
+          loadTokens();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleApplyPreset = (preset: 'single' | 'class' | 'institution') => {

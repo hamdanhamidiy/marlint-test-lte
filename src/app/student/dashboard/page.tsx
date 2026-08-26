@@ -94,58 +94,77 @@ export default function StudentDashboardPage() {
               .eq('is_active', true),
           ]);
 
+          const activeId = user?.id || profile?.id;
+          const activeEmail = (user?.email || profile?.email || '').toLowerCase();
+
           let resList: StudentResult[] = [];
           if (resultsRes.data && resultsRes.data.length > 0) {
             resList = [...(resultsRes.data as StudentResult[])];
           }
 
-          if (typeof window !== 'undefined') {
+          if (typeof window !== 'undefined' && (activeId || activeEmail)) {
             const foundIds = new Set<string>(resList.map((r) => r.attempt_id || r.id));
-            const histStr = localStorage.getItem('marlins_history_results');
-            if (histStr) {
-              try {
-                const arr = JSON.parse(histStr);
-                if (Array.isArray(arr)) {
-                  arr.forEach((item) => {
-                    const aid = item.attempt_id || item.id;
-                    if (aid && !foundIds.has(aid)) {
-                      resList.push(item);
-                      foundIds.add(aid);
-                    }
-                  });
-                }
-              } catch (e) {}
-            }
 
-            // Scan individual keys
+            // Scoped user history
+            const userHistKeys = [
+              `marlins_history_results_${activeId}`,
+              `marlins_history_results_${activeEmail}`,
+            ];
+
+            userHistKeys.forEach((key) => {
+              const histStr = localStorage.getItem(key);
+              if (histStr) {
+                try {
+                  const arr = JSON.parse(histStr);
+                  if (Array.isArray(arr)) {
+                    arr.forEach((item) => {
+                      const aid = item.attempt_id || item.id;
+                      if (aid && !foundIds.has(aid)) {
+                        resList.push(item);
+                        foundIds.add(aid);
+                      }
+                    });
+                  }
+                } catch (e) {}
+              }
+            });
+
+            // Scan individual keys strictly for this active student
             for (let i = 0; i < localStorage.length; i++) {
               const key = localStorage.key(i);
               if (!key) continue;
               if (key.startsWith('marlins_result_') || key.startsWith('test_result_')) {
                 try {
                   const item = JSON.parse(localStorage.getItem(key) || '');
-                  const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
-                  if (aid && !foundIds.has(aid)) {
-                    resList.push({
-                      id: item.id || `res-${aid}`,
-                      student_id: user.id,
-                      attempt_id: aid,
-                      score: item.overall_score !== undefined ? item.overall_score : item.score || 0,
-                      correct_answers: item.total_score !== undefined ? item.total_score : item.correct_answers || 0,
-                      total_questions: item.total_questions || 60,
-                      level: item.level || 'A2',
-                      category_scores: item.category_scores || {},
-                      time_spent_seconds: item.time_spent_seconds || 1800,
-                      is_passed: item.is_passed,
-                      start_time: item.start_time || new Date().toISOString(),
-                      end_time: item.end_time || new Date().toISOString(),
-                      created_at: item.completed_at || item.created_at || new Date().toISOString(),
-                      test_name: item.test_name || `Marlins Test #${item.marlint_test_number || item.test_number || 1}`,
-                      marlint_test_number: item.test_number || item.marlint_test_number || 1,
-                      test_mode: 'standard',
-                      points_earned: item.points_earned || 50,
-                    });
-                    foundIds.add(aid);
+                  const belongsToActiveUser =
+                    (item.student_id && (item.student_id === activeId || item.student_id === activeEmail)) ||
+                    (item.student_email && item.student_email.toLowerCase() === activeEmail) ||
+                    (!item.student_id && !item.student_email && activeEmail === 'hamdan@gmail.com');
+
+                  if (belongsToActiveUser) {
+                    const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
+                    if (aid && !foundIds.has(aid)) {
+                      resList.push({
+                        id: item.id || `res-${aid}`,
+                        student_id: activeId || '',
+                        attempt_id: aid,
+                        score: item.overall_score !== undefined ? item.overall_score : item.score || 0,
+                        correct_answers: item.total_score !== undefined ? item.total_score : item.correct_answers || 0,
+                        total_questions: item.total_questions || 60,
+                        level: item.level || 'A2',
+                        category_scores: item.category_scores || {},
+                        time_spent_seconds: item.time_spent_seconds || 1800,
+                        is_passed: item.is_passed,
+                        start_time: item.start_time || new Date().toISOString(),
+                        end_time: item.end_time || new Date().toISOString(),
+                        created_at: item.completed_at || item.created_at || new Date().toISOString(),
+                        test_name: item.test_name || `Marlins Test #${item.marlint_test_number || item.test_number || 1}`,
+                        marlint_test_number: item.test_number || item.marlint_test_number || 1,
+                        test_mode: 'standard',
+                        points_earned: item.points_earned || 50,
+                      });
+                      foundIds.add(aid);
+                    }
                   }
                 } catch (e) {}
               }

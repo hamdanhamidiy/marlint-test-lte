@@ -39,45 +39,64 @@ export default function StudentHistoryPage() {
       try {
         setLoading(true);
         let resList: StudentResult[] = [];
-        const currentUserId = user?.id || profile?.id || 'a1c181cd-4d43-49b7-9814-d724ba27ea2e';
 
-        // 1. Fetch from Supabase student_results table
+        if (!user && !profile) {
+          setResults([]);
+          return;
+        }
+
+        const activeId = user?.id || profile?.id;
+        const activeEmail = (user?.email || profile?.email || '').toLowerCase();
+
+        // 1. Fetch from Supabase student_results table for THIS USER ONLY
         try {
+          const userFilters: string[] = [];
+          if (activeId) userFilters.push(`student_id.eq.${activeId}`);
+          if (activeEmail) userFilters.push(`student_id.eq.${activeEmail}`);
+
           let query = supabase.from('student_results').select('*').order('created_at', { ascending: false });
-          if (user?.id) {
-            query = query.or(`student_id.eq.${user.id},student_id.eq.00000000-0000-0000-0000-000000000001,student_id.eq.a1c181cd-4d43-49b7-9814-d724ba27ea2e`);
+          if (userFilters.length > 0) {
+            query = query.or(userFilters.join(','));
           }
+
           const { data: dbData } = await query;
           if (dbData && dbData.length > 0) {
-            resList = dbData.map((d: any) => normalizeHistoryItem(d, currentUserId));
+            resList = dbData.map((d: any) => normalizeHistoryItem(d, activeId || ''));
           }
         } catch (err) {
           console.warn('Supabase load history note:', err);
         }
 
-        // 2. Discover test results stored in browser localStorage (e.g. from tests taken on this device)
-        if (typeof window !== 'undefined') {
+        // 2. Discover test results stored in browser localStorage strictly for THIS USER ONLY
+        if (typeof window !== 'undefined' && (activeId || activeEmail)) {
           const foundAttempts = new Set<string>(resList.map((r) => r.attempt_id || r.id));
 
-          // A. Check marlins_history_results array
-          const historyArrStr = localStorage.getItem('marlins_history_results');
-          if (historyArrStr) {
-            try {
-              const arr = JSON.parse(historyArrStr);
-              if (Array.isArray(arr)) {
-                arr.forEach((item) => {
-                  const aid = item.attempt_id || item.id;
-                  if (aid && !foundAttempts.has(aid)) {
-                    const norm = normalizeHistoryItem(item, currentUserId);
-                    resList.push(norm);
-                    foundAttempts.add(aid);
-                  }
-                });
-              }
-            } catch (e) {}
-          }
+          // A. Check user-scoped history key
+          const userHistKeys = [
+            `marlins_history_results_${activeId}`,
+            `marlins_history_results_${activeEmail}`,
+          ];
 
-          // B. Scan all individual localStorage keys (marlins_result_*, test_result_*, marlins_review_*)
+          userHistKeys.forEach((key) => {
+            const historyArrStr = localStorage.getItem(key);
+            if (historyArrStr) {
+              try {
+                const arr = JSON.parse(historyArrStr);
+                if (Array.isArray(arr)) {
+                  arr.forEach((item) => {
+                    const aid = item.attempt_id || item.id;
+                    if (aid && !foundAttempts.has(aid)) {
+                      const norm = normalizeHistoryItem(item, activeId || '');
+                      resList.push(norm);
+                      foundAttempts.add(aid);
+                    }
+                  });
+                }
+              } catch (e) {}
+            }
+          });
+
+          // B. Scan individual localStorage keys but strictly match this student
           for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (!key) continue;
@@ -85,63 +104,28 @@ export default function StudentHistoryPage() {
             if (key.startsWith('marlins_result_') || key.startsWith('test_result_')) {
               try {
                 const item = JSON.parse(localStorage.getItem(key) || '');
-                const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
-                if (aid && !foundAttempts.has(aid)) {
-                  const norm = normalizeHistoryItem({ ...item, attempt_id: aid }, currentUserId);
-                  resList.push(norm);
-                  foundAttempts.add(aid);
-                }
-              } catch (e) {}
-            } else if (key.startsWith('marlins_review_')) {
-              try {
-                const reviewPayload = JSON.parse(localStorage.getItem(key) || '');
-                const aid = reviewPayload.attempt_id || key.replace('marlins_review_', '');
-                if (aid && !foundAttempts.has(aid)) {
-                  const resData = reviewPayload.result || {
-                    attempt_id: aid,
-                    score: reviewPayload.score || 0,
-                    test_name: reviewPayload.test_name,
-                    test_number: reviewPayload.test_number,
-                    created_at: reviewPayload.completed_at,
-                  };
-                  const norm = normalizeHistoryItem(resData, currentUserId);
-                  resList.push(norm);
-                  foundAttempts.add(aid);
+                const belongsToActiveUser =
+                  (item.student_id && (item.student_id === activeId || item.student_id === activeEmail)) ||
+                  (item.student_email && item.student_email.toLowerCase() === activeEmail) ||
+                  (!item.student_id && !item.student_email && activeEmail === 'hamdan@gmail.com');
+
+                if (belongsToActiveUser) {
+                  const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
+                  if (aid && !foundAttempts.has(aid)) {
+                    const norm = normalizeHistoryItem({ ...item, attempt_id: aid }, activeId || '');
+                    resList.push(norm);
+                    foundAttempts.add(aid);
+                  }
                 }
               } catch (e) {}
             }
           }
 
-          // Update local cache
-          if (resList.length > 0) {
+          // Update local scoped cache
+          if (activeId) {
             try {
-              localStorage.setItem('marlins_history_results', JSON.stringify(resList));
+              localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
             } catch (e) {}
-          }
-
-          // 3. Asynchronously upload local results to Supabase so other devices (laptop/phone) receive them immediately
-          if (user?.id && resList.length > 0) {
-            resList.forEach(async (item) => {
-              try {
-                await supabase.from('student_results').upsert({
-                  id: item.id,
-                  student_id: user.id,
-                  attempt_id: item.attempt_id,
-                  score: item.score,
-                  correct_answers: item.correct_answers,
-                  total_questions: item.total_questions,
-                  level: item.level,
-                  category_scores: item.category_scores,
-                  is_passed: item.is_passed,
-                  time_spent_seconds: item.time_spent_seconds,
-                  start_time: item.start_time,
-                  end_time: item.end_time,
-                  created_at: item.created_at,
-                });
-              } catch (syncErr) {
-                // Silently ignore if network offline or RLS pending
-              }
-            });
           }
         }
 

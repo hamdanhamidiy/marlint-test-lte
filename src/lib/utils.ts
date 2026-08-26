@@ -30,13 +30,16 @@ export function formatStopwatch(seconds: number): string {
 
 export function formatDateIndo(dateStr: string): string {
   try {
-    const date = new Date(dateStr);
+    if (!dateStr) return '';
+    const safeStr = dateStr.includes('Z') || dateStr.includes('+') ? dateStr : `${dateStr}Z`;
+    const date = new Date(safeStr);
     return new Intl.DateTimeFormat('id-ID', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'Asia/Jakarta',
     }).format(date);
   } catch (e) {
     return dateStr;

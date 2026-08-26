@@ -49,13 +49,13 @@ export default function StudentHistoryPage() {
         const activeEmail = (user?.email || profile?.email || '').toLowerCase();
 
         // 1. Fetch from Supabase student_results table for THIS USER ONLY
-        try {
-          const isValidUuid = (str?: string | null): boolean =>
-            !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+        const isValidUuid = (str?: string | null): boolean =>
+          !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-          const targetUuid = isValidUuid(activeId) ? activeId : null;
+        const targetUuid = isValidUuid(activeId) ? activeId : null;
 
-          if (targetUuid) {
+        if (targetUuid) {
+          try {
             const { data: dbData } = await supabase
               .from('student_results')
               .select('*')
@@ -65,76 +65,85 @@ export default function StudentHistoryPage() {
             if (dbData && dbData.length > 0) {
               resList = dbData.map((d: any) => normalizeHistoryItem(d, targetUuid));
             }
+          } catch (err) {
+            console.warn('Supabase load history note:', err);
           }
-        } catch (err) {
-          console.warn('Supabase load history note:', err);
         }
 
-        // 2. Discover test results stored in browser localStorage strictly for THIS USER ONLY
-        if (typeof window !== 'undefined' && (activeId || activeEmail)) {
-          const foundAttempts = new Set<string>(resList.map((r) => r.attempt_id || r.id));
+        // 2. Discover and auto-sync any local-only attempts to Supabase
+        if (typeof window !== 'undefined' && targetUuid) {
+          const knownIds = new Set<string>(resList.map((r) => r.attempt_id || r.id));
+          const knownTimestamps = resList.map((r) => new Date(r.created_at || '').getTime());
 
-          // A. Check user-scoped history key
+          const localCandidates: any[] = [];
           const userHistKeys = [
             `marlins_history_results_${activeId}`,
             `marlins_history_results_${activeEmail}`,
           ];
 
           userHistKeys.forEach((key) => {
-            const historyArrStr = localStorage.getItem(key);
-            if (historyArrStr) {
+            const str = localStorage.getItem(key);
+            if (str) {
               try {
-                const arr = JSON.parse(historyArrStr);
-                if (Array.isArray(arr)) {
-                  arr.forEach((item) => {
-                    const aid = item.attempt_id || item.id;
-                    if (aid && !foundAttempts.has(aid)) {
-                      const norm = normalizeHistoryItem(item, activeId || '');
-                      resList.push(norm);
-                      foundAttempts.add(aid);
-                    }
-                  });
-                }
+                const arr = JSON.parse(str);
+                if (Array.isArray(arr)) localCandidates.push(...arr);
               } catch (e) {}
             }
           });
 
-          // B. Scan individual localStorage keys but strictly match this student
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (!key) continue;
+          for (const item of localCandidates) {
+            const aid = item.attempt_id || item.id;
+            const itemTime = new Date(item.created_at || item.completed_at || '').getTime();
 
-            if (key.startsWith('marlins_result_') || key.startsWith('test_result_')) {
+            // Check if already represented by ID or within 10 minutes with same test number and score
+            const isDuplicate =
+              (aid && knownIds.has(aid)) ||
+              (itemTime > 0 && knownTimestamps.some((kt) => Math.abs(kt - itemTime) < 10 * 60 * 1000));
+
+            if (!isDuplicate && aid) {
+              const norm = normalizeHistoryItem(item, targetUuid);
+              resList.push(norm);
+              knownIds.add(aid);
+
+              // Auto-sync this local-only result to Supabase
               try {
-                const item = JSON.parse(localStorage.getItem(key) || '');
-                const belongsToActiveUser =
-                  (item.student_id && (item.student_id === activeId || item.student_id === activeEmail)) ||
-                  (item.student_email && item.student_email.toLowerCase() === activeEmail) ||
-                  (!item.student_id && !item.student_email && activeEmail === 'hamdan@gmail.com');
+                const pureUuid = isValidUuid(aid)
+                  ? aid
+                  : typeof crypto !== 'undefined' && crypto.randomUUID
+                  ? crypto.randomUUID()
+                  : `8899e649-9911-44eb-845f-${Date.now().toString(16).padStart(12, '0')}`;
 
-                if (belongsToActiveUser) {
-                  const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
-                  if (aid && !foundAttempts.has(aid)) {
-                    const norm = normalizeHistoryItem({ ...item, attempt_id: aid }, activeId || '');
-                    resList.push(norm);
-                    foundAttempts.add(aid);
-                  }
-                }
+                supabase
+                  .from('student_results')
+                  .upsert({
+                    id: pureUuid,
+                    student_id: targetUuid,
+                    score: norm.score,
+                    correct_answers: norm.correct_answers,
+                    total_questions: norm.total_questions,
+                    level: norm.level,
+                    category_scores: norm.category_scores,
+                    start_time: norm.start_time,
+                    end_time: norm.end_time,
+                    is_passed: norm.is_passed,
+                    test_name: norm.test_name,
+                    marlint_test_number: norm.marlint_test_number,
+                    test_mode: norm.test_mode,
+                    points_earned: norm.points_earned,
+                    time_spent_seconds: norm.time_spent_seconds,
+                    created_at: norm.created_at,
+                  })
+                  .then();
               } catch (e) {}
             }
           }
 
-          // Update local scoped cache
-          if (activeId) {
-            try {
-              localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
-            } catch (e) {}
-          }
+          // Cache sanitized list
+          localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
         }
 
         // Sort descending by completion date
         resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
-
         setResults(resList);
       } catch (err) {
         console.error('Error loading history:', err);

@@ -36,24 +36,33 @@ export default function StudentHistoryPage() {
 
   useEffect(() => {
     async function loadHistory() {
-      if (!user) return;
       try {
         setLoading(true);
-
-        // Load results strictly belonging to the logged-in student user.id
-        const { data, error } = await supabase
-          .from('student_results')
-          .select('*')
-          .eq('student_id', user.id)
-          .order('created_at', { ascending: false });
-
         let resList: StudentResult[] = [];
-        if (data && data.length > 0) {
-          resList = [...(data as StudentResult[])];
+        const currentUserId = user?.id || profile?.id || 'a1c181cd-4d43-49b7-9814-d724ba27ea2e';
+
+        // 1. Query Supabase
+        if (user?.id) {
+          try {
+            const { data } = await supabase
+              .from('student_results')
+              .select('*')
+              .eq('student_id', user.id)
+              .order('created_at', { ascending: false });
+
+            if (data && data.length > 0) {
+              resList = [...(data as StudentResult[])];
+            }
+          } catch (err) {
+            console.warn('Supabase load history error:', err);
+          }
         }
 
+        // 2. Scan LocalStorage for any test results on this browser & device
         if (typeof window !== 'undefined') {
-          // Check localStorage results ONLY if they strictly belong to this user.id
+          const foundAttempts = new Set<string>(resList.map((r) => r.attempt_id || r.id));
+
+          // A. Check marlins_history_results
           const historyArrStr = localStorage.getItem('marlins_history_results');
           if (historyArrStr) {
             try {
@@ -61,27 +70,56 @@ export default function StudentHistoryPage() {
               if (Array.isArray(arr)) {
                 arr.forEach((item) => {
                   const aid = item.attempt_id || item.id;
-                  // Only add if student_id strictly matches this user's id
-                  if (item.student_id === user.id && aid && !resList.some((r) => r.attempt_id === aid || r.id === aid)) {
-                    resList.push(normalizeHistoryItem(item, user.id));
+                  if (aid && !foundAttempts.has(aid)) {
+                    const norm = normalizeHistoryItem(item, currentUserId);
+                    resList.push(norm);
+                    foundAttempts.add(aid);
                   }
                 });
               }
             } catch (e) {}
           }
 
-          // Scan single result keys only if matching user.id
+          // B. Scan all individual localStorage keys (marlins_result_*, test_result_*, marlins_review_*)
           for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && (key.startsWith('marlins_result_') || key.startsWith('test_result_'))) {
+            if (!key) continue;
+
+            if (key.startsWith('marlins_result_') || key.startsWith('test_result_')) {
               try {
                 const item = JSON.parse(localStorage.getItem(key) || '');
-                const aid = item.attempt_id || item.id;
-                if (item.student_id === user.id && aid && !resList.some((r) => r.attempt_id === aid || r.id === aid)) {
-                  resList.push(normalizeHistoryItem(item, user.id));
+                const aid = item.attempt_id || item.id || key.replace('marlins_result_', '').replace('test_result_', '');
+                if (aid && !foundAttempts.has(aid)) {
+                  const norm = normalizeHistoryItem({ ...item, attempt_id: aid }, currentUserId);
+                  resList.push(norm);
+                  foundAttempts.add(aid);
+                }
+              } catch (e) {}
+            } else if (key.startsWith('marlins_review_')) {
+              try {
+                const reviewPayload = JSON.parse(localStorage.getItem(key) || '');
+                const aid = reviewPayload.attempt_id || key.replace('marlins_review_', '');
+                if (aid && !foundAttempts.has(aid)) {
+                  const resData = reviewPayload.result || {
+                    attempt_id: aid,
+                    score: reviewPayload.score || 0,
+                    test_name: reviewPayload.test_name,
+                    test_number: reviewPayload.test_number,
+                    created_at: reviewPayload.completed_at,
+                  };
+                  const norm = normalizeHistoryItem(resData, currentUserId);
+                  resList.push(norm);
+                  foundAttempts.add(aid);
                 }
               } catch (e) {}
             }
+          }
+
+          // Backfill and sync localStorage with normalized array
+          if (resList.length > 0) {
+            try {
+              localStorage.setItem('marlins_history_results', JSON.stringify(resList));
+            } catch (e) {}
           }
         }
 
@@ -98,13 +136,13 @@ export default function StudentHistoryPage() {
 
     function normalizeHistoryItem(item: any, currentUserId: string): StudentResult {
       const aid = item.attempt_id || item.id || `att-${Date.now()}`;
-      const overallScore = item.overall_score !== undefined ? item.overall_score : item.score || 0;
-      const totalScore = item.total_score !== undefined ? item.total_score : item.correct_answers || 0;
+      const overallScore = item.overall_score !== undefined ? item.overall_score : item.score !== undefined ? item.score : 0;
+      const totalScore = item.total_score !== undefined ? item.total_score : item.correct_answers !== undefined ? item.correct_answers : 0;
       const totalQ = item.total_questions || 60;
       const isPassed = item.is_passed !== undefined ? item.is_passed : overallScore >= (item.passing_grade || 70);
       const levelCode =
         item.level ||
-        (overallScore >= 90 ? 'C2' : overallScore >= 80 ? 'C1' : overallScore >= 70 ? 'B2' : overallScore >= 55 ? 'B1+' : 'B1');
+        (overallScore >= 90 ? 'C2' : overallScore >= 80 ? 'C1' : overallScore >= 70 ? 'B2' : overallScore >= 55 ? 'B1+' : overallScore >= 40 ? 'B1' : 'A2');
 
       return {
         id: item.id || `res-${aid}`,
@@ -122,7 +160,7 @@ export default function StudentHistoryPage() {
         start_time: item.start_time || new Date().toISOString(),
         end_time: item.end_time || new Date().toISOString(),
         created_at: item.completed_at || item.created_at || new Date().toISOString(),
-        test_name: item.test_name || 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+        test_name: item.test_name || `Marlins Test #${item.marlint_test_number || item.test_number || 1} - Cruise Hospitality & Maritime English`,
         marlint_test_number: item.test_number || item.marlint_test_number || 1,
         test_mode: item.test_mode || 'standard',
         points_earned: item.points_earned || 50,
@@ -130,7 +168,7 @@ export default function StudentHistoryPage() {
     }
 
     loadHistory();
-  }, [user]);
+  }, [user, profile]);
 
   const totalSessions = results.length;
   const passedSessions = results.filter((r) => r.is_passed).length;

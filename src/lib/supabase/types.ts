@@ -18,6 +18,7 @@ export interface UserProfile {
   nationality: string | null;
   placement_test_taken: boolean;
   placement_test_date: string | null;
+  department_track?: string | null;
   created_at: string;
   updated_at: string;
 }

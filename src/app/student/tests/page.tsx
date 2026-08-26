@@ -54,12 +54,35 @@ export default function StudentTestsCatalogPage() {
           const userIds = [user?.id, profile?.id].filter(Boolean);
           const userEmails = [user?.email, profile?.email].filter(Boolean);
 
+          // 1. Check profile.department_track
+          if (profile?.department_track && profile.department_track.startsWith('[')) {
+            try {
+              const parsed = JSON.parse(profile.department_track);
+              if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
+            } catch (e) {}
+          }
+
+          // 2. Fetch fresh department_track from users table in Supabase
+          try {
+            const { data: uData } = await supabase
+              .from('users')
+              .select('department_track')
+              .or(`id.eq.${user?.id || profile?.id},email.eq.${user?.email || profile?.email}`)
+              .maybeSingle();
+
+            if (uData?.department_track && uData.department_track.startsWith('[')) {
+              const parsed = JSON.parse(uData.department_track);
+              if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
+            }
+          } catch (e) {}
+
+          // 3. Fetch from test_entitlements table
           try {
             if (userIds.length > 0) {
               const { data: entData } = await supabase
                 .from('test_entitlements')
                 .select('test_number, is_active')
-                .in('user_id', userIds)
+                .or(`user_id.in.(${userIds.map((id) => `"${id}"`).join(',')}),user_id.in.(${userEmails.map((em) => `"${em}"`).join(',')})`)
                 .eq('is_active', true);
 
               if (entData) {
@@ -68,6 +91,7 @@ export default function StudentTestsCatalogPage() {
             }
           } catch (e) {}
 
+          // 4. Local storage fallback
           if (typeof window !== 'undefined') {
             const checkKeys = [
               ...userIds.map((id) => `marlins_entitlements_${id}`),

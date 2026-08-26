@@ -55,6 +55,19 @@ const MARLINS_10_TESTS = [
   { number: 10, name: 'Marlins Test #10', subtitle: 'Master & Chief Engineer Proficiency', isFree: false },
 ];
 
+const MARLINT_TEST_UUIDS: Record<number, string> = {
+  1: 'c943bc21-c159-4c8f-9af0-2f8be1582b0f',
+  2: '77e831cf-a3d0-4306-bb32-49dddf130248',
+  3: 'b25d1278-a95a-4719-afa1-831d06a7eb3e',
+  4: 'c1991eb1-d47a-4be1-aeb3-b71e2b9d068a',
+  5: '1edeb04e-3d22-4194-b517-336b9ee75158',
+  6: '7e7d4ff8-c051-4bed-9662-8ea02c2c37a3',
+  7: '518759f3-3a81-47bd-afaf-168a2c3aab90',
+  8: 'c09f9dbb-df21-4e1d-af01-d806c25e0521',
+  9: '62854365-907b-43ad-a3dc-6c19debc0cf6',
+  10: '9e18e110-47bc-4a47-aab3-1eb52a8b635d',
+};
+
 const DEFAULT_STUDENTS: UserProfile[] = [
   {
     id: 'a1c181cd-4d43-49b7-9814-d724ba27ea2e',
@@ -512,17 +525,29 @@ export default function AdminStudentsPage() {
 
       // 2. Load entitlements from Supabase
       const entSet = new Set<number>([1]); // Test 1 free by default
-      const { data: ents } = await supabase
-        .from('test_entitlements')
-        .select('test_number, is_active')
-        .or(`user_id.eq.${st.id},user_id.eq.${st.email}`)
-        .eq('is_active', true);
 
-      if (ents && ents.length > 0) {
-        ents.forEach((e) => entSet.add(e.test_number));
+      // A. Check database department_track JSON
+      if (st.department_track && st.department_track.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(st.department_track);
+          if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
+        } catch (e) {}
       }
 
-      // Check localStorage entitlements
+      // B. Check test_entitlements table
+      try {
+        const { data: ents } = await supabase
+          .from('test_entitlements')
+          .select('test_number, is_active')
+          .or(`user_id.eq.${st.id},user_id.eq.${st.email}`)
+          .eq('is_active', true);
+
+        if (ents && ents.length > 0) {
+          ents.forEach((e) => entSet.add(e.test_number));
+        }
+      } catch (e) {}
+
+      // C. Check localStorage entitlements
       if (typeof window !== 'undefined') {
         const keys = [`marlins_entitlements_${st.id}`, `marlins_entitlements_${st.email?.toLowerCase()}`];
         keys.forEach((k) => {
@@ -551,37 +576,43 @@ export default function AdminStudentsPage() {
     try {
       setUpdatingAccess(true);
       const hasAccess = studentEntitlements.includes(testNumber);
+      const marlintTestId = MARLINT_TEST_UUIDS[testNumber] || 'c943bc21-c159-4c8f-9af0-2f8be1582b0f';
 
       let nextEnts: number[] = [];
       if (hasAccess) {
         // Revoke access
-        await supabase
-          .from('test_entitlements')
-          .update({ is_active: false })
-          .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
-          .eq('test_number', testNumber);
-
         nextEnts = studentEntitlements.filter((t) => t !== testNumber);
+        try {
+          await supabase
+            .from('test_entitlements')
+            .delete()
+            .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
+            .eq('test_number', testNumber);
+        } catch (e) {}
       } else {
         // Grant access
-        await supabase
-          .from('test_entitlements')
-          .upsert(
-            [
-              {
-                user_id: selectedStudent.id,
-                marlint_test_id: `test-${testNumber}`,
-                test_number: testNumber,
-                source: 'super_admin_grant',
-                is_active: true,
-                granted_at: new Date().toISOString(),
-              },
-            ],
-            { onConflict: 'user_id, marlint_test_id' }
-          );
-
         nextEnts = Array.from(new Set([...studentEntitlements, testNumber]));
+        try {
+          await supabase.from('test_entitlements').insert([
+            {
+              user_id: selectedStudent.id,
+              marlint_test_id: marlintTestId,
+              test_number: testNumber,
+              source: 'super_admin_grant',
+              is_active: true,
+              granted_at: new Date().toISOString(),
+            },
+          ]);
+        } catch (e) {}
       }
+
+      // Synchronize directly to users.department_track in Supabase
+      try {
+        await supabase
+          .from('users')
+          .update({ department_track: JSON.stringify(nextEnts) })
+          .or(`id.eq.${selectedStudent.id},email.eq.${selectedStudent.email}`);
+      } catch (e) {}
 
       setStudentEntitlements(nextEnts);
 
@@ -604,18 +635,28 @@ export default function AdminStudentsPage() {
     try {
       setUpdatingAccess(true);
       const allNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-      const records = allNums.map((num) => ({
-        user_id: selectedStudent.id,
-        marlint_test_id: `test-${num}`,
-        test_number: num,
-        source: 'super_admin_grant_all',
-        is_active: true,
-        granted_at: new Date().toISOString(),
-      }));
-
-      await supabase.from('test_entitlements').upsert(records, { onConflict: 'user_id, marlint_test_id' });
       setStudentEntitlements(allNums);
+
+      // 1. Update Supabase users table
+      try {
+        await supabase
+          .from('users')
+          .update({ department_track: JSON.stringify(allNums) })
+          .or(`id.eq.${selectedStudent.id},email.eq.${selectedStudent.email}`);
+      } catch (e) {}
+
+      // 2. Insert into test_entitlements
+      try {
+        const records = allNums.map((num) => ({
+          user_id: selectedStudent.id,
+          marlint_test_id: MARLINT_TEST_UUIDS[num],
+          test_number: num,
+          source: 'super_admin_grant_all',
+          is_active: true,
+          granted_at: new Date().toISOString(),
+        }));
+        await supabase.from('test_entitlements').insert(records);
+      } catch (e) {}
 
       if (typeof window !== 'undefined') {
         localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify(allNums));
@@ -634,13 +675,24 @@ export default function AdminStudentsPage() {
     if (!selectedStudent) return;
     try {
       setUpdatingAccess(true);
-      await supabase
-        .from('test_entitlements')
-        .update({ is_active: false })
-        .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
-        .neq('test_number', 1);
-
       setStudentEntitlements([1]);
+
+      // 1. Update Supabase users table
+      try {
+        await supabase
+          .from('users')
+          .update({ department_track: JSON.stringify([1]) })
+          .or(`id.eq.${selectedStudent.id},email.eq.${selectedStudent.email}`);
+      } catch (e) {}
+
+      // 2. Delete from test_entitlements
+      try {
+        await supabase
+          .from('test_entitlements')
+          .delete()
+          .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
+          .neq('test_number', 1);
+      } catch (e) {}
 
       if (typeof window !== 'undefined') {
         localStorage.setItem(`marlins_entitlements_${selectedStudent.id}`, JSON.stringify([1]));

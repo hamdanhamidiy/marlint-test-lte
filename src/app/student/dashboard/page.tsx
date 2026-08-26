@@ -173,9 +173,32 @@ export default function StudentDashboardPage() {
 
           resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
           setRecentResults(resList.slice(0, 5));
+          const entSet = new Set<number>([1]);
           if (entRes.data) {
-            setEntitlements(new Set(entRes.data.map((e) => e.test_number)));
+            entRes.data.forEach((e) => entSet.add(e.test_number));
           }
+
+          if (profile?.department_track && profile.department_track.startsWith('[')) {
+            try {
+              const arr = JSON.parse(profile.department_track);
+              if (Array.isArray(arr)) arr.forEach((num) => entSet.add(Number(num)));
+            } catch (e) {}
+          }
+
+          if (typeof window !== 'undefined') {
+            const keys = [`marlins_entitlements_${activeId}`, `marlins_entitlements_${activeEmail}`, 'marlins_entitlements_all'];
+            keys.forEach((k) => {
+              const val = localStorage.getItem(k);
+              if (val) {
+                try {
+                  const arr = JSON.parse(val);
+                  if (Array.isArray(arr)) arr.forEach((num) => entSet.add(Number(num)));
+                } catch (e) {}
+              }
+            });
+          }
+
+          setEntitlements(entSet);
         }
 
         const { data: articlesData } = await supabase

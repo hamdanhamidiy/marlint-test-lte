@@ -63,25 +63,54 @@ export default function TestOverviewPage() {
           return;
         }
 
-        let hasAccess = data.is_free || testNumber === 1;
+        let hasAccess = data.is_free || Number(testNumber) === 1;
 
         if (user || profile) {
           const userIds = [user?.id, profile?.id].filter(Boolean);
           const userEmails = [user?.email, profile?.email].filter(Boolean);
+          const currentTestNum = Number(testNumber);
 
+          // 1. Check profile.department_track
+          if (profile?.department_track && profile.department_track.startsWith('[')) {
+            try {
+              const parsed = JSON.parse(profile.department_track);
+              if (Array.isArray(parsed) && parsed.map(Number).includes(currentTestNum)) {
+                hasAccess = true;
+              }
+            } catch (e) {}
+          }
+
+          // 2. Check users table directly in Supabase
+          try {
+            const { data: uData } = await supabase
+              .from('users')
+              .select('department_track')
+              .or(`id.eq.${user?.id || profile?.id},email.eq.${user?.email || profile?.email}`)
+              .maybeSingle();
+
+            if (uData?.department_track && uData.department_track.startsWith('[')) {
+              const parsed = JSON.parse(uData.department_track);
+              if (Array.isArray(parsed) && parsed.map(Number).includes(currentTestNum)) {
+                hasAccess = true;
+              }
+            }
+          } catch (e) {}
+
+          // 3. Check test_entitlements table
           try {
             if (userIds.length > 0) {
               const { data: entData } = await supabase
                 .from('test_entitlements')
                 .select('id, test_number, is_active')
-                .in('user_id', userIds)
-                .eq('test_number', testNumber)
+                .or(`user_id.in.(${userIds.map((id) => `"${id}"`).join(',')}),user_id.in.(${userEmails.map((em) => `"${em}"`).join(',')})`)
+                .eq('test_number', currentTestNum)
                 .eq('is_active', true);
 
               if (entData && entData.length > 0) hasAccess = true;
             }
           } catch (e) {}
 
+          // 4. Check local storage
           if (typeof window !== 'undefined') {
             const checkKeys = [
               ...userIds.map((id) => `marlins_entitlements_${id}`),
@@ -94,7 +123,7 @@ export default function TestOverviewPage() {
               if (localEnt) {
                 try {
                   const arr = JSON.parse(localEnt);
-                  if (Array.isArray(arr) && arr.map(Number).includes(Number(testNumber))) {
+                  if (Array.isArray(arr) && arr.map(Number).includes(currentTestNum)) {
                     hasAccess = true;
                   }
                 } catch (e) {}

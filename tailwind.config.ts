@@ -48,8 +48,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "var(--font-outfit)",
-          "Outfit",
+          "var(--font-jakarta)",
+          "var(--font-inter)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
@@ -59,19 +59,19 @@ const config: Config = {
           "sans-serif"
         ],
         heading: [
-          "var(--font-outfit)",
-          "Outfit",
+          "var(--font-jakarta)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
           "Roboto",
-          "Helvetica Neue",
-          "Arial",
+          "sans-serif"
+        ],
+        body: [
+          "var(--font-inter)",
+          "var(--font-jakarta)",
           "sans-serif"
         ],
         mono: [
-          "var(--font-outfit)",
-          "Outfit",
           "ui-monospace",
           "SFMono-Regular",
           "Menlo",
@@ -82,17 +82,37 @@ const config: Config = {
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "float": "float 3s ease-in-out infinite",
+        "float": "float 4s ease-in-out infinite",
+        "float-subtle": "float-subtle 5s ease-in-out infinite",
+        "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "shimmer": "shimmer 3.5s ease infinite",
+        "glow-pulse-subtle": "glow-pulse-subtle 3.5s ease-in-out infinite",
       },
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
-        }
+        },
+        "float-subtle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-3px)" },
+        },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(18px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        "glow-pulse-subtle": {
+          "0%, 100%": { boxShadow: "0 0 10px rgba(2, 132, 199, 0.15)" },
+          "50%": { boxShadow: "0 0 24px rgba(2, 132, 199, 0.35)" },
+        },
       }
     },
   },
   plugins: [],
 };
 export default config;
-

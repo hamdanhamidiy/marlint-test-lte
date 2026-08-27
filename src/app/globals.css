@@ -4,67 +4,118 @@
 
 @layer base {
   :root {
-    --font-sans: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-heading: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: var(--font-outfit), 'Outfit', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-sans: var(--font-jakarta), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-heading: var(--font-jakarta), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
   *, html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
 
   body {
-    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #0f172a;
+    font-family: var(--font-jakarta), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0F172A;
     background-color: #ffffff;
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.6;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.012em;
   }
 
   h1, h2, h3, h4, h5, h6, .font-heading {
-    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    letter-spacing: -0.028em;
+    font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.03em;
     line-height: 1.15;
-    font-weight: 700;
-    color: #000000;
+    font-weight: 800;
+    color: #090D16;
   }
 
   h1 {
-    letter-spacing: -0.035em;
+    letter-spacing: -0.036em;
     line-height: 1.08;
+    font-weight: 800;
   }
 
   h2 {
-    letter-spacing: -0.028em;
+    letter-spacing: -0.03em;
     line-height: 1.15;
+    font-weight: 800;
   }
 
-  button, input, textarea, select, span, p, a, div {
-    font-family: var(--font-outfit), 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  h3 {
+    letter-spacing: -0.024em;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+
+  h4, h5, h6 {
+    letter-spacing: -0.018em;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  p, span, li, label {
+    letter-spacing: -0.011em;
+  }
+
+  button, input, textarea, select {
+    font-family: var(--font-jakarta), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.01em;
   }
 
   .font-mono {
-    font-family: var(--font-outfit), 'Outfit', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Modern Pill Badges (Inspired by high-end design systems) */
+.badge-pill-numbered {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.badge-pill-numbered:hover {
+  transform: translateY(-1px);
+}
+
+/* Modern Card with Subtle Hover Lift and Oceanic Glow */
+.pro-card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pro-card:hover {
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 12px 30px -10px rgba(2, 132, 199, 0.12), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
 }
 
 /* Light clean subtle grid & dot patterns */
 .bg-grid-pattern {
   background-color: #ffffff;
-  background-size: 24px 24px;
+  background-size: 28px 28px;
   background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
 }
 
 .bg-dot-pattern {
-  background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -87,13 +138,13 @@
   background: #94a3b8;
 }
 
-/* ===== ANIMATIONS ===== */
+/* ===== MODERN ANIMATIONS & KEYFRAMES ===== */
 
-/* Fade In Up — for scroll reveal */
+/* Fade In Up — for smooth scroll reveal */
 @keyframes fade-in-up {
   0% {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
@@ -102,30 +153,30 @@
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-fade-in-up-delay-1 {
-  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  animation: fade-in-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 .animate-fade-in-up-delay-2 {
-  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  animation: fade-in-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 .animate-fade-in-up-delay-3 {
-  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  animation: fade-in-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .animate-fade-in-up-delay-4 {
-  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  animation: fade-in-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 
 /* Scale In */
 @keyframes scale-in {
   0% {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   100% {
     opacity: 1;
@@ -134,10 +185,10 @@
 }
 
 .animate-scale-in {
-  animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: scale-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Gradient Shimmer for heading text */
+/* Smooth Gradient Text Flow */
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -146,17 +197,43 @@
 
 .animate-gradient-text {
   background-size: 200% auto;
-  animation: gradient-shift 4s ease infinite;
+  animation: gradient-shift 5s ease infinite;
 }
 
-/* Subtle glow pulse for badges */
+/* Subtle Shimmer Sheen for Highlights */
+@keyframes text-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #0B192C 0%,
+    #0284C7 25%,
+    #38BDF8 50%,
+    #0284C7 75%,
+    #0B192C 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 6s linear infinite;
+}
+
+/* Subtle Oceanic Glow Pulse */
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(234, 88, 12, 0.15); }
-  50% { box-shadow: 0 0 24px rgba(234, 88, 12, 0.35); }
+  0%, 100% { box-shadow: 0 0 8px rgba(2, 132, 199, 0.15); }
+  50% { box-shadow: 0 0 22px rgba(2, 132, 199, 0.32); }
 }
 
 .animate-glow-pulse {
-  animation: glow-pulse 3s ease-in-out infinite;
+  animation: glow-pulse 3.5s ease-in-out infinite;
 }
 
 /* Wave animation */
@@ -194,12 +271,6 @@
 
 .animate-float {
   animation: float-slow 4s ease-in-out infinite;
-}
-
-/* Dot grid background */
-.bg-dot-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-  background-size: 20px 20px;
 }
 
 /* Print Specific Certificate Styling & Anti-Print Exam Protection */

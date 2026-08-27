@@ -1,12 +1,19 @@
 import type { Metadata } from 'next';
-import { Outfit } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/context/AuthContext';
 
-const outfit = Outfit({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-outfit',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -21,16 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${outfit.variable} ${outfit.className}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className={`${outfit.className} font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-black selection:text-white`}>
+    <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable} scroll-smooth`}>
+      <body className={`${plusJakartaSans.className} font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-[#0284C7] selection:text-white`}>
         <AuthProvider>
           {children}
         </AuthProvider>
@@ -38,3 +37,4 @@ export default function RootLayout({
     </html>
   );
 }
+

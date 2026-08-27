@@ -8,15 +8,17 @@ import {
   ArrowRight,
   Compass,
   Layers,
-  Code2,
   LayoutDashboard,
   Award,
   CheckCircle2,
   FileCheck2,
-  Ship,
   Utensils,
   Hotel,
   QrCode,
+  Clock,
+  Globe2,
+  Check,
+  TrendingUp,
 } from 'lucide-react';
 import PublicNavbar from '@/components/navbar/PublicNavbar';
 import Logo from '@/components/brand/Logo';
@@ -54,6 +56,7 @@ export default function LandingPage() {
 
   // Scroll reveal refs
   const heroReveal = useScrollReveal();
+  const statsReveal = useScrollReveal();
   const dashReveal = useScrollReveal();
   const featuresReveal = useScrollReveal();
   const testsReveal = useScrollReveal();
@@ -80,13 +83,13 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-[#EA580C] selection:text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-[#0284C7] selection:text-white flex flex-col font-sans">
       <PublicNavbar />
 
-      {/* Hero Section - LTE Cruise Hotel & Marine Training Theme */}
-      <section className="relative overflow-hidden pt-16 pb-24 md:pt-28 md:pb-36 bg-white">
+      {/* Hero Section - Formal, Authoritative & Prestigious */}
+      <section className="relative overflow-hidden pt-16 pb-24 md:pt-28 md:pb-36 bg-gradient-to-b from-slate-50/50 via-white to-white">
         {/* Subtle decorative background glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-sky-100/40 via-blue-50/30 to-orange-50/20 blur-[120px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-gradient-to-tr from-sky-200/20 via-blue-100/20 to-teal-100/15 blur-[140px] pointer-events-none rounded-full" />
 
         <div
           ref={heroReveal.ref}
@@ -94,42 +97,42 @@ export default function LandingPage() {
             heroReveal.isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-[13px] font-medium shadow-2xs hover:border-slate-300 transition-colors">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="font-bold text-[#0284C7]">LTE CRUISE TRAINING CENTER</span>
+          {/* Executive Badge Pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200/90 text-slate-800 text-xs sm:text-[13px] font-semibold shadow-xs hover:border-sky-300 transition-all duration-300">
+            <span className="w-2 h-2 rounded-full bg-[#0284C7] animate-ping" />
+            <span className="font-extrabold text-[#0284C7] tracking-wider uppercase">LTE CRUISE TRAINING CENTER</span>
             <span className="text-slate-300">|</span>
-            <span className="text-slate-600 font-semibold">Sekolah Perhotelan & Kapal Pesiar</span>
+            <span className="text-slate-600 font-medium">Hotel & Marine Training Academy</span>
           </div>
 
           {/* Heading */}
           <div className="space-y-6 max-w-4xl mx-auto">
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-[62px] font-extrabold text-black tracking-tight leading-[1.1]">
-              Marlins English Test <br />
-              <span className="bg-gradient-to-r from-black via-[#0369A1] to-[#0284C7] bg-clip-text text-transparent">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-[64px] font-extrabold text-slate-950 tracking-tight leading-[1.08]">
+              Standardized Marlins Test <br />
+              <span className="bg-gradient-to-r from-slate-950 via-[#0369A1] to-[#0284C7] bg-clip-text text-transparent">
                 Perhotelan & Kapal Pesiar
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
-              Platform resmi evaluasi dan asesmen Bahasa Inggris standar Marlins Test untuk siswa sekolah perhotelan & kapal pesiar LTE Cruise Training Center (divisi Food & Beverage, Housekeeping, Culinary, dan Guest Service).
+              Platform resmi asesmen Bahasa Inggris standar Marlins Test untuk peserta didik sekolah perhotelan & calon kru kapal pesiar internasional (Food & Beverage, Housekeeping, Culinary, dan Guest Service).
             </p>
           </div>
 
-          {/* CTA Buttons */}
+          {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               href={user ? (isAdmin ? '/admin/dashboard' : '/student/dashboard') : '/login'}
-              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] shadow-md shadow-sky-500/25 transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]"
+              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-lg shadow-sky-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <LayoutDashboard className="w-4.5 h-4.5 text-slate-200" />
-              <span>{user ? (isAdmin ? 'Buka Portal Pengelolaan' : 'Buka Dashboard Siswa') : 'Mulai Ujian Sekarang'}</span>
-              <ArrowRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-0.5" />
+              <LayoutDashboard className="w-4.5 h-4.5 text-cyan-200" />
+              <span>{user ? (isAdmin ? 'Buka Portal Admin' : 'Buka Dashboard Siswa') : 'Mulai Ujian Sekarang'}</span>
+              <ArrowRight className="w-4.5 h-4.5 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
 
             <Link
               href="/verify"
-              className="flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white hover:bg-sky-50/50 border border-slate-200/90 hover:border-[#0284C7] hover:text-[#0284C7] shadow-2xs transition-all duration-150 hover:scale-[1.02]"
+              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 hover:text-[#0284C7] shadow-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               <QrCode className="w-4.5 h-4.5 text-[#0284C7]" />
               <span>Verifikasi Sertifikat</span>
@@ -137,31 +140,36 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Minimalist Stats Strip */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-3xl bg-white border border-slate-200/80 shadow-2xs text-center">
+        {/* Minimalist Professional Stats Strip */}
+        <div
+          ref={statsReveal.ref}
+          className={`max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 transition-all duration-700 delay-100 ${
+            statsReveal.isVisible ? 'animate-fade-in-up' : 'opacity-0'
+          }`}
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 sm:p-8 rounded-[28px] bg-white border border-slate-200/90 shadow-sm text-center">
             <div className="space-y-1">
-              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-black">10 Paket</span>
-              <p className="text-xs text-slate-500 font-medium">Ujian Standar STCW</p>
+              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950">10 Paket</span>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Standar IMO STCW</p>
             </div>
             <div className="space-y-1 border-l border-slate-100">
-              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-emerald-600">60 Soal</span>
-              <p className="text-xs text-slate-500 font-medium">Evaluasi Stopwatch</p>
+              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-[#0284C7]">60 Soal</span>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Evaluasi Stopwatch</p>
             </div>
             <div className="space-y-1 border-l border-slate-100">
-              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-[#0284C7]">CEFR A1–C1</span>
-              <p className="text-xs text-slate-500 font-medium">Standar Kelulusan</p>
+              <span className="font-heading text-2xl sm:text-3xl font-extrabold text-emerald-600">CEFR A1–C1</span>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Skor Kelulusan</p>
             </div>
             <div className="space-y-1 border-l border-slate-100">
               <span className="font-heading text-2xl sm:text-3xl font-extrabold text-amber-500">100% Valid</span>
-              <p className="text-xs text-slate-500 font-medium">Sertifikat Resmi QR</p>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Sertifikat Resmi QR</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 md:py-28 bg-[#F8F9FA] border-t border-b border-slate-200/80">
+      {/* Features Section - Numbered Badges & Modern Card Hover */}
+      <section id="features" className="py-20 md:py-28 bg-[#F8FAFC] border-t border-b border-slate-200/80">
         <div
           ref={featuresReveal.ref}
           className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 transition-all duration-700 ${
@@ -169,52 +177,88 @@ export default function LandingPage() {
           }`}
         >
           <div className="text-center space-y-4 max-w-2xl mx-auto">
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-black tracking-tight">
-              Fitur Standar Asesmen Marlins Test
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-[#0284C7] text-xs font-bold uppercase tracking-wider">
+              <span>Keunggulan Platform</span>
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
+              Standar Evaluasi Bahasa Internasional
             </h2>
             <p className="text-sm sm:text-base text-slate-600 font-normal">
-              Dirancang khusus untuk melatih kecakapan percakapan dan kepatuhan standar keselamatan kerja di kapal pesiar internasional.
+              Dirancang secara komprehensif untuk melatih kecakapan percakapan maritim, pemahaman instruksi, dan kepatuhan keselamatan kerja di kapal pesiar internasional.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all space-y-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-bold shadow-xs">
-                <Utensils className="w-6 h-6" />
+            <div className="pro-card p-8 space-y-5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <Utensils className="w-5 h-5 text-cyan-300" />
+                  </div>
+                  <span className="text-xs font-bold font-mono tracking-widest text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
+                    01
+                  </span>
+                </div>
+                <h3 className="font-heading text-xl font-extrabold text-slate-950 group-hover:text-[#0284C7] transition-colors duration-200">
+                  Hospitality & Cruise English
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                  Kosakata dan dialog interaktif terapan untuk departemen Food & Beverage, Housekeeping, Culinary, Front Desk, dan layanan tamu internasional.
+                </p>
               </div>
-              <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-[#0284C7] transition-colors">
-                Hospitality & Cruise English
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Kosakata dan dialog interaktif khusus departemen Food & Beverage, Housekeeping, Galley, Front Desk, dan layanan tamu kapal pesiar.
-              </p>
+              <div className="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-[#0284C7]">
+                <Check className="w-4 h-4 text-emerald-500" />
+                <span>Simulasi percakapan nyata di kapal</span>
+              </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all space-y-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white flex items-center justify-center font-bold shadow-xs">
-                <Award className="w-6 h-6" />
+            <div className="pro-card p-8 space-y-5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <Award className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold font-mono tracking-widest text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
+                    02
+                  </span>
+                </div>
+                <h3 className="font-heading text-xl font-extrabold text-slate-950 group-hover:text-[#0284C7] transition-colors duration-200">
+                  Kalkulasi CEFR & Skor Instan
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                  Penilaian otomatis komprehensif setelah selesai ujian dengan pemetaan level CEFR (A1–C1) untuk kelayakan rekrutmen perusahaan kapal pesiar internasional.
+                </p>
               </div>
-              <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-[#0284C7] transition-colors">
-                Kalkulasi CEFR & Skor Instan
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Penilaian otomatis langsung setelah ujian dengan pemetaan level CEFR (A1–C1) untuk kelayakan rekrutmen perusahaan kapal pesiar internasional.
-              </p>
+              <div className="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-[#0284C7]">
+                <Check className="w-4 h-4 text-emerald-500" />
+                <span>Hasil instan dan analisis butir soal</span>
+              </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all space-y-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold shadow-xs">
-                <ShieldCheck className="w-6 h-6" />
+            <div className="pro-card p-8 space-y-5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold font-mono tracking-widest text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
+                    03
+                  </span>
+                </div>
+                <h3 className="font-heading text-xl font-extrabold text-slate-950 group-hover:text-amber-600 transition-colors duration-200">
+                  Sertifikat Resmi Terverifikasi
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                  Sertifikat kelulusan digital resmi LTE Cruise dilengkapi QR Code terenkripsi untuk validasi keaslian oleh agensi pelayaran internasional.
+                </p>
               </div>
-              <h3 className="font-heading text-lg sm:text-xl font-bold text-black group-hover:text-amber-600 transition-colors">
-                Sertifikat Resmi LTE Cruise
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Sertifikat kelulusan digital resmi dengan QR code unik untuk verifikasi keaslian oleh agensi kapal pesiar dan hotel internasional.
-              </p>
+              <div className="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-amber-600">
+                <Check className="w-4 h-4 text-emerald-500" />
+                <span>Terintegrasi dengan sistem verifikasi publik</span>
+              </div>
             </div>
           </div>
         </div>
@@ -228,45 +272,45 @@ export default function LandingPage() {
             dashReveal.isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
-          <div className="bg-[#F8F9FA] rounded-[32px] p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-6">
+          <div className="bg-[#F8FAFC] rounded-[32px] p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/70 pb-6">
               <div>
-                <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider block mb-1">
-                  LTE Cruise Portal
+                <span className="text-[11px] font-extrabold text-[#0284C7] uppercase tracking-wider block mb-1">
+                  PORTAL SISWA TERPADU
                 </span>
-                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-black">
+                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950">
                   Dashboard Siswa & Calon Kru Kapal Pesiar
                 </h2>
               </div>
 
               <Link
                 href="/student/dashboard"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white hover:from-[#0369A1] hover:to-[#075985] transition-all shadow-md shadow-sky-500/25"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white hover:opacity-95 transition-all duration-200 shadow-md shadow-sky-500/20"
               >
                 <span>Buka Dashboard Siswa</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </div>
 
-            {/* Preview Banner - Royal Indigo Gradient */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-7 sm:p-9 text-white shadow-md">
+            {/* Preview Banner */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-8 sm:p-10 text-white shadow-md">
               <div className="relative z-10 max-w-xl space-y-4">
-                <span className="text-[11px] font-bold tracking-widest text-cyan-200 uppercase block">
-                  LTE Cruise • Hotel Marine Training Center
+                <span className="text-[11px] font-extrabold tracking-widest text-cyan-200 uppercase block">
+                  LTE CRUISE • HOTEL & MARINE TRAINING CENTER
                 </span>
                 <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-white leading-tight">
                   Sistem Ujian Marlins Test Resmi
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  Latihan soal interaktif, asah kemampuan mendengarkan instruksi bahasa Inggris di kapal pesiar, dan dapatkan sertifikat resmi.
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
+                  Latihan soal interaktif, asah kemampuan mendengarkan instruksi bahasa Inggris di kapal pesiar, dan dapatkan sertifikat kelulusan standar industri.
                 </p>
                 <div className="pt-2">
                   <Link
                     href="/student/tests"
-                    className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 hover:bg-slate-100 text-xs font-bold shadow-md transition-all hover:scale-105"
+                    className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-950 hover:bg-slate-100 text-xs font-bold shadow-md transition-all duration-200 hover:scale-105"
                   >
                     <span>Mulai Ujian Sekarang</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                 </div>
               </div>
@@ -274,32 +318,32 @@ export default function LandingPage() {
 
             {/* 3 Quick Cards Preview */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-2xs flex items-center gap-3 hover:border-sky-300 transition-all">
-                <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center font-bold">
+              <div className="bg-white rounded-2xl p-4.5 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:border-sky-300 transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center font-bold shrink-0">
                   <Layers className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Listening & Guest Orders</span>
-                  <h4 className="text-xs font-bold text-slate-900">Cruise Communication</h4>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Listening & Orders</span>
+                  <h4 className="text-xs font-bold text-slate-900">Maritime Communication</h4>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-2xs flex items-center gap-3 hover:border-slate-300 transition-all">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#EA580C] flex items-center justify-center font-bold">
+              <div className="bg-white rounded-2xl p-4.5 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:border-sky-300 transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#EA580C] flex items-center justify-center font-bold shrink-0">
                   <Hotel className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Hospitality Standards</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Hospitality Standard</span>
                   <h4 className="text-xs font-bold text-slate-900">F&B & Housekeeping</h4>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-2xs flex items-center gap-3 hover:border-slate-300 transition-all">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <div className="bg-white rounded-2xl p-4.5 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:border-sky-300 transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold shrink-0">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-medium block">Verifikasi QR Code</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Verifikasi QR Code</span>
                   <h4 className="text-xs font-bold text-slate-900">Validitas Sertifikat</h4>
                 </div>
               </div>
@@ -309,7 +353,7 @@ export default function LandingPage() {
       </section>
 
       {/* Test Packages Catalog Preview */}
-      <section className="py-20 md:py-28 bg-[#F8F9FA]">
+      <section id="tests" className="py-20 md:py-28 bg-[#F8FAFC]">
         <div
           ref={testsReveal.ref}
           className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 transition-all duration-700 ${
@@ -318,7 +362,10 @@ export default function LandingPage() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-black tracking-tight">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-[#0284C7] text-xs font-bold uppercase tracking-wider">
+                <span>Katalog Evaluasi</span>
+              </div>
+              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
                 Paket Ujian Marlins Test
               </h2>
               <p className="text-sm sm:text-base text-slate-600 font-normal">
@@ -331,7 +378,7 @@ export default function LandingPage() {
               className="group inline-flex items-center gap-2 text-sm font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors"
             >
               <span>Lihat Semua Paket</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </div>
 
@@ -344,7 +391,7 @@ export default function LandingPage() {
               tests.map((test) => (
                 <div
                   key={test.id}
-                  className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-5 hover:border-sky-300 hover:shadow-md transition-all group"
+                  className="pro-card p-6 flex flex-col justify-between space-y-5 group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -373,10 +420,10 @@ export default function LandingPage() {
 
                     <Link
                       href={`/student/test/${test.test_number}`}
-                      className="group/btn w-full flex items-center justify-center gap-2.5 py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] shadow-md shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                      className="group/btn w-full flex items-center justify-center gap-2.5 py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <span>Mulai Ujian</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
                     </Link>
                   </div>
                 </div>
@@ -388,7 +435,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200/80 bg-white py-10 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs text-slate-500 font-medium">
           <Logo size="sm" showSubtitle={true} subtitleText="Hotel & Marine Training Center" variant="dark" />
           <p>&copy; {new Date().getFullYear()} LTE Cruise - Hotel & Marine Training Center. Marlins Test System.</p>
         </div>

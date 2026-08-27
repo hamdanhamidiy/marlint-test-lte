@@ -11,12 +11,16 @@ import {
   ArrowRight,
   ShieldCheck,
   Unlock,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
+import { useNotifications } from '@/lib/context/NotificationContext';
 
 function RedeemContent() {
   const searchParams = useSearchParams();
-  const { redeemToken } = useAuth();
+  const { redeemToken, user } = useAuth();
+  const { addNotification } = useNotifications();
 
   const [tokenCode, setTokenCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,6 +42,18 @@ function RedeemContent() {
           type: 'success',
           message: res.message || 'Token akses berhasil diaktivasi! Paket ujian Anda telah terbuka.',
         });
+
+        // Trigger Notification
+        addNotification({
+          user_id: user?.id || 'current_user',
+          type: 'token_redeemed',
+          category: 'token',
+          title: `Token Lisensi ${codeToRedeem.trim().toUpperCase()} Berhasil Diaktivasi`,
+          body: res.message || 'Paket ujian resmi Anda telah dibuka dan dapat diakses kapan saja.',
+          action_url: '/student/tests',
+          action_label: 'Buka Paket Ujian',
+        });
+
         setTokenCode('');
       } else {
         setStatus({
@@ -69,10 +85,15 @@ function RedeemContent() {
     executeRedeem(tokenCode);
   };
 
+  const sampleTokens = [
+    { code: 'MLT-SAMPLE-FULL-ACCESS', label: '10 Paket Ujian Penuh' },
+    { code: 'MLT-MARITIME-2026', label: 'Lisensi Siswa 2026' },
+  ];
+
   return (
-    <div className="max-w-[480px] mx-auto space-y-6 font-sans py-4 sm:py-8">
+    <div className="max-w-[490px] mx-auto space-y-6 font-sans py-4 sm:py-8">
       {/* Main Clean Card */}
-      <div className="bg-white p-6 sm:p-8 rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6 relative overflow-hidden text-center">
+      <div className="bg-white p-6 sm:p-8 rounded-[28px] border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 relative overflow-hidden text-center">
         
         {/* Subtle Top Ambient Gradient Line */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
@@ -108,6 +129,26 @@ function RedeemContent() {
             </div>
           </div>
 
+          {/* Preset Sample Voucher Chips */}
+          <div className="space-y-1.5 pt-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
+              Kode Voucher Tersedia
+            </span>
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              {sampleTokens.map((st) => (
+                <button
+                  key={st.code}
+                  type="button"
+                  onClick={() => setTokenCode(st.code)}
+                  className="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[11px] font-mono font-bold text-[#0284C7] transition-all cursor-pointer inline-flex items-center gap-1"
+                  title={`Klik untuk mengisi ${st.label}`}
+                >
+                  <span>{st.code}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Status Feedback Alerts */}
           {status.type === 'success' && (
             <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-2 font-medium animate-in fade-in zoom-in-95 duration-150">
@@ -139,7 +180,7 @@ function RedeemContent() {
           <button
             type="submit"
             disabled={loading || !tokenCode.trim()}
-            className="w-full py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-sky-500/20 hover:scale-[1.01] active:scale-[0.99]"
           >
             {loading ? (
               <>

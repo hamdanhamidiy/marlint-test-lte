@@ -742,6 +742,32 @@ export default function TestTakingPage() {
         historyArr.unshift(clientResult);
         localStorage.setItem(key, JSON.stringify(historyArr));
       });
+
+      // Save notification for completed test
+      try {
+        const notifKey = `marlins_notifications_${studentUserId}`;
+        const existingNotifsStr = localStorage.getItem(notifKey);
+        let notifsArr: any[] = [];
+        if (existingNotifsStr) {
+          try {
+            notifsArr = JSON.parse(existingNotifsStr);
+          } catch (e) {}
+        }
+        const newNotif = {
+          id: `notif-test-${Date.now()}`,
+          user_id: studentUserId,
+          type: 'test_result',
+          category: 'test',
+          title: `Hasil ${attempt.test_name}: ${finalPercentage}% (${isPassed ? 'LULUS' : 'REMEDIAL'})`,
+          body: `Evaluasi Anda telah selesai dengan perolehan skor ${finalPercentage}% (Level ${levelCode}). Klik untuk melihat lembar analisis nilai lengkap.`,
+          is_read: false,
+          created_at: nowIso,
+          action_url: `/student/test/result/${attemptId}`,
+          action_label: 'Lihat Analisis Nilai',
+        };
+        notifsArr = [newNotif, ...notifsArr.filter((n: any) => n.id !== newNotif.id)];
+        localStorage.setItem(notifKey, JSON.stringify(notifsArr));
+      } catch (e) {}
     } catch (e) {
       console.warn('Failed to save result to localStorage:', e);
     }

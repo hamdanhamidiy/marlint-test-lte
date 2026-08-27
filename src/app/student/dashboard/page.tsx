@@ -15,6 +15,8 @@ import {
   Clock,
   Compass,
   CheckCircle,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -178,6 +180,11 @@ export default function StudentDashboardPage() {
 
   const greetingName = getGreetingName();
 
+  const avgScore =
+    recentResults.length > 0
+      ? Math.round(recentResults.reduce((acc, curr) => acc + (curr.score || 0), 0) / recentResults.length)
+      : (profile?.total_points ? Math.min(Math.round((profile.total_points / 800) * 100), 92) : 78);
+
   const defaultSampleRows = [
     {
       id: 'def-1',
@@ -281,8 +288,9 @@ export default function StudentDashboardPage() {
             <div>
               <h2 className="text-base sm:text-lg font-extrabold text-slate-950 tracking-tight flex items-center gap-2">
                 <span>Paket Ujian Marlins</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Ready
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/90 shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>10 Paket Tersedia</span>
                 </span>
               </h2>
               <p className="text-xs text-slate-500 font-normal mt-0.5">
@@ -429,15 +437,25 @@ export default function StudentDashboardPage() {
                       </td>
                       <td className="py-3.5 pr-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-[#0284C7] text-xs">{res.score}%</span>
+                          <span className="font-mono font-black text-slate-900 text-xs">{res.score}%</span>
                           <span
-                            className={`px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-2xs ${
                               res.is_passed
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-rose-100 text-rose-800'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/90'
+                                : 'bg-rose-50 text-rose-700 border border-rose-200/90'
                             }`}
                           >
-                            {res.is_passed ? 'LULUS' : 'REMEDIAL'}
+                            {res.is_passed ? (
+                              <>
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>LULUS</span>
+                              </>
+                            ) : (
+                              <>
+                                <AlertCircle className="w-3 h-3 text-rose-600" />
+                                <span>REMEDIAL</span>
+                              </>
+                            )}
                           </span>
                         </div>
                       </td>
@@ -471,8 +489,11 @@ export default function StudentDashboardPage() {
                           {art.category || 'IMO SMCP'}
                         </span>
                       </td>
-                      <td className="py-3.5 pr-4 text-slate-600 font-medium">
-                        Materi Referensi Siap Baca
+                      <td className="py-3.5 pr-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-sky-50 text-[#0284C7] border border-sky-200/80">
+                          <BookOpen className="w-3 h-3 text-[#0284C7]" />
+                          <span>Modul Terverifikasi</span>
+                        </span>
                       </td>
                       <td className="py-3.5 text-right">
                         <Link
@@ -505,9 +526,20 @@ export default function StudentDashboardPage() {
                         </span>
                       </td>
                       <td className="py-3.5 pr-4">
-                        <span className="font-medium text-slate-700 text-xs">
-                          {row.statusText}
-                        </span>
+                        {row.isPassed ? (
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-black text-slate-900 text-xs">{row.score}%</span>
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/90 shadow-2xs">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>LULUS</span>
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-sky-50 text-[#0284C7] border border-sky-200/80">
+                            <BookOpen className="w-3 h-3" />
+                            <span>{row.statusText}</span>
+                          </span>
+                        )}
                       </td>
                       <td className="py-3.5 text-right">
                         <Link
@@ -531,11 +563,11 @@ export default function StudentDashboardPage() {
               recentResults.map((res) => (
                 <div
                   key={res.id}
-                  className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 shadow-2xs"
+                  className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0">
                         <FileCheck2 className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -546,25 +578,35 @@ export default function StudentDashboardPage() {
                     <span className="font-mono font-black text-slate-900 text-xs shrink-0">{res.score}%</span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-200/70">
+                  <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-200 text-slate-800 uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
                         STANDAR CEFR
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${
                           res.is_passed
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-200 text-slate-700'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
                         }`}
                       >
-                        {res.is_passed ? 'LULUS' : 'REMEDIAL'}
+                        {res.is_passed ? (
+                          <>
+                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                            <span>LULUS</span>
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
+                            <span>REMEDIAL</span>
+                          </>
+                        )}
                       </span>
                     </div>
 
                     <Link
                       href={`/student/test/result/${res.attempt_id || res.id}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 hover:text-black shrink-0"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
                     >
                       <span>Lihat Hasil</span>
                       <ArrowRight className="w-3 h-3" />
@@ -576,11 +618,11 @@ export default function StudentDashboardPage() {
               defaultSampleRows.map((row) => (
                 <div
                   key={row.id}
-                  className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 shadow-2xs"
+                  className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0">
                         <FileCheck2 className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -590,13 +632,13 @@ export default function StudentDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-200/70">
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-200 text-slate-800 uppercase tracking-wider">
+                  <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
+                    <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-700 uppercase tracking-wider">
                       {row.type}
                     </span>
                     <Link
                       href={row.href}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 hover:text-black shrink-0"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
                     >
                       <span>Buka</span>
                       <ArrowRight className="w-3 h-3" />
@@ -611,7 +653,7 @@ export default function StudentDashboardPage() {
       </div>
 
       {/* Right Sidebar Widgets Panel */}
-      <RightStatsPanel />
+      <RightStatsPanel scoreAverage={avgScore} totalTestsCompleted={recentResults.length} />
     </div>
   );
 }

@@ -373,18 +373,18 @@ export default function AdminInstructorsPage() {
   const activeCount = instructors.filter((i) => i.status === 'active').length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16 min-w-0">
+    <div className="space-y-6 sm:space-y-7 max-w-7xl mx-auto font-sans pb-16 min-w-0">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black text-white text-[11px] font-bold shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Super Administrator Control</span>
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200/80 text-xs font-semibold text-[#0284C7] shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
+            <span className="font-bold text-[#0369A1]">Super Administrator Control</span>
           </div>
           <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-tight">
             Manajemen Instruktur & Penguji
           </h1>
-          <p className="text-xs sm:text-[14px] text-slate-500 font-normal leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed max-w-2xl">
             Kelola data staf pengajar perhotelan & kapal pesiar di LTE Cruise Training Center, nomor sertifikasi penguji IMO 6.09, dan hak akses pengelolaan soal.
           </p>
         </div>
@@ -392,84 +392,84 @@ export default function AdminInstructorsPage() {
         <button
           type="button"
           onClick={handleOpenAddModal}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-[13px] font-bold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer w-full sm:w-auto"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white text-xs sm:text-[13px] font-bold shadow-md shadow-sky-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer w-full sm:w-auto"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-cyan-200" />
           <span>Tambah Instruktur Baru</span>
         </button>
       </div>
 
-      {/* Top Metric Cards - Executive Modern Palette */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Card 1: Total Instruktur (Signature Black Card) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-black text-white shadow-sm flex flex-col justify-between space-y-2">
+      {/* Top Metric Cards - Oceanic Blue Modern Palette */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
+        {/* Card 1: Total Instruktur */}
+        <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between min-h-[135px] group">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
               Total Pengajar
             </span>
-            <span className="p-1.5 rounded-lg bg-white/10 text-white">
-              <Users className="w-3.5 h-3.5" />
-            </span>
+            <div className="w-9 h-9 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center border border-sky-100/80 group-hover:scale-110 transition-transform">
+              <Users className="w-4 h-4" />
+            </div>
           </div>
           <div>
-            <p className="font-heading text-2xl sm:text-3xl font-black text-white">{totalCount}</p>
-            <span className="text-[11px] text-slate-400 font-medium">Staf Pengajar Terdaftar</span>
+            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950 leading-tight">{totalCount}</p>
+            <span className="text-xs text-slate-500 font-medium mt-1 block">Staf Pengajar Terdaftar</span>
           </div>
         </div>
 
         {/* Card 2: Instruktur Aktif */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between min-h-[135px] group">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
               Status Aktif
             </span>
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />
           </div>
           <div>
-            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950">{activeCount}</p>
-            <span className="text-[11px] text-emerald-700 font-bold">Memiliki Hak Kelola Soal</span>
+            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950 leading-tight">{activeCount}</p>
+            <span className="text-xs text-emerald-700 font-bold mt-1 block">Memiliki Hak Kelola Soal</span>
           </div>
         </div>
 
         {/* Card 3: F&B & Hospitality */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between min-h-[135px] group">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
               F&B & Service
             </span>
-            <span className="p-1.5 rounded-lg bg-slate-100 text-slate-700">
-              <Utensils className="w-3.5 h-3.5" />
-            </span>
+            <div className="w-9 h-9 rounded-2xl bg-blue-50 text-[#0369A1] flex items-center justify-center border border-blue-100/80 group-hover:scale-110 transition-transform">
+              <Utensils className="w-4 h-4" />
+            </div>
           </div>
           <div>
-            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950">
+            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950 leading-tight">
               {instructors.filter((i) => i.specialization === 'fb' || i.specialization === 'frontoffice' || i.specialization === 'general').length}
             </p>
-            <span className="text-[11px] text-slate-500 font-medium">Penguji Cruise Line</span>
+            <span className="text-xs text-slate-500 font-medium mt-1 block">Penguji Cruise Line</span>
           </div>
         </div>
 
         {/* Card 4: Culinary & Rooms */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between min-h-[135px] group">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
               Culinary & Rooms
             </span>
-            <span className="p-1.5 rounded-lg bg-slate-100 text-slate-700">
-              <Briefcase className="w-3.5 h-3.5" />
-            </span>
+            <div className="w-9 h-9 rounded-2xl bg-cyan-50 text-[#0284C7] flex items-center justify-center border border-cyan-100/80 group-hover:scale-110 transition-transform">
+              <Briefcase className="w-4 h-4" />
+            </div>
           </div>
           <div>
-            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950">
+            <p className="font-heading text-2xl sm:text-3xl font-black text-slate-950 leading-tight">
               {instructors.filter((i) => i.specialization === 'culinary' || i.specialization === 'housekeeping').length}
             </p>
-            <span className="text-[11px] text-slate-500 font-medium">Divisi Operasional Hotel</span>
+            <span className="text-xs text-slate-500 font-medium mt-1 block">Divisi Operasional Hotel</span>
           </div>
         </div>
       </div>
 
-      {/* Filter & Search Bar - Clean Monochromatic Design */}
-      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Filter & Search Bar - Oceanic Clean Design */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-[24px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
@@ -477,16 +477,18 @@ export default function AdminInstructorsPage() {
             placeholder="Cari nama pengajar, email, no. sertifikasi..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-black font-medium transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 font-medium transition-all"
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-[#F1F3F5] p-1 rounded-full text-xs font-bold text-slate-600 shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
+        <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-full text-xs font-bold text-slate-600 shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
-              statusFilter === 'all' ? 'bg-black text-white shadow-xs' : 'hover:text-black'
+            className={`px-4 py-2 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'all'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                : 'hover:text-[#0284C7]'
             }`}
           >
             Semua ({totalCount})
@@ -494,8 +496,10 @@ export default function AdminInstructorsPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('active')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
-              statusFilter === 'active' ? 'bg-slate-900 text-white shadow-xs' : 'hover:text-black'
+            className={`px-4 py-2 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'active'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                : 'hover:text-[#0284C7]'
             }`}
           >
             Aktif ({activeCount})
@@ -503,8 +507,10 @@ export default function AdminInstructorsPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('inactive')}
-            className={`px-4 py-1.5 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
-              statusFilter === 'inactive' ? 'bg-slate-800 text-white shadow-xs' : 'hover:text-black'
+            className={`px-4 py-2 rounded-full transition-all cursor-pointer text-center flex-1 sm:flex-initial ${
+              statusFilter === 'inactive'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                : 'hover:text-[#0284C7]'
             }`}
           >
             Nonaktif ({totalCount - activeCount})
@@ -514,15 +520,15 @@ export default function AdminInstructorsPage() {
 
       {/* Instructors List Grid */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-400 text-xs shadow-2xs space-y-2">
-          <div className="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center mx-auto animate-pulse">
-            <Users className="w-4 h-4" />
+        <div className="p-12 text-center bg-white border border-slate-200/80 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2.5">
+          <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100 animate-pulse">
+            <Users className="w-5 h-5" />
           </div>
-          <p className="font-semibold text-slate-700">Memuat direktori staf pengajar...</p>
+          <p className="font-bold text-slate-700">Memuat direktori staf pengajar...</p>
         </div>
       ) : filteredInstructors.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+        <div className="p-12 text-center bg-white border border-slate-200/80 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
             <Users className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -533,54 +539,54 @@ export default function AdminInstructorsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredInstructors.map((inst) => (
             <div
               key={inst.id || inst.email}
-              className={`bg-white p-5 rounded-2xl border transition-all duration-150 flex flex-col justify-between space-y-4 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black hover:shadow-md ${
+              className={`bg-white p-5 sm:p-6 rounded-[28px] border transition-all duration-200 flex flex-col justify-between space-y-4 shadow-xs hover:border-sky-300 hover:shadow-md group ${
                 inst.status === 'inactive'
-                  ? 'border-slate-200 bg-slate-50/70 opacity-70'
-                  : 'border-slate-200/90'
+                  ? 'border-slate-200 bg-slate-50/70 opacity-75'
+                  : 'border-slate-200/80'
               }`}
             >
               {/* Card Header: Role Badge & Active Toggle */}
               <div className="flex items-center justify-between gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-black text-white">
+                <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-sky-50 text-[#0284C7] border border-sky-200/80">
                   Penguji Marlins
                 </span>
 
                 <button
                   type="button"
                   onClick={() => handleToggleStatus(inst.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     inst.status === 'active'
-                      ? 'bg-slate-900 text-white hover:bg-black'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                   }`}
                   title="Klik untuk ubah status"
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${inst.status === 'active' ? 'bg-emerald-400' : 'bg-slate-400'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${inst.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                   <span>{inst.status === 'active' ? 'Aktif' : 'Nonaktif'}</span>
                 </button>
               </div>
 
               {/* Identity & Details */}
-              <div className="space-y-2">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-950 text-white font-heading font-black text-sm flex items-center justify-center shrink-0">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white font-heading font-black text-sm flex items-center justify-center shrink-0 shadow-sm">
                     {inst.full_name.charAt(0)}
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h3 className="font-heading text-[15px] sm:text-base font-extrabold text-slate-950 leading-snug break-words">
+                    <h3 className="font-heading text-base font-extrabold text-slate-950 leading-snug break-words">
                       {inst.full_name}
                     </h3>
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed truncate">
+                    <p className="text-xs text-[#0284C7] font-semibold leading-relaxed truncate">
                       {inst.job_title || 'Instruktur Perhotelan & Kapal Pesiar'}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-2 space-y-1 text-xs text-slate-600 font-medium border-t border-slate-100">
+                <div className="pt-3 space-y-1.5 text-xs text-slate-600 font-medium border-t border-slate-100">
                   <div className="flex items-center gap-2 truncate">
                     <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span className="truncate">{inst.email}</span>
@@ -592,22 +598,24 @@ export default function AdminInstructorsPage() {
                     </div>
                   )}
                   {inst.certificate_number && (
-                    <div className="flex items-center gap-2 text-slate-900 font-semibold text-[11px] pt-0.5">
-                      <Award className="w-3.5 h-3.5 text-black shrink-0" />
-                      <span className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded-md">{inst.certificate_number}</span>
+                    <div className="flex items-center gap-2 text-slate-900 font-semibold text-xs pt-0.5">
+                      <Award className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
+                      <span className="font-mono text-[11px] bg-sky-50 text-[#0369A1] px-2 py-0.5 rounded-lg border border-sky-100">
+                        {inst.certificate_number}
+                      </span>
                     </div>
                   )}
                 </div>
 
                 {inst.about && (
-                  <p className="text-[11px] text-slate-500 bg-[#F8FAFC] p-2.5 rounded-xl border border-slate-100 leading-relaxed italic line-clamp-2">
+                  <p className="text-xs text-slate-500 bg-slate-50/80 p-3 rounded-2xl border border-slate-100 leading-relaxed italic line-clamp-2">
                     "{inst.about}"
                   </p>
                 )}
               </div>
 
               {/* Bottom Actions */}
-              <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span className="text-[11px] text-slate-400 font-medium">
                   {formatDateIndo(inst.created_at)}
                 </span>
@@ -616,7 +624,7 @@ export default function AdminInstructorsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenEditModal(inst)}
-                    className="p-1.5 rounded-full bg-slate-100 hover:bg-black hover:text-white text-slate-700 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-sky-50 hover:text-[#0284C7] text-slate-700 transition-colors cursor-pointer"
                     title="Edit Pengajar"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
@@ -624,7 +632,7 @@ export default function AdminInstructorsPage() {
                   <button
                     type="button"
                     onClick={() => handleDeleteInstructor(inst)}
-                    className="p-1.5 rounded-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors cursor-pointer"
                     title="Hapus Pengajar"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -636,13 +644,13 @@ export default function AdminInstructorsPage() {
         </div>
       )}
 
-      {/* Add / Edit Instructor Modal - Executive Clean Style */}
+      {/* Add / Edit Instructor Modal - Oceanic Clean Style */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-lg w-full p-6 sm:p-7 rounded-[28px] border border-slate-200 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-lg w-full p-6 sm:p-7 rounded-[32px] border border-slate-200 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
-                <span className="text-[10px] font-extrabold text-black uppercase tracking-wider block">
+                <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
                   {modalMode === 'add' ? 'Registrasi Pengajar Baru' : 'Perbarui Data Pengajar'}
                 </span>
                 <h3 className="font-heading text-lg font-bold text-slate-950">
@@ -652,7 +660,7 @@ export default function AdminInstructorsPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-black cursor-pointer"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -673,7 +681,7 @@ export default function AdminInstructorsPage() {
                   placeholder="Contoh: Capt. Hendra Wijaya, M.Mar"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none font-medium"
                 />
               </div>
 
@@ -687,7 +695,7 @@ export default function AdminInstructorsPage() {
                     placeholder="pengajar@marlins.com"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium disabled:bg-slate-100 disabled:text-slate-400"
+                    className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none font-medium disabled:bg-slate-100 disabled:text-slate-400"
                   />
                 </div>
 
@@ -698,7 +706,7 @@ export default function AdminInstructorsPage() {
                     placeholder="08123456789"
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none font-medium"
                   />
                 </div>
               </div>
@@ -711,7 +719,7 @@ export default function AdminInstructorsPage() {
                     placeholder="Lead Instructor & Assessor"
                     value={formJobTitle}
                     onChange={(e) => setFormJobTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none font-medium"
                   />
                 </div>
 
@@ -722,7 +730,7 @@ export default function AdminInstructorsPage() {
                     placeholder="IMO-6.09-ID-2026-001"
                     value={formCertNumber}
                     onChange={(e) => setFormCertNumber(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none font-medium"
                   />
                 </div>
               </div>
@@ -732,7 +740,7 @@ export default function AdminInstructorsPage() {
                 <select
                   value={formStatus}
                   onChange={(e) => setFormStatus(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-black outline-none cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none cursor-pointer"
                 >
                   <option value="active">Aktif (Memiliki Hak Kelola Soal)</option>
                   <option value="inactive">Nonaktif (Akses Ditangguhkan)</option>
@@ -746,21 +754,21 @@ export default function AdminInstructorsPage() {
                   placeholder="Pengalaman mengajar bahasa Inggris perhotelan kapal pesiar..."
                   value={formAbout}
                   onChange={(e) => setFormAbout(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-black outline-none resize-none font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 outline-none resize-none font-medium"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-full font-bold text-xs text-white bg-black hover:bg-neutral-800 shadow-xs transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-full font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] shadow-md shadow-sky-500/20 hover:opacity-95 transition-all cursor-pointer"
                 >
                   {modalMode === 'add' ? 'Simpan Pengajar' : 'Simpan Perubahan'}
                 </button>

@@ -357,14 +357,14 @@ export default function AdminQuestionsPage() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-12 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-7 min-w-0 font-sans pb-16 max-w-7xl mx-auto">
       {/* Top Header & Add Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
-            <span className="font-bold text-slate-900">Bank Soal Standar IMO STCW & SMCP</span>
-            <span className="text-slate-300">•</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200/80 text-xs font-semibold text-[#0284C7] shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse shrink-0"></span>
+            <span className="font-bold text-[#0369A1]">Bank Soal Standar IMO STCW & SMCP</span>
+            <span className="text-sky-300">•</span>
             <span className="text-slate-500 font-medium">Evaluation Repository</span>
           </div>
 
@@ -372,7 +372,7 @@ export default function AdminQuestionsPage() {
             Kelola Bank Soal Maritim
           </h1>
 
-          <p className="text-xs sm:text-[14px] text-slate-500 font-normal max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
             Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, kelola status, dan uji interaktif secara realtime.
           </p>
         </div>
@@ -380,9 +380,9 @@ export default function AdminQuestionsPage() {
         <button
           type="button"
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-[13px] text-white bg-black hover:bg-neutral-800 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-[13px] text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] shadow-md shadow-sky-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-cyan-200" />
           <span>Tambah Soal Baru</span>
         </button>
       </div>
@@ -411,13 +411,13 @@ export default function AdminQuestionsPage() {
             }}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
               selectedTestNum === tab.val
-                ? 'bg-black text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-black border border-slate-200/90 hover:bg-slate-50'
+                ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] border border-slate-200/90 hover:bg-sky-50/40'
             }`}
           >
             <span>{tab.label}</span>
             <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] ${
-              selectedTestNum === tab.val ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+              selectedTestNum === tab.val ? 'bg-white/20 text-white font-bold' : 'bg-slate-100 text-slate-600'
             }`}>
               {tab.count}
             </span>
@@ -426,7 +426,7 @@ export default function AdminQuestionsPage() {
       </div>
 
       {/* Modern Clean Filter Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-[24px] border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3.5">
+      <div className="bg-white p-4 sm:p-5 rounded-[28px] border border-slate-200/80 shadow-xs space-y-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3.5 items-center">
           {/* Search Input */}
           <div className="relative lg:col-span-6">
@@ -436,7 +436,7 @@ export default function AdminQuestionsPage() {
               placeholder="Cari kata kunci soal, kunci jawaban, atau opsi..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/20 font-medium transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs sm:text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 font-medium transition-all"
             />
           </div>
 
@@ -445,7 +445,7 @@ export default function AdminQuestionsPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-slate-200/90 text-xs sm:text-[13px] text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
+              className="w-full px-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs sm:text-[13px] text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 transition-all cursor-pointer"
             >
               <option value="all">Semua Kategori</option>
               <option value="grammar">Grammar</option>
@@ -462,7 +462,7 @@ export default function AdminQuestionsPage() {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] transition-all cursor-pointer"
+              className="w-full px-4 py-2.5 rounded-full bg-slate-50/80 border border-slate-200/90 text-xs sm:text-[13px] text-slate-800 font-bold outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100 transition-all cursor-pointer"
             >
               <option value="all">Semua Tipe Soal</option>
               <option value="multiple_choice">Multiple Choice</option>
@@ -498,17 +498,17 @@ export default function AdminQuestionsPage() {
         </div>
       </div>
 
-      {/* Questions Cards List with Generous Gap */}
+      {/* Questions Cards List */}
       {loading ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-400 text-xs shadow-2xs space-y-2">
-          <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
-            <HelpCircle className="w-4 h-4" />
+        <div className="p-12 text-center bg-white border border-slate-200/80 rounded-[28px] text-slate-400 text-xs shadow-2xs space-y-2.5">
+          <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse border border-sky-100">
+            <HelpCircle className="w-5 h-5" />
           </div>
-          <p className="font-semibold text-slate-700">Memuat bank soal dari database Supabase...</p>
+          <p className="font-bold text-slate-700">Memuat bank soal dari database Supabase...</p>
         </div>
       ) : questions.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-3xl text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+        <div className="p-12 text-center bg-white border border-slate-200/80 rounded-[28px] text-slate-500 text-sm shadow-2xs space-y-3 max-w-md mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
             <FileQuestion className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -519,7 +519,7 @@ export default function AdminQuestionsPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {paginatedQuestions.map((q, idx) => {
             const catInfo = getCategoryInfo(q.category);
             const questionNumber = (currentPage - 1) * itemsPerPage + idx + 1;
@@ -527,38 +527,38 @@ export default function AdminQuestionsPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white p-4 sm:p-5 rounded-2xl border transition-all duration-200 ease-out hover:border-slate-300 hover:shadow-xs ${
+                className={`bg-white p-5 sm:p-6 rounded-[28px] border transition-all duration-200 ease-out hover:border-sky-300 hover:shadow-md group ${
                   q.is_active === false
                     ? 'border-slate-200 bg-slate-50/70 opacity-60'
-                    : 'border-slate-200/90 shadow-[0_1px_6px_rgba(0,0,0,0.02)]'
+                    : 'border-slate-200/80 shadow-xs'
                 }`}
               >
                 {/* Header Row: Number + Badges + Actions Toolbar */}
-                <div className="flex items-center justify-between gap-3 flex-wrap pb-2.5 border-b border-slate-100">
+                <div className="flex items-center justify-between gap-3 flex-wrap pb-3 border-b border-slate-100">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-800 text-[11px] font-black flex items-center justify-center shrink-0">
+                    <span className="w-7 h-7 rounded-xl bg-sky-50 text-[#0284C7] text-xs font-black flex items-center justify-center shrink-0 border border-sky-100">
                       {questionNumber}
                     </span>
 
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}
                     >
                       {catInfo.name}
                     </span>
 
                     {q.marlint_test_number && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369A1] text-[11px] font-bold border border-sky-200/80">
+                      <span className="px-3 py-1 rounded-full bg-sky-50 text-[#0369A1] text-xs font-bold border border-sky-200/80">
                         Paket #{q.marlint_test_number}
                       </span>
                     )}
 
-                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[11px] text-slate-600 font-medium hidden sm:inline-block">
+                    <span className="px-2.5 py-1 rounded-full bg-slate-100 text-xs text-slate-600 font-medium hidden sm:inline-block">
                       {formatQuestionTypeName(q.question_type)}
                     </span>
 
                     {q.audio_url && (
-                      <span className="flex items-center gap-1 text-[11px] text-[#C2410C] font-bold bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
-                        <Headphones className="w-3 h-3 text-[#EA580C]" /> Audio
+                      <span className="flex items-center gap-1 text-xs text-sky-700 font-bold bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
+                        <Headphones className="w-3.5 h-3.5 text-[#0284C7]" /> Audio
                       </span>
                     )}
                   </div>
@@ -568,10 +568,10 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => handleToggleActive(q)}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         q.is_active !== false
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 border border-slate-200'
                       }`}
                       title="Ubah Status Aktif"
                     >
@@ -582,37 +582,37 @@ export default function AdminQuestionsPage() {
                     <button
                       type="button"
                       onClick={() => setPreviewQuestion(q)}
-                      className="p-1.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-all cursor-pointer flex items-center gap-1"
+                      className="p-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50 transition-all cursor-pointer flex items-center gap-1.5"
                       title="Preview Soal"
                     >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline text-[11px]">Preview</span>
+                      <Eye className="w-4 h-4 text-slate-500 group-hover:text-[#0284C7]" />
+                      <span className="hidden sm:inline text-xs">Preview</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(q)}
-                      className="p-1.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1"
+                      className="p-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#0284C7] hover:bg-sky-50 transition-all cursor-pointer flex items-center gap-1.5"
                       title="Edit Soal"
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline text-[11px]">Edit</span>
+                      <Edit2 className="w-4 h-4 text-slate-500 group-hover:text-[#0284C7]" />
+                      <span className="hidden sm:inline text-xs">Edit</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setDeleteConfirmId(q.id)}
-                      className="p-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+                      className="p-2 rounded-xl text-xs font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-all cursor-pointer"
                       title="Hapus Soal"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
                 {/* Question Text */}
-                <div className="py-1">
-                  <p className="text-sm sm:text-[15px] font-bold text-slate-900 leading-relaxed break-words">
+                <div className="py-2">
+                  <p className="text-sm sm:text-base font-bold text-slate-900 leading-relaxed break-words">
                     {q.question_text}
                   </p>
                 </div>
@@ -620,13 +620,13 @@ export default function AdminQuestionsPage() {
                 {/* Answer Key Row */}
                 <div className="pt-2 flex items-center justify-between gap-3 text-xs flex-wrap">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-bold text-slate-400">Kunci:</span>
-                    <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/80 text-xs truncate max-w-lg">
+                    <span className="text-xs font-bold text-slate-400">Kunci:</span>
+                    <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/80 text-xs truncate max-w-lg">
                       {q.correct_answer || '-'}
                     </span>
                   </div>
 
-                  <span className="text-[11px] font-semibold text-slate-400">
+                  <span className="text-xs font-semibold text-slate-400">
                     Level {q.level || 'A1'}
                   </span>
                 </div>
@@ -639,7 +639,7 @@ export default function AdminQuestionsPage() {
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between gap-4 pt-2">
-          <p className="text-xs sm:text-[13px] text-slate-500 font-medium">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium">
             Menampilkan <strong className="text-slate-900 font-bold">{Math.min((currentPage - 1) * itemsPerPage + 1, questions.length)}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * itemsPerPage, questions.length)}</strong> dari <strong className="text-slate-900 font-bold">{questions.length}</strong> butir soal
           </p>
 
@@ -648,18 +648,18 @@ export default function AdminQuestionsPage() {
               type="button"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
+              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-sky-50 hover:text-[#0284C7] disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-xs sm:text-[13px] font-bold text-slate-800 px-2">
+            <span className="text-xs sm:text-sm font-bold text-slate-800 px-2">
               Halaman {currentPage} dari {totalPages}
             </span>
             <button
               type="button"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
+              className="p-2.5 rounded-full border border-slate-200/90 bg-white text-slate-700 hover:bg-sky-50 hover:text-[#0284C7] disabled:opacity-40 disabled:pointer-events-none transition-all shadow-2xs cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -670,7 +670,7 @@ export default function AdminQuestionsPage() {
       {/* Modal: Delete Confirmation */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-sm w-full p-6 sm:p-7 rounded-3xl border border-slate-200/90 space-y-4 shadow-2xl text-center">
+          <div className="bg-white max-w-sm w-full p-6 sm:p-7 rounded-[32px] border border-slate-200/90 space-y-4 shadow-2xl text-center">
             <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200">
               <AlertTriangle className="w-7 h-7" />
             </div>
@@ -706,11 +706,16 @@ export default function AdminQuestionsPage() {
       {/* Modal: Create / Edit Question */}
       {modalMode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-200/90 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-[32px] border border-slate-200 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
-              <h3 className="font-heading text-lg font-bold text-slate-950">
-                {modalMode === 'create' ? 'Tambah Butir Soal Baru' : 'Edit Butir Soal'}
-              </h3>
+              <div>
+                <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
+                  {modalMode === 'create' ? 'Modul Soal Baru' : 'Perbarui Butir Soal'}
+                </span>
+                <h3 className="font-heading text-lg font-bold text-slate-950">
+                  {modalMode === 'create' ? 'Tambah Butir Soal Baru' : 'Edit Butir Soal'}
+                </h3>
+              </div>
               <button
                 type="button"
                 onClick={() => setModalMode(null)}
@@ -727,13 +732,18 @@ export default function AdminQuestionsPage() {
                   <select
                     value={formData.marlint_test_number}
                     onChange={(e) => setFormData({ ...formData, marlint_test_number: Number(e.target.value) })}
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   >
                     <option value={1}>Marlins Test 1</option>
                     <option value={2}>Marlins Test 2</option>
                     <option value={3}>Marlins Test 3</option>
                     <option value={4}>Marlins Test 4</option>
                     <option value={5}>Marlins Test 5</option>
+                    <option value={6}>Marlins Test 6</option>
+                    <option value={7}>Marlins Test 7</option>
+                    <option value={8}>Marlins Test 8</option>
+                    <option value={9}>Marlins Test 9</option>
+                    <option value={10}>Marlins Test 10</option>
                   </select>
                 </div>
 
@@ -742,7 +752,7 @@ export default function AdminQuestionsPage() {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as QuestionCategory })}
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   >
                     <option value="grammar">Grammar</option>
                     <option value="vocabulary">Vocabulary</option>
@@ -758,7 +768,7 @@ export default function AdminQuestionsPage() {
                   <select
                     value={formData.question_type}
                     onChange={(e) => setFormData({ ...formData, question_type: e.target.value as QuestionType })}
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-bold outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   >
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="gap_fill">Gap Fill</option>
@@ -779,7 +789,7 @@ export default function AdminQuestionsPage() {
                   value={formData.question_text}
                   onChange={(e) => setFormData({ ...formData, question_text: e.target.value })}
                   placeholder="Ketik teks pertanyaan atau instruksi soal maritim..."
-                  className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7]"
+                  className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                 />
               </div>
 
@@ -792,7 +802,7 @@ export default function AdminQuestionsPage() {
                   value={formData.optionsRaw}
                   onChange={(e) => setFormData({ ...formData, optionsRaw: e.target.value })}
                   placeholder="Opsi A&#10;Opsi B&#10;Opsi C&#10;Opsi D"
-                  className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium font-mono outline-none focus:bg-white focus:border-[#0284C7]"
+                  className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium font-mono outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                 />
               </div>
 
@@ -805,7 +815,7 @@ export default function AdminQuestionsPage() {
                     value={formData.correct_answer}
                     onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })}
                     placeholder="Contoh: Option A atau kata kunci"
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
 
@@ -816,7 +826,7 @@ export default function AdminQuestionsPage() {
                     value={formData.audio_url}
                     onChange={(e) => setFormData({ ...formData, audio_url: e.target.value })}
                     placeholder="https://.../audio.mp3"
-                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
               </div>
@@ -828,14 +838,14 @@ export default function AdminQuestionsPage() {
                   value={formData.explanation}
                   onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
                   placeholder="Ringkasan inti pembahasan..."
-                  className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7]"
+                  className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                 />
               </div>
 
               {/* Deep Explanation & Distractor Analysis Section */}
               <div className="p-4 sm:p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-3.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-lg bg-sky-100 text-[#0284C7] flex items-center justify-center">
                     <Sparkles className="w-3.5 h-3.5" />
                   </div>
                   <h4 className="font-heading text-xs font-bold text-slate-900 uppercase tracking-wider">
@@ -850,7 +860,7 @@ export default function AdminQuestionsPage() {
                     value={formData.why_correct}
                     onChange={(e) => setFormData({ ...formData, why_correct: e.target.value })}
                     placeholder="Jelaskan alasan gramatikal / teknis mengapa opsi ini benar..."
-                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
 
@@ -863,7 +873,7 @@ export default function AdminQuestionsPage() {
                     value={formData.distractor_reasons_raw}
                     onChange={(e) => setFormData({ ...formData, distractor_reasons_raw: e.target.value })}
                     placeholder="Opsi B : Salah karena bentuk past tense tidak sesuai&#10;Opsi C : Salah karena subjek tunggal..."
-                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-mono text-[11px] outline-none focus:border-[#0284C7]"
+                    className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-mono text-[11px] outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
 
@@ -875,7 +885,7 @@ export default function AdminQuestionsPage() {
                       value={formData.rule_or_formula}
                       onChange={(e) => setFormData({ ...formData, rule_or_formula: e.target.value })}
                       placeholder="Contoh: Subject + Verb-1 (s/es)"
-                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                     />
                   </div>
 
@@ -886,7 +896,7 @@ export default function AdminQuestionsPage() {
                       value={formData.maritime_context}
                       onChange={(e) => setFormData({ ...formData, maritime_context: e.target.value })}
                       placeholder="Contoh: Prosedur evakuasi SOLAS / Komunikasi radio VHF"
-                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7]"
+                      className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-medium outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-sky-100"
                     />
                   </div>
                 </div>
@@ -898,18 +908,18 @@ export default function AdminQuestionsPage() {
                 </p>
               )}
 
-              <div className="flex items-center gap-3 pt-2">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="flex-1 py-2.5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 cursor-pointer"
+                  className="px-4 py-2.5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white font-bold text-xs shadow-md shadow-sky-500/20 hover:opacity-95 transition-all cursor-pointer"
                 >
                   {saving ? 'Menyimpan...' : 'Simpan Butir Soal'}
                 </button>
@@ -922,7 +932,7 @@ export default function AdminQuestionsPage() {
       {/* Modal: Interactive Preview */}
       {previewQuestion && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-3xl border border-slate-200/90 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-[32px] border border-slate-200 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div>
                 <span className="text-xs font-bold text-[#0284C7] uppercase tracking-wider">

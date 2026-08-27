@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/context/AuthContext';
 
@@ -7,13 +7,6 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-jakarta',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -28,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable} scroll-smooth`}>
+    <html lang="id" className={`${plusJakartaSans.variable} ${plusJakartaSans.className} scroll-smooth`}>
       <body className={`${plusJakartaSans.className} font-sans antialiased min-h-screen bg-white text-slate-900 selection:bg-[#0284C7] selection:text-white`}>
         <AuthProvider>
           {children}
@@ -37,4 +30,3 @@ export default function RootLayout({
     </html>
   );
 }
-

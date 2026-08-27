@@ -73,45 +73,7 @@
   }
 }
 
-/* ==========================================================================
-   SILKY SMOOTH HOVER TRANSITIONS (Universal Physics-based Easing)
-   ========================================================================== */
-
-/* Universal smooth transition for all interactive components */
-a,
-button,
-input,
-select,
-textarea,
-[role="button"],
-.pro-card,
-.badge-pill-numbered,
-nav a,
-aside a,
-table tbody tr {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 280ms;
-}
-
-/* Hardware-accelerated transforms for 60/120fps crisp animations */
-button,
-a,
-.pro-card,
-.badge-pill-numbered {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Spring-like interactive active click feedback */
-button:active,
-a:active,
-[role="button"]:active {
-  transform: scale(0.975) translateZ(0);
-  transition-duration: 100ms;
-}
-
-/* Modern Pill Badges with Smooth Hover Glow */
+/* Modern Pill Badges */
 .badge-pill-numbered {
   display: inline-flex;
   align-items: center;
@@ -122,39 +84,25 @@ a:active,
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .badge-pill-numbered:hover {
-  transform: translateY(-1.5px) scale(1.02);
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+  transform: translateY(-1px);
 }
 
-/* Modern Card with Buttery Smooth Hover Lift and Oceanic Glow */
+/* Modern Card with Subtle Hover Lift and Oceanic Glow */
 .pro-card {
   background: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.85);
   border-radius: 1.5rem;
-  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pro-card:hover {
-  border-color: rgba(2, 132, 199, 0.45);
-  box-shadow: 0 16px 36px -10px rgba(2, 132, 199, 0.16),
-              0 4px 14px -4px rgba(15, 23, 42, 0.05);
-  transform: translateY(-3px);
-}
-
-/* Smooth Focus Rings for All Form Inputs */
-input,
-textarea,
-select {
-  transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 12px 30px -10px rgba(2, 132, 199, 0.12), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
 }
 
 /* Light clean subtle grid & dot patterns */
@@ -184,7 +132,6 @@ select {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
-  transition: background 0.25s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {

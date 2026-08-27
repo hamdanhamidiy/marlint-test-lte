@@ -115,18 +115,18 @@ export default function StudentLevelPage() {
               return (
                 <div
                   key={lvl.code}
-                  className={`p-4 sm:p-5 rounded-[24px] border transition-all duration-300 ease-out flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                  className={`p-4 sm:p-5 rounded-[24px] border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                     isCurrent
-                      ? 'border-[#0284C7] bg-sky-50/60 shadow-md ring-2 ring-[#0284C7]/25 hover:-translate-y-1 hover:shadow-lg hover:shadow-sky-500/15'
-                      : 'border-slate-100 hover:border-sky-300/80 hover:bg-sky-50/30 hover:shadow-md hover:-translate-y-1 bg-white shadow-2xs'
+                      ? 'border-[#0284C7] bg-sky-50/50 shadow-xs ring-2 ring-[#0284C7]/20'
+                      : 'border-slate-100 hover:border-slate-200 bg-white shadow-2xs'
                   }`}
                 >
                   <div className="flex items-start sm:items-center gap-3.5">
                     <div
-                      className={`w-11 h-11 rounded-2xl font-mono text-sm font-extrabold flex items-center justify-center shrink-0 shadow-2xs transition-transform duration-300 ${
+                      className={`w-11 h-11 rounded-2xl font-mono text-sm font-extrabold flex items-center justify-center shrink-0 shadow-2xs ${
                         isCurrent
                           ? 'bg-[#0284C7] text-white shadow-sky-500/25 scale-105'
-                          : 'bg-slate-100 text-slate-700 group-hover:scale-105'
+                          : 'bg-slate-100 text-slate-700'
                       }`}
                     >
                       {lvl.code}
@@ -136,7 +136,7 @@ export default function StudentLevelPage() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-heading text-sm font-extrabold text-slate-900">{lvl.name}</h3>
                         {isCurrent && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#0284C7] text-white text-[9px] font-bold uppercase tracking-wider shadow-2xs">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#0284C7] text-white text-[9px] font-bold uppercase tracking-wider">
                             Level Anda
                           </span>
                         )}
@@ -152,7 +152,7 @@ export default function StudentLevelPage() {
                     </div>
 
                     {isCurrent && (
-                      <div className="w-8 h-8 rounded-full bg-sky-100 text-[#0284C7] flex items-center justify-center shadow-xs">
+                      <div className="w-8 h-8 rounded-full bg-sky-100 text-[#0284C7] flex items-center justify-center">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                     )}

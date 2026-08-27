@@ -85,16 +85,6 @@ const config: Config = {
           "monospace"
         ],
       },
-      transitionTimingFunction: {
-        'smooth': 'cubic-bezier(0.16, 1, 0.3, 1)',
-        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'soft': 'cubic-bezier(0.25, 0.1, 0.25, 1)',
-      },
-      transitionDuration: {
-        '250': '250ms',
-        '350': '350ms',
-        '400': '400ms',
-      },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "float": "float 4s ease-in-out infinite",

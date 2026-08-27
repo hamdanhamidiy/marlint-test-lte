@@ -123,16 +123,16 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               href={user ? (isAdmin ? '/admin/dashboard' : '/student/dashboard') : '/login'}
-              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-lg shadow-sky-500/25 transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-xl hover:shadow-sky-500/30 active:scale-[0.97]"
+              className="group flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-lg shadow-sky-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <LayoutDashboard className="w-4.5 h-4.5 text-cyan-200 group-hover:rotate-6 transition-transform duration-300" />
+              <LayoutDashboard className="w-4.5 h-4.5 text-cyan-200" />
               <span>{user ? (isAdmin ? 'Buka Portal Admin' : 'Buka Dashboard Siswa') : 'Mulai Ujian Sekarang'}</span>
-              <ArrowRight className="w-4.5 h-4.5 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight className="w-4.5 h-4.5 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
 
             <Link
               href="/verify"
-              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white hover:bg-sky-50/50 border border-slate-200/90 hover:border-sky-300 hover:text-[#0284C7] shadow-xs transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-md active:scale-[0.97]"
+              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 hover:text-[#0284C7] shadow-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               <QrCode className="w-4.5 h-4.5 text-[#0284C7]" />
               <span>Verifikasi Sertifikat</span>
@@ -391,11 +391,11 @@ export default function LandingPage() {
               tests.map((test) => (
                 <div
                   key={test.id}
-                  className="pro-card p-6 flex flex-col justify-between space-y-5 group hover:border-sky-400 hover:shadow-2xl hover:shadow-sky-500/15 hover:-translate-y-1.5 transition-all duration-300 ease-out"
+                  className="pro-card p-6 flex flex-col justify-between space-y-5 group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 text-xs font-mono font-bold group-hover:bg-sky-100 transition-colors duration-300">
+                      <span className="px-3 py-1 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 text-xs font-mono font-bold">
                         Tes #{test.test_number}
                       </span>
                       <span className="text-xs font-extrabold text-emerald-700">
@@ -403,7 +403,7 @@ export default function LandingPage() {
                       </span>
                     </div>
 
-                    <h3 className="font-heading text-lg font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors duration-200">
+                    <h3 className="font-heading text-lg font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors">
                       {test.test_name}
                     </h3>
                     <p className="text-xs text-slate-500 line-clamp-3 font-normal leading-relaxed">
@@ -420,10 +420,10 @@ export default function LandingPage() {
 
                     <Link
                       href={`/student/test/${test.test_number}`}
-                      className="group/btn w-full flex items-center justify-center gap-2.5 py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98]"
+                      className="group/btn w-full flex items-center justify-center gap-2.5 py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <span>Mulai Ujian</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
                     </Link>
                   </div>
                 </div>

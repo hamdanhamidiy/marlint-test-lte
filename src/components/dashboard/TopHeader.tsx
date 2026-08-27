@@ -75,7 +75,7 @@ export default function TopHeader({
         {/* Token Voucher Shortcut Button (Ocean Blue Gradient) */}
         <Link
           href="/student/redeem"
-          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 transition-all duration-300 shadow-md shadow-sky-500/20 hover:scale-[1.03] active:scale-[0.97]"
+          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] transition-all duration-200 shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
         >
           <KeyRound className="w-3.5 h-3.5 text-amber-300" />
           <span>Klaim Token</span>
@@ -84,7 +84,7 @@ export default function TopHeader({
         {/* Learning Materials Button */}
         <Link
           href="/student/articles"
-          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/80 hover:scale-105 active:scale-95 transition-all duration-300 shadow-xs relative"
+          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/80 hover:scale-105 active:scale-95 transition-all shadow-xs relative"
           title="Materi SMCP"
         >
           <BookOpen className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function TopHeader({
         {/* Notification Bell Button */}
         <button
           type="button"
-          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-amber-600 hover:bg-amber-50/70 hover:scale-105 active:scale-95 transition-all duration-300 shadow-xs relative cursor-pointer"
+          className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-amber-600 hover:bg-amber-50/70 hover:scale-105 active:scale-95 transition-all shadow-xs relative cursor-pointer"
           title="Notifikasi"
         >
           <Bell className="w-4 h-4" />
@@ -106,10 +106,10 @@ export default function TopHeader({
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 sm:pr-3.5 rounded-full bg-white hover:bg-sky-50/60 border border-slate-200/90 text-slate-800 transition-all duration-300 shadow-xs cursor-pointer hover:border-sky-300 hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 sm:pr-3.5 rounded-full bg-white hover:bg-sky-50/40 border border-slate-200/90 text-slate-800 transition-all duration-200 shadow-xs cursor-pointer hover:border-sky-300 hover:scale-[1.01]"
           >
             {/* Avatar with Vibrant Gradient Ring */}
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-amber-500 p-0.5 shadow-xs transition-transform duration-300 hover:rotate-6">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-amber-500 p-0.5 shadow-xs">
               <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-xs font-bold text-slate-800 overflow-hidden">
                 {profile?.photo_url ? (
                   <img
@@ -132,12 +132,12 @@ export default function TopHeader({
               </p>
             </div>
 
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform duration-300" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {/* Profile Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl p-2 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 z-50">
+            <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl p-2 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-100 z-50">
               <div className="px-3 py-2 border-b border-slate-100">
                 <p className="text-xs font-bold text-slate-900 truncate">{displayName}</p>
                 <p className="text-[11px] text-[#0284C7] font-semibold truncate">

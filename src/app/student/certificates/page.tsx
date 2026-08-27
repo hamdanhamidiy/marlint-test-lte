@@ -170,14 +170,14 @@ export default function StudentCertificatesPage() {
           {certificates.map((cert) => (
             <div
               key={cert.id}
-              className="bg-white rounded-[26px] border border-slate-200/90 p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-4 group relative overflow-hidden"
+              className="bg-white rounded-[26px] border border-slate-200/90 p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-2xl hover:shadow-sky-500/10 hover:border-sky-300 hover:-translate-y-1.5 transition-all duration-300 ease-out flex flex-col justify-between space-y-4 group relative overflow-hidden"
             >
               {/* Top Accent Line */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] to-emerald-500 opacity-90" />
 
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shadow-2xs">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shadow-2xs group-hover:scale-105 transition-transform duration-300">
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                     <span>LULUS ({cert.grade || 'Merit'})</span>
                   </span>
@@ -188,7 +188,7 @@ export default function StudentCertificatesPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-base leading-snug group-hover:text-[#0284C7] transition-colors line-clamp-1">
+                  <h3 className="font-heading font-bold text-slate-900 text-base leading-snug group-hover:text-[#0284C7] transition-colors duration-200 line-clamp-1">
                     {cert.test_name}
                   </h3>
                   <p className="font-mono text-xs text-slate-500 mt-1">
@@ -197,7 +197,7 @@ export default function StudentCertificatesPage() {
                 </div>
 
                 {/* Score & Completion Meta Box */}
-                <div className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 flex items-center justify-between text-xs">
+                <div className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 flex items-center justify-between text-xs group-hover:bg-sky-50/40 group-hover:border-sky-100 transition-all duration-300">
                   <div>
                     <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Skor Kelulusan:</span>
                     <span className="font-mono font-extrabold text-[#0284C7] text-lg">{cert.score}%</span>
@@ -219,10 +219,10 @@ export default function StudentCertificatesPage() {
 
                 <Link
                   href={`/student/certificates/${cert.id}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white text-xs font-bold transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 text-white text-xs font-bold transition-all duration-300 ease-out shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Lihat e-Sertifikat</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </div>
             </div>

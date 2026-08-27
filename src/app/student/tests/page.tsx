@@ -179,10 +179,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'all'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             Semua ({tests.length})
@@ -190,10 +190,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('free')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'free'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             Gratis
@@ -201,10 +201,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('unlocked')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'unlocked'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             Terbuka
@@ -212,10 +212,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('fb')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'fb'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             F&B Service & Bar
@@ -223,10 +223,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('housekeeping')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'housekeeping'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             Housekeeping & Laundry
@@ -234,10 +234,10 @@ export default function StudentTestsCatalogPage() {
           <button
             type="button"
             onClick={() => setActiveFilter('culinary')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ease-out shrink-0 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
               activeFilter === 'culinary'
                 ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20'
-                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/60 border border-slate-200/90'
+                : 'bg-white text-slate-600 hover:text-[#0284C7] hover:bg-sky-50/70 border border-slate-200/90 hover:border-sky-200'
             }`}
           >
             Culinary & Galley
@@ -280,15 +280,15 @@ export default function StudentTestsCatalogPage() {
                 key={test.id}
                 className={`bg-white rounded-[26px] p-5 sm:p-6 border transition-all duration-300 ease-out flex flex-col justify-between h-full group relative overflow-hidden ${
                   isTest1
-                    ? 'border-sky-300/80 shadow-[0_4px_20px_rgba(2,132,199,0.08)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
-                    : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-slate-400 hover:-translate-y-1'
+                    ? 'border-sky-300/90 shadow-[0_4px_20px_rgba(2,132,199,0.08)] hover:shadow-2xl hover:shadow-sky-500/15 hover:border-[#0284C7] hover:-translate-y-1.5'
+                    : 'border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-2xl hover:shadow-sky-500/10 hover:border-sky-300 hover:-translate-y-1.5'
                 }`}
               >
                 {/* Top Header Row */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight ${
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-tight transition-colors duration-300 ${
                         isTest1 ? 'bg-sky-50 text-[#0284C7] border border-sky-100' : 'bg-slate-100 text-slate-700'
                       }`}>
                         Paket #{test.test_number}
@@ -299,12 +299,12 @@ export default function StudentTestsCatalogPage() {
                     </div>
 
                     {hasAccess ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200/80 shrink-0 shadow-2xs">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200/80 shrink-0 shadow-2xs group-hover:scale-105 transition-transform duration-300">
                         <Unlock className="w-3 h-3 text-emerald-600" />
                         <span>{test.is_free ? 'Gratis' : 'Akses Terbuka'}</span>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shrink-0 shadow-2xs">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] text-[11px] font-bold border border-orange-200 shrink-0 shadow-2xs group-hover:scale-105 transition-transform duration-300">
                         <Lock className="w-3 h-3 text-[#EA580C]" />
                         <span>{formatPriceIDR(test.price)}</span>
                       </span>
@@ -313,8 +313,8 @@ export default function StudentTestsCatalogPage() {
 
                   {/* Title & Description */}
                   <div className="space-y-1">
-                    <h3 className={`font-heading text-base font-bold text-slate-900 transition-colors leading-snug line-clamp-1 ${
-                      isTest1 ? 'group-hover:text-[#0284C7]' : 'group-hover:text-[#EA580C]'
+                    <h3 className={`font-heading text-base font-bold text-slate-900 transition-colors duration-200 leading-snug line-clamp-1 ${
+                      isTest1 ? 'group-hover:text-[#0284C7]' : 'group-hover:text-[#0284C7]'
                     }`}>
                       {formattedTestName}
                     </h3>
@@ -327,7 +327,7 @@ export default function StudentTestsCatalogPage() {
                 {/* Details Row (Specs) & CTA Button */}
                 <div className="pt-4 mt-4 border-t border-slate-100 space-y-3.5">
                   {/* Inline specs with clean typography */}
-                  <div className="grid grid-cols-3 gap-1.5 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center">
+                  <div className="grid grid-cols-3 gap-1.5 py-2 px-2.5 rounded-2xl bg-slate-50/90 border border-slate-100/90 text-center group-hover:bg-sky-50/40 group-hover:border-sky-100 transition-all duration-300">
                     <div className="flex flex-col items-center justify-center">
                       <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Waktu</span>
                       <span className="text-xs font-extrabold text-amber-600 mt-0.5">Stopwatch</span>
@@ -345,14 +345,14 @@ export default function StudentTestsCatalogPage() {
                   {/* Action Button */}
                   <Link
                     href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                    className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
+                    className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold transition-all duration-300 ease-out cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] ${
                       hasAccess
-                        ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white shadow-sky-500/25'
+                        ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 text-white shadow-sky-500/25'
                         : 'bg-gradient-to-r from-[#0B192C] via-[#1E293B] to-[#0B192C] hover:from-[#0369A1] hover:to-[#0284C7] text-white border border-slate-700/30'
                     }`}
                   >
                     <span>{hasAccess ? 'Mulai Ujian Sekarang' : `Beli Akses (${formatPriceIDR(test.price)})`}</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </div>
               </div>

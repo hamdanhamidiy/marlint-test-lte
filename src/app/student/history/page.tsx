@@ -236,8 +236,8 @@ export default function StudentHistoryPage() {
 
       {/* 4 Clean Minimalist Metric Cards - Responsive (2-column on mobile, 4-column on desktop) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        {/* Card 1: Total Sesi (Ocean True Blue Gradient Card) */}
-        <div className="bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white p-3.5 sm:p-5 rounded-2xl shadow-md shadow-sky-500/15 flex flex-col justify-between space-y-1 sm:space-y-2">
+        {/* Card 1: Total Sesi */}
+        <div className="bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white p-3.5 sm:p-5 rounded-2xl shadow-md shadow-sky-500/15 hover:shadow-xl hover:shadow-sky-500/25 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-200">
               Total Sesi
@@ -258,7 +258,7 @@ export default function StudentHistoryPage() {
         </div>
 
         {/* Card 2: Rata-Rata Skor */}
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-sky-300/80 hover:shadow-lg hover:shadow-sky-500/10 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Rata-Rata Skor
@@ -279,7 +279,7 @@ export default function StudentHistoryPage() {
         </div>
 
         {/* Card 3: Tingkat Kelulusan */}
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-emerald-300/80 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Tingkat Kelulusan
@@ -298,7 +298,7 @@ export default function StudentHistoryPage() {
         </div>
 
         {/* Card 4: Poin Kemahiran */}
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-1 sm:space-y-2">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-amber-300/80 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Poin Kemahiran
@@ -333,7 +333,7 @@ export default function StudentHistoryPage() {
             <p className="font-medium text-slate-700">Belum ada riwayat ujian yang sesuai dengan filter ini.</p>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs transition-all cursor-pointer shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs transition-all duration-300 ease-out cursor-pointer shadow-md shadow-sky-500/20 hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Mulai Ujian Sekarang</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -343,7 +343,7 @@ export default function StudentHistoryPage() {
           filteredResults.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:border-sky-300 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
             >
               {/* Left Score Block & Test Details */}
               <div className="flex items-center gap-3.5 sm:gap-4.5 min-w-0">

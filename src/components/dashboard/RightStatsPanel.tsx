@@ -61,10 +61,10 @@ export default function RightStatsPanel({
                 >
                   {/* Tooltip on hover */}
                   <span
-                    className={`transition-all duration-150 absolute -top-5 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow-xs pointer-events-none z-20 ${
+                    className={`transition-all duration-300 ease-out absolute -top-5 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow-xs pointer-events-none z-20 ${
                       isHovered
-                        ? 'opacity-100 -translate-y-0.5 bg-slate-950 text-white'
-                        : 'opacity-0 bg-slate-950 text-white'
+                        ? 'opacity-100 -translate-y-1 bg-slate-950 text-white scale-105'
+                        : 'opacity-0 bg-slate-950 text-white translate-y-0'
                     }`}
                   >
                     {bar.value}%
@@ -72,8 +72,8 @@ export default function RightStatsPanel({
 
                   {/* Animated colored bar */}
                   <div
-                    className={`w-full max-w-[22px] rounded-t-md bg-gradient-to-t transition-all duration-300 ${bar.color} ${
-                      isHovered ? 'scale-105 shadow-sm' : 'opacity-90'
+                    className={`w-full max-w-[22px] rounded-t-md bg-gradient-to-t transition-all duration-300 ease-out ${bar.color} ${
+                      isHovered ? 'scale-110 shadow-md brightness-110 -translate-y-0.5' : 'opacity-90'
                     }`}
                     style={{ height: `${bar.value}%` }}
                   />
@@ -88,7 +88,7 @@ export default function RightStatsPanel({
           {chartBars.map((bar, idx) => (
             <span
               key={idx}
-              className={`text-center flex-1 transition-colors ${
+              className={`text-center flex-1 transition-colors duration-250 ${
                 bar.isKey ? 'font-extrabold text-slate-900' : 'font-medium text-slate-500'
               }`}
             >
@@ -99,20 +99,20 @@ export default function RightStatsPanel({
       </div>
 
       {/* Status Sertifikasi STCW 2010 */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3 shadow-xs">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3 shadow-xs hover:border-sky-300/80 hover:shadow-md transition-all duration-300 ease-out">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-extrabold text-slate-950 uppercase tracking-wider">
             Status Sertifikasi
           </h3>
           <Link
             href="/student/certificates"
-            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1]"
+            className="text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors duration-200"
           >
             Sertifikat Saya ➔
           </Link>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2 hover:bg-sky-50/40 hover:border-sky-200/60 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs">
@@ -136,13 +136,13 @@ export default function RightStatsPanel({
 
         <Link
           href="/student/level"
-          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl border border-slate-200/90 hover:bg-sky-50/50 hover:border-sky-300 transition-all text-xs font-bold text-slate-800 shadow-2xs group"
+          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200/90 hover:bg-sky-50/60 hover:border-sky-300 hover:shadow-xs transition-all duration-300 ease-out text-xs font-bold text-slate-800 shadow-2xs group hover:scale-[1.01] active:scale-[0.98]"
         >
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
-            <span className="group-hover:text-[#0284C7] transition-colors">Matriks Jenjang CEFR Maritim</span>
+            <span className="group-hover:text-[#0284C7] transition-colors duration-200">Matriks Jenjang CEFR Maritim</span>
           </div>
-          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-all" />
+          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0284C7] group-hover:translate-x-1 transition-all duration-200" />
         </Link>
       </div>
     </aside>

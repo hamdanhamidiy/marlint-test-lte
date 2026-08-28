@@ -962,7 +962,7 @@ export default function TestTakingPage() {
           {/* Right: Stopwatch, Navigator Button & Exit */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Stopwatch Time */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm font-bold shadow-2xs">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
@@ -976,7 +976,7 @@ export default function TestTakingPage() {
             >
               <Grid className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Daftar Soal</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-[#0284C7] text-white text-[10px] font-mono shadow-2xs">
+              <span className="px-1.5 py-0.2 rounded-full bg-[#0284C7] text-white text-[10px] font-bold shadow-2xs">
                 {answeredCount}/{totalQuestionsCount}
               </span>
             </button>
@@ -1004,7 +1004,7 @@ export default function TestTakingPage() {
             {/* Question Header: Number Pill, Category Pill & Flag Toggle */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide font-mono shadow-2xs">
+                <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide shadow-2xs">
                   SOAL {currentIndex + 1}
                 </span>
 
@@ -1138,7 +1138,7 @@ export default function TestTakingPage() {
             </button>
 
             {/* Question Progress Indicator */}
-            <div className="text-center font-mono">
+            <div className="text-center">
               <span className="text-xs sm:text-sm font-bold text-slate-900 block">
                 Soal {currentIndex + 1} / {totalQuestionsCount}
               </span>
@@ -1182,7 +1182,7 @@ export default function TestTakingPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  Daftar Soal ({totalQuestionsCount} Butir)
+                  Daftar Soal ({totalQuestionsCount} Soal)
                 </h3>
                 <p className="text-xs text-slate-500 font-normal">
                   Pilih nomor soal untuk langsung menuju soal tersebut.
@@ -1201,15 +1201,15 @@ export default function TestTakingPage() {
             <div className="grid grid-cols-3 gap-2.5 py-1">
               <div className="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 text-center transition-all">
                 <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Terjawab</span>
-                <span className="font-mono text-base font-extrabold text-emerald-900">{answeredCount}</span>
+                <span className="text-base font-extrabold text-emerald-900">{answeredCount}</span>
               </div>
               <div className="p-2.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-center transition-all">
                 <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Ragu-Ragu</span>
-                <span className="font-mono text-base font-extrabold text-amber-900">{flaggedCount}</span>
+                <span className="text-base font-extrabold text-amber-900">{flaggedCount}</span>
               </div>
               <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center transition-all">
                 <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Belum</span>
-                <span className="font-mono text-base font-extrabold text-slate-800">{unansweredCount}</span>
+                <span className="text-base font-extrabold text-slate-800">{unansweredCount}</span>
               </div>
             </div>
 
@@ -1231,7 +1231,7 @@ export default function TestTakingPage() {
                       setCurrentIndex(idx);
                       setNavigatorModalOpen(false);
                     }}
-                    className={`h-9 sm:h-10 rounded-xl font-mono text-xs font-extrabold transition-all duration-200 cursor-pointer relative flex items-center justify-center ${
+                    className={`h-9 sm:h-10 rounded-xl text-xs font-extrabold transition-all duration-200 cursor-pointer relative flex items-center justify-center ${
                       isCurrent
                         ? 'ring-2 ring-[#0284C7] ring-offset-2 bg-[#0284C7] text-white shadow-sm scale-105 z-10'
                         : isFlagged
@@ -1292,7 +1292,7 @@ export default function TestTakingPage() {
                 Selesaikan Ujian Sekarang?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800 font-bold">{totalQuestionsCount}</strong> butir soal.
+                Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800 font-bold">{totalQuestionsCount}</strong> soal.
                 {unansweredCount > 0 && (
                   <span className="block text-amber-800 font-bold mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-left">
                     ⚠️ Masih ada {unansweredCount} soal yang belum Anda isi!

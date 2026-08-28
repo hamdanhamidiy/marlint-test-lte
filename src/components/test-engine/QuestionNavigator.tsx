@@ -47,7 +47,7 @@ export default function QuestionNavigator({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[#0284C7] text-[11px] font-bold font-mono">
+          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[#0284C7] text-[11px] font-bold">
             {answeredCount}/{totalQuestions} ({percentCompleted}%)
           </span>
 
@@ -92,7 +92,7 @@ export default function QuestionNavigator({
                     onSelect(index);
                     // optionally collapse on mobile selection
                   }}
-                  className={`relative aspect-square rounded-lg sm:rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                  className={`relative aspect-square rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
                     isCurrent
                       ? 'bg-[#0284C7] text-white shadow-sm ring-2 ring-[#0284C7] ring-offset-1 font-extrabold z-10'
                       : isFlagged

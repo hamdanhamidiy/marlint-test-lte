@@ -110,7 +110,7 @@ export default function DragDropLabelQuestion({
                 }`}
               >
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">
                     Target #{zone.id}
                   </span>
                   <p className="text-xs sm:text-sm font-semibold text-slate-800">

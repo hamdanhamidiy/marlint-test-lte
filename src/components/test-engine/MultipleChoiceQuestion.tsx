@@ -40,7 +40,7 @@ export default function MultipleChoiceQuestion({
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1 pr-2">
               <span
-                className={`w-8 h-8 rounded-xl font-mono text-xs font-black flex items-center justify-center transition-all duration-200 shrink-0 ${
+                className={`w-8 h-8 rounded-xl text-xs font-black flex items-center justify-center transition-all duration-200 shrink-0 ${
                   isSelected
                     ? 'bg-[#0284C7] text-white shadow-xs shadow-sky-500/25 scale-105'
                     : 'bg-slate-100 text-slate-700 group-hover:bg-sky-100 group-hover:text-[#0284C7]'

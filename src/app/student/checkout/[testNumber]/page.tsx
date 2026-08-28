@@ -489,7 +489,7 @@ export default function CheckoutPage() {
                 {formattedTestName}
               </h3>
               <p className="text-xs text-slate-500 font-normal">
-                Standar Asesmen IMO STCW & SMCP (60 Butir Soal Evaluasi)
+                Standar Asesmen IMO STCW & SMCP (60 Soal Evaluasi)
               </p>
             </div>
 

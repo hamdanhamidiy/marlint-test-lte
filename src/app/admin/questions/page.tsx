@@ -373,7 +373,7 @@ export default function AdminQuestionsPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> butir pertanyaan aktif. Tambah, edit, kelola status, dan uji interaktif secara realtime.
+            Total <strong className="text-slate-900 font-bold">{allQuestions.length}</strong> pertanyaan aktif. Tambah, edit, kelola status, dan uji interaktif secara realtime.
           </p>
         </div>
 
@@ -480,7 +480,7 @@ export default function AdminQuestionsPage() {
         <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-2 px-1 border-t border-slate-100">
           <span>
             Menampilkan <strong className="text-slate-900 font-bold">{paginatedQuestions.length}</strong> dari{' '}
-            <strong className="text-slate-900 font-bold">{questions.length}</strong> butir soal terfilter
+            <strong className="text-slate-900 font-bold">{questions.length}</strong> soal terfilter
           </span>
           {(search || selectedCategory !== 'all' || selectedType !== 'all' || selectedTestNum !== 'all') && (
             <button
@@ -640,7 +640,7 @@ export default function AdminQuestionsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between gap-4 pt-2">
           <p className="text-xs sm:text-sm text-slate-500 font-medium">
-            Menampilkan <strong className="text-slate-900 font-bold">{Math.min((currentPage - 1) * itemsPerPage + 1, questions.length)}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * itemsPerPage, questions.length)}</strong> dari <strong className="text-slate-900 font-bold">{questions.length}</strong> butir soal
+            Menampilkan <strong className="text-slate-900 font-bold">{Math.min((currentPage - 1) * itemsPerPage + 1, questions.length)}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * itemsPerPage, questions.length)}</strong> dari <strong className="text-slate-900 font-bold">{questions.length}</strong> soal
           </p>
 
           <div className="flex items-center gap-2">
@@ -676,7 +676,7 @@ export default function AdminQuestionsPage() {
             </div>
             <div className="space-y-1">
               <h3 className="font-heading text-base font-bold text-slate-950">
-                Hapus Butir Soal Ini?
+                Hapus Soal Ini?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Soal ini akan dihapus secara permanen dari bank soal database dan tidak dapat dipulihkan.
@@ -710,10 +710,10 @@ export default function AdminQuestionsPage() {
             <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-extrabold text-[#0284C7] uppercase tracking-wider block">
-                  {modalMode === 'create' ? 'Modul Soal Baru' : 'Perbarui Butir Soal'}
+                  {modalMode === 'create' ? 'Modul Soal Baru' : 'Perbarui Soal'}
                 </span>
                 <h3 className="font-heading text-lg font-bold text-slate-950">
-                  {modalMode === 'create' ? 'Tambah Butir Soal Baru' : 'Edit Butir Soal'}
+                  {modalMode === 'create' ? 'Tambah Soal Baru' : 'Edit Soal'}
                 </h3>
               </div>
               <button
@@ -921,7 +921,7 @@ export default function AdminQuestionsPage() {
                   disabled={saving}
                   className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white font-bold text-xs shadow-md shadow-sky-500/20 hover:opacity-95 transition-all cursor-pointer"
                 >
-                  {saving ? 'Menyimpan...' : 'Simpan Butir Soal'}
+                  {saving ? 'Menyimpan...' : 'Simpan Soal'}
                 </button>
               </div>
             </form>

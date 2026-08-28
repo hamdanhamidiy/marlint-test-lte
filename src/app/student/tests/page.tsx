@@ -299,7 +299,7 @@ export default function StudentTestsCatalogPage() {
                     </div>
                     <div className="flex flex-col items-center justify-center border-x border-slate-200/70 px-1">
                       <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Soal</span>
-                      <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} butir</span>
+                      <span className="text-xs font-extrabold text-slate-800 mt-0.5">{test.total_questions >= 60 ? test.total_questions : 60} Soal</span>
                     </div>
                     <div className="flex flex-col items-center justify-center">
                       <span className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider block">Passing</span>

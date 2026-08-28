@@ -29,7 +29,7 @@ export default function TestTimer({ startedAt }: TestTimerProps) {
   }, [startedAt]);
 
   return (
-    <div className="inline-flex items-center gap-1.5 text-slate-300 font-mono text-xs sm:text-sm font-semibold tracking-wider">
+    <div className="inline-flex items-center gap-1.5 text-slate-300 text-xs sm:text-sm font-semibold tracking-wider">
       <Clock className="w-4 h-4 text-slate-400" />
       <span>{formatStopwatch(elapsedSeconds)}</span>
     </div>

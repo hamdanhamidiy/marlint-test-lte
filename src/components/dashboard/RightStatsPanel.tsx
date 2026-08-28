@@ -80,7 +80,7 @@ export default function RightStatsPanel({
                 <span>Terverifikasi & Aktif</span>
               </div>
               
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 shadow-2xs font-mono">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 shadow-2xs">
                 STCW 2010
               </span>
             </div>
@@ -110,7 +110,7 @@ export default function RightStatsPanel({
             <div className="space-y-1 pt-1">
               <div className="flex items-center justify-between text-[10px] text-slate-500">
                 <span>Rata-Rata Asesmen</span>
-                <span className="font-mono font-bold text-slate-900">{scoreAverage}%</span>
+                <span className="font-bold text-slate-900">{scoreAverage}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden">
                 <div

@@ -224,7 +224,7 @@ export default function AudioListeningQuestion({
         {/* Plays Limit Counter Badge */}
         <div className="shrink-0">
           <span
-            className={`text-xs font-bold px-3 py-1 rounded-xl border font-mono ${
+            className={`text-xs font-bold px-3 py-1 rounded-xl border ${
               remainingPlays > 0
                 ? 'bg-sky-50 text-[#0284C7] border-sky-200'
                 : 'bg-slate-100 text-slate-500 border-slate-200'

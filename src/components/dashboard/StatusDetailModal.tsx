@@ -230,7 +230,7 @@ export default function StatusDetailModal({
             </div>
 
             <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/70">
-              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-200/80 font-mono shadow-2xs">
+              <span className="text-[11px] font-extrabold px-3 py-1.5 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-200/80 shadow-2xs">
                 Level {levelCode} ({totalPoints} XP)
               </span>
             </div>
@@ -267,7 +267,7 @@ export default function StatusDetailModal({
               <div className="space-y-1.5 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500 font-medium">Rata-rata Skor Anda</span>
-                  <span className="font-mono font-black text-slate-900">{scoreAverage}%</span>
+                  <span className="font-black text-slate-900">{scoreAverage}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden relative">
                   <div
@@ -281,7 +281,7 @@ export default function StatusDetailModal({
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-slate-400">
                   <span>0%</span>
-                  <span className="text-emerald-700 font-bold font-mono">Standar Lulus: 70%</span>
+                  <span className="text-emerald-700 font-bold">Standar Lulus: 70%</span>
                   <span>100%</span>
                 </div>
               </div>
@@ -310,7 +310,7 @@ export default function StatusDetailModal({
               <div className="space-y-1.5 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500 font-medium">Menuju Level {currentLevelInfo.next}</span>
-                  <span className="font-mono font-bold text-[#0284C7]">{progressPercent}%</span>
+                  <span className="font-bold text-[#0284C7]">{progressPercent}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                   <div

@@ -805,7 +805,7 @@ export default function TestReviewPage() {
           {filteredQuestions.length === 0 ? (
             <div className="p-10 text-center bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs space-y-2">
               <CheckCircle2 className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="font-bold text-slate-800 text-sm">Tidak ada butir soal sesuai filter ini.</p>
+              <p className="font-bold text-slate-800 text-sm">Tidak ada soal sesuai filter ini.</p>
               <button
                 type="button"
                 onClick={() => {

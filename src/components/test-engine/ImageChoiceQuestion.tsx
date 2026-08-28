@@ -46,7 +46,7 @@ export default function ImageChoiceQuestion({
               {/* Badge label & Checkmark */}
               <div className="flex items-center justify-between mb-2 w-full">
                 <span
-                  className={`w-6 h-6 rounded-lg text-xs font-mono font-bold flex items-center justify-center transition-colors shadow-2xs ${
+                  className={`w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center transition-colors shadow-2xs ${
                     isSelected ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white' : 'bg-slate-100 text-slate-700'
                   }`}
                 >

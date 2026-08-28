@@ -253,7 +253,7 @@ export default function TestOverviewPage() {
               </div>
               <div className="px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-center min-w-[80px]">
                 <span className="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider block">Soal</span>
-                <span className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5 block">{displayTotalQuestions} Butir</span>
+                <span className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5 block">{displayTotalQuestions} Soal</span>
               </div>
               <div className="px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-center min-w-[80px]">
                 <span className="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider block">Passing</span>
@@ -272,7 +272,7 @@ export default function TestOverviewPage() {
               <span>Komposisi Kategori Soal:</span>
             </h3>
             <span className="text-xs font-semibold text-slate-400">
-              Total {displayTotalQuestions} Butir Soal Terstandar
+              Total {displayTotalQuestions} Soal Terstandar
             </span>
           </div>
 

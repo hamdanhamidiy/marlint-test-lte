@@ -250,12 +250,12 @@ function VerificationContent() {
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Paket Ujian</span>
                     <p className="font-heading font-bold text-slate-900 text-sm">{result.test_name}</p>
-                    <p className="text-xs text-slate-500 font-mono">Test #{result.test_number || 1}</p>
+                    <p className="text-xs text-slate-500">Test #{result.test_number || 1}</p>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Skor & Level CEFR</span>
-                    <p className="font-mono font-bold text-emerald-600 text-lg sm:text-xl">
+                    <p className="font-bold text-emerald-600 text-lg sm:text-xl">
                       {result.score}%
                     </p>
                     <p className="text-xs font-semibold text-slate-700">
@@ -265,10 +265,10 @@ function VerificationContent() {
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Nomor Sertifikat</span>
-                    <p className="font-mono font-bold text-slate-900 text-xs sm:text-sm truncate" title={result.certificate_number}>
+                    <p className="font-bold text-slate-900 text-xs sm:text-sm truncate" title={result.certificate_number}>
                       {result.certificate_number}
                     </p>
-                    <p className="text-xs text-slate-500 font-mono">Kode: {result.verification_code || 'VER-VALID'}</p>
+                    <p className="text-xs text-slate-500">Kode: {result.verification_code || 'VER-VALID'}</p>
                   </div>
                 </div>
 

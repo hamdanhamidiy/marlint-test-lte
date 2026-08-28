@@ -808,7 +808,7 @@ export default function AdminTestsPage() {
 
                     <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
                       <BookOpen className="w-3.5 h-3.5 text-[#0284C7]" />
-                      <span>{test.total_questions >= 60 ? test.total_questions : 60} Butir Soal</span>
+                      <span>{test.total_questions >= 60 ? test.total_questions : 60} Soal</span>
                     </span>
 
                     <span className="inline-flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
@@ -824,7 +824,7 @@ export default function AdminTestsPage() {
                   <Link
                     href={`/admin/questions`}
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
-                    title="Kelola butir soal pada paket ini"
+                    title="Kelola soal pada paket ini"
                   >
                     <BookOpen className="w-3.5 h-3.5 text-slate-500" />
                     <span>Bank Soal</span>
@@ -878,7 +878,7 @@ export default function AdminTestsPage() {
                 <p className="text-xs text-slate-500 font-medium">
                   {modalMode === 'create'
                     ? 'Buat paket ujian baru standar maritim internasional IMO.'
-                    : 'Perbarui parameter butir soal, kelulusan, dan tarif paket.'}
+                    : 'Perbarui parameter soal, kelulusan, dan tarif paket.'}
                 </p>
               </div>
               <button
@@ -931,7 +931,7 @@ export default function AdminTestsPage() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">Total Butir Soal:</label>
+                  <label className="block text-xs font-bold text-slate-700">Total Soal:</label>
                   <input
                     type="number"
                     min={10}

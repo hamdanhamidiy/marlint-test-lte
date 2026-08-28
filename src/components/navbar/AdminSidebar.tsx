@@ -13,6 +13,7 @@ import {
   LogOut,
   ArrowLeft,
   X,
+  Wallet,
 } from 'lucide-react';
 import Logo from '@/components/brand/Logo';
 import { useAuth } from '@/lib/context/AuthContext';
@@ -39,6 +40,7 @@ export default function AdminSidebar({
       ? [{ name: 'Manajemen Instruktur', href: '/admin/instructors', icon: GraduationCap }]
       : []),
     { name: 'Data Siswa & Nilai', href: '/admin/students', icon: Users },
+    { name: 'Pembayaran & Keuangan', href: '/admin/payments', icon: Wallet },
     { name: 'Bank Soal', href: '/admin/questions', icon: HelpCircle },
     { name: 'Kelola Ujian', href: '/admin/tests', icon: FileCheck2 },
     { name: 'Token Akses', href: '/admin/tokens', icon: KeyRound },

@@ -24,6 +24,8 @@ import { MarlintTest, StudentResult, Article } from '@/lib/supabase/types';
 import { formatPriceIDR, formatDateIndo } from '@/lib/utils';
 import RightStatsPanel from '@/components/dashboard/RightStatsPanel';
 
+import { getUserUnlockedTests } from '@/lib/entitlements';
+
 const TYPEWRITER_PHRASES = [
   'Siap mengikuti evaluasi Marlins Test standar perhotelan & kapal pesiar hari ini?',
   'Uji kecakapan bahasa Inggris departemen Food & Beverage, Housekeeping, Guest Service & Maritim.',
@@ -31,12 +33,14 @@ const TYPEWRITER_PHRASES = [
 ];
 
 export default function StudentDashboardPage() {
-  const { profile, user } = useAuth();
+  const { profile, user, isSuperAdmin, isInstructor } = useAuth();
   const [tests, setTests] = useState<MarlintTest[]>([]);
-  const [entitlements, setEntitlements] = useState<Set<number>>(new Set());
+  const [entitlements, setEntitlements] = useState<Set<number>>(new Set([1]));
   const [recentResults, setRecentResults] = useState<StudentResult[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
 
   // Typewriter Animation State
   const [currentText, setCurrentText] = useState('');
@@ -68,92 +72,68 @@ export default function StudentDashboardPage() {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, phraseIndex]);
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        const { data: testsData } = await supabase
-          .from('marlint_tests')
-          .select('*')
-          .eq('is_active', true)
-          .order('test_number', { ascending: true })
-          .limit(6);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const { data: testsData } = await supabase
+        .from('marlint_tests')
+        .select('*')
+        .eq('is_active', true)
+        .order('test_number', { ascending: true })
+        .limit(6);
 
-        if (testsData) setTests(testsData as MarlintTest[]);
+      if (testsData) setTests(testsData as MarlintTest[]);
 
-        if (user) {
-          const [resultsRes, entRes] = await Promise.all([
-            supabase
-              .from('student_results')
-              .select('*')
-              .eq('student_id', user.id)
-              .order('created_at', { ascending: false })
-              .limit(5),
-            supabase
-              .from('test_entitlements')
-              .select('test_number')
-              .eq('user_id', user.id)
-              .eq('is_active', true),
-          ]);
+      if (user) {
+        const [resultsRes, unlockedTests] = await Promise.all([
+          supabase
+            .from('student_results')
+            .select('*')
+            .eq('student_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(5),
+          getUserUnlockedTests(user.id, user.email, isStaff),
+        ]);
 
-          const activeId = user?.id || profile?.id;
+        const activeId = user?.id || profile?.id;
 
-          let resList: StudentResult[] = [];
-          if (resultsRes.data && resultsRes.data.length > 0) {
-            resList = [...(resultsRes.data as StudentResult[])];
-          }
-
-          // Overwrite client-side history cache with Supabase data
-          if (typeof window !== 'undefined' && activeId) {
-            localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
-          }
-
-          resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
-          setRecentResults(resList.slice(0, 5));
-
-          const entSet = new Set<number>([1]);
-          if (entRes.data) {
-            entRes.data.forEach((e) => entSet.add(e.test_number));
-          }
-
-          if (profile?.department_track && profile.department_track.startsWith('[')) {
-            try {
-              const arr = JSON.parse(profile.department_track);
-              if (Array.isArray(arr)) arr.forEach((num) => entSet.add(Number(num)));
-            } catch (e) {}
-          }
-
-          setEntitlements(entSet);
+        let resList: StudentResult[] = [];
+        if (resultsRes.data && resultsRes.data.length > 0) {
+          resList = [...(resultsRes.data as StudentResult[])];
         }
 
-        const { data: articlesData } = await supabase
-          .from('articles')
-          .select('*')
-          .eq('is_published', true)
-          .order('created_at', { ascending: false })
-          .limit(4);
+        // Overwrite client-side history cache with Supabase data
+        if (typeof window !== 'undefined' && activeId) {
+          localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
+        }
 
-        if (articlesData) setArticles(articlesData as Article[]);
-      } catch (err) {
-        console.error('Error loading dashboard data:', err);
-      } finally {
-        setLoading(false);
+        resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
+        setRecentResults(resList.slice(0, 5));
+        setEntitlements(unlockedTests);
       }
-    }
 
+      const { data: articlesData } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      if (articlesData) setArticles(articlesData as Article[]);
+    } catch (err) {
+      console.error('Error loading dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadData();
 
-    // Realtime subscription for live sync with Admin changes
+    // Realtime subscription for live sync with Admin / Payment changes
     if (user?.id) {
       const channel = supabase
         .channel(`dashboard_realtime_${user.id}`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'student_results', filter: `student_id=eq.${user.id}` },
-          () => {
-            loadData();
-          }
-        )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'test_entitlements', filter: `user_id=eq.${user.id}` },
@@ -163,8 +143,20 @@ export default function StudentDashboardPage() {
         )
         .subscribe();
 
+      // Listen to cross-tab broadcast
+      let broadcast: BroadcastChannel | null = null;
+      try {
+        broadcast = new BroadcastChannel('marlins_entitlements_sync');
+        broadcast.onmessage = (e) => {
+          if (e.data?.type === 'ENTITLEMENT_GRANTED') {
+            loadData();
+          }
+        };
+      } catch {}
+
       return () => {
         supabase.removeChannel(channel);
+        if (broadcast) broadcast.close();
       };
     }
   }, [user, profile]);

@@ -18,110 +18,75 @@ import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
 import { MarlintTest } from '@/lib/supabase/types';
 import { formatPriceIDR } from '@/lib/utils';
+import { getUserUnlockedTests } from '@/lib/entitlements';
 
 export default function StudentTestsCatalogPage() {
   const { user, profile, isSuperAdmin, isInstructor } = useAuth();
   const [tests, setTests] = useState<MarlintTest[]>([]);
-  const [entitlements, setEntitlements] = useState<Set<number>>(new Set());
+  const [entitlements, setEntitlements] = useState<Set<number>>(new Set([1]));
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'unlocked' | 'fb' | 'housekeeping' | 'culinary'>('all');
 
-  useEffect(() => {
-    async function loadTestsAndEntitlements() {
-      try {
-        setLoading(true);
+  const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
 
-        const { data: testData } = await supabase
+  const loadTestsAndEntitlements = async () => {
+    try {
+      setLoading(true);
+
+      const [testRes, unlockedTests] = await Promise.all([
+        supabase
           .from('marlint_tests')
           .select('*')
           .eq('is_active', true)
-          .order('test_number', { ascending: true });
+          .order('test_number', { ascending: true }),
+        getUserUnlockedTests(user?.id || profile?.id, user?.email || profile?.email, isStaff),
+      ]);
 
-        if (testData && testData.length > 0) {
-          setTests(testData as MarlintTest[]);
-        }
-
-        const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
-        if (isStaff) {
-          setEntitlements(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
-          return;
-        }
-
-        const entSet = new Set<number>([1]); // Test 1 is default free
-
-        if (user || profile) {
-          const userIds = [user?.id, profile?.id].filter(Boolean);
-          const userEmails = [user?.email, profile?.email].filter(Boolean);
-
-          // 1. Check profile.department_track
-          if (profile?.department_track && profile.department_track.startsWith('[')) {
-            try {
-              const parsed = JSON.parse(profile.department_track);
-              if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
-            } catch (e) {}
-          }
-
-          // 2. Fetch fresh department_track from users table in Supabase
-          try {
-            const { data: uData } = await supabase
-              .from('users')
-              .select('department_track')
-              .or(`id.eq.${user?.id || profile?.id},email.eq.${user?.email || profile?.email}`)
-              .maybeSingle();
-
-            if (uData?.department_track && uData.department_track.startsWith('[')) {
-              const parsed = JSON.parse(uData.department_track);
-              if (Array.isArray(parsed)) parsed.forEach((num) => entSet.add(Number(num)));
-            }
-          } catch (e) {}
-
-          // 3. Fetch from test_entitlements table
-          try {
-            if (userIds.length > 0) {
-              const { data: entData } = await supabase
-                .from('test_entitlements')
-                .select('test_number, is_active')
-                .or(`user_id.in.(${userIds.map((id) => `"${id}"`).join(',')}),user_id.in.(${userEmails.map((em) => `"${em}"`).join(',')})`)
-                .eq('is_active', true);
-
-              if (entData) {
-                entData.forEach((e) => entSet.add(e.test_number));
-              }
-            }
-          } catch (e) {}
-
-          // 4. Local storage fallback
-          if (typeof window !== 'undefined') {
-            const checkKeys = [
-              ...userIds.map((id) => `marlins_entitlements_${id}`),
-              ...userEmails.map((em) => `marlins_entitlements_${em?.toLowerCase()}`),
-              'marlins_entitlements_all',
-            ];
-
-            checkKeys.forEach((k) => {
-              const localEnt = localStorage.getItem(k);
-              if (localEnt) {
-                try {
-                  const arr = JSON.parse(localEnt);
-                  if (Array.isArray(arr)) {
-                    arr.forEach((num) => entSet.add(Number(num)));
-                  }
-                } catch (e) {}
-              }
-            });
-          }
-        }
-
-        setEntitlements(entSet);
-      } catch (err) {
-        console.error('Error loading tests catalog:', err);
-      } finally {
-        setLoading(false);
+      if (testRes.data && testRes.data.length > 0) {
+        setTests(testRes.data as MarlintTest[]);
       }
-    }
 
+      setEntitlements(unlockedTests);
+    } catch (err) {
+      console.error('Error loading tests catalog:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadTestsAndEntitlements();
+
+    const activeId = user?.id || profile?.id;
+    if (activeId) {
+      const channel = supabase
+        .channel(`tests_catalog_realtime_${activeId}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'test_entitlements', filter: `user_id=eq.${activeId}` },
+          () => {
+            loadTestsAndEntitlements();
+          }
+        )
+        .subscribe();
+
+      // Listen to cross-tab broadcast
+      let broadcast: BroadcastChannel | null = null;
+      try {
+        broadcast = new BroadcastChannel('marlins_entitlements_sync');
+        broadcast.onmessage = (e) => {
+          if (e.data?.type === 'ENTITLEMENT_GRANTED') {
+            loadTestsAndEntitlements();
+          }
+        };
+      } catch {}
+
+      return () => {
+        supabase.removeChannel(channel);
+        if (broadcast) broadcast.close();
+      };
+    }
   }, [user, profile, isSuperAdmin, isInstructor]);
 
   const filteredTests = tests.filter((t) => {

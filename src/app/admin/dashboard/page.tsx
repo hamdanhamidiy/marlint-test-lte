@@ -19,6 +19,7 @@ import {
   Ship,
   ExternalLink,
   Settings,
+  Wallet,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDateIndo, formatPriceIDR } from '@/lib/utils';
@@ -205,7 +206,14 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0 flex-wrap">
+          <Link
+            href="/admin/payments"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-[13px] font-bold bg-white hover:bg-emerald-50 text-slate-800 border border-slate-200/90 shadow-2xs hover:border-emerald-300 hover:text-emerald-700 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
+            <Wallet className="w-4 h-4 text-emerald-600" />
+            <span>Keuangan & QRIS</span>
+          </Link>
           <Link
             href="/admin/questions"
             className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-[13px] font-bold bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white shadow-md shadow-sky-500/20 hover:opacity-95 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"

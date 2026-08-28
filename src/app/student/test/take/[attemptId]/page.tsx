@@ -14,15 +14,12 @@ import {
   AlertCircle,
   Clock,
   ShieldCheck,
-  ShieldAlert,
-  EyeOff,
-  Lock,
   LogOut,
   AlertTriangle,
   Loader2,
   Grid,
   X,
-  ArrowRight,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -67,62 +64,62 @@ function getTestInfo(testNum: number) {
     case 10:
       return {
         test_number: 10,
-        test_name: 'Marlins Test 10 - Master & Chief Engineer Executive Capstone',
+        test_name: 'Marlins Test 10 – Master & Chief Engineer Executive Capstone',
         questions: MARLINS_TEST_10_STANDARD_QUESTIONS,
       };
     case 9:
       return {
         test_number: 9,
-        test_name: 'Marlins Test 9 - Autonomous Ships (MASS), Modern GMDSS & BRM Forensics',
+        test_name: 'Marlins Test 9 – Autonomous Ships (MASS), GMDSS & BRM Forensics',
         questions: MARLINS_TEST_9_STANDARD_QUESTIONS,
       };
     case 8:
       return {
         test_number: 8,
-        test_name: 'Marlins Test 8 - Heavy Lift, Dry Docking, Ocean Towage & Bio-Fouling',
+        test_name: 'Marlins Test 8 – Heavy Lift, Dry Docking & Ocean Towage',
         questions: MARLINS_TEST_8_STANDARD_QUESTIONS,
       };
     case 7:
       return {
         test_number: 7,
-        test_name: 'Marlins Test 7 - Ro-Ro Passenger Safety, Polar Code & Green Shipping (CII)',
+        test_name: 'Marlins Test 7 – Ro-Ro Passenger Safety & Green Shipping',
         questions: MARLINS_TEST_7_STANDARD_QUESTIONS,
       };
     case 6:
       return {
         test_number: 6,
-        test_name: 'Marlins Test 6 - Container & Bulk Carrier Operations (IMSBC & Cyber Risk)',
+        test_name: 'Marlins Test 6 – Container & Bulk Carrier Operations',
         questions: MARLINS_TEST_6_STANDARD_QUESTIONS,
       };
     case 5:
       return {
         test_number: 5,
-        test_name: 'Marlins Test 5 - Offshore Operations & Dynamic Positioning Systems',
+        test_name: 'Marlins Test 5 – Offshore Operations & Dynamic Positioning',
         questions: MARLINS_TEST_5_STANDARD_QUESTIONS,
       };
     case 4:
       return {
         test_number: 4,
-        test_name: 'Marlins Test 4 - Tanker Operations & IMDG Cargo Handling',
+        test_name: 'Marlins Test 4 – Tanker Operations & IMDG Cargo Handling',
         questions: MARLINS_TEST_4_STANDARD_QUESTIONS,
       };
     case 3:
       return {
         test_number: 3,
-        test_name: 'Marlins Test 3 - Bridge Watchkeeping & COLREGs',
+        test_name: 'Marlins Test 3 – Bridge Watchkeeping & COLREGs',
         questions: MARLINS_TEST_3_STANDARD_QUESTIONS,
       };
     case 2:
       return {
         test_number: 2,
-        test_name: 'Marlins Test 2 - Deck & Engine Operations',
+        test_name: 'Marlins Test 2 – Deck & Engine Operations',
         questions: MARLINS_TEST_2_STANDARD_QUESTIONS,
       };
     case 1:
     default:
       return {
         test_number: 1,
-        test_name: 'Marlins Test 1 - Cruise Hospitality & Maritime English',
+        test_name: 'Marlins Test 1 – Cruise Hospitality & Maritime English',
         questions: MARLINS_60_STANDARD_QUESTIONS,
       };
   }
@@ -169,7 +166,7 @@ export default function TestTakingPage() {
     return now;
   }, []);
 
-  // Elapsed stopwatch timer state (Persisted & Synced with Absolute Timestamp)
+  // Elapsed stopwatch timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
@@ -194,13 +191,10 @@ export default function TestTakingPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Push initial history state to capture back button
     window.history.pushState({ marlinsExamActive: true }, '', window.location.href);
 
     const handlePopState = () => {
-      // Re-push history state so URL doesn't leave the exam screen
       window.history.pushState({ marlinsExamActive: true }, '', window.location.href);
-      // Trigger confirmation modal
       setExitModalOpen(true);
     };
 
@@ -219,13 +213,12 @@ export default function TestTakingPage() {
     };
   }, []);
 
-  // Load Attempt Data with 60 questions fallback
+  // Load Attempt Data
   useEffect(() => {
     async function loadAttempt() {
       try {
         setLoading(true);
 
-        // Restore previously saved answers from localStorage if any
         try {
           const savedAnswers = localStorage.getItem(`marlins_attempt_answers_${attemptId}`);
           if (savedAnswers) {
@@ -255,7 +248,6 @@ export default function TestTakingPage() {
           const userIds = [user?.id, profile?.id].filter(Boolean);
           const userEmails = [user?.email, profile?.email].filter(Boolean);
 
-          // 1. Check profile.department_track
           if (!hasAccess && profile?.department_track && profile.department_track.startsWith('[')) {
             try {
               const arr = JSON.parse(profile.department_track);
@@ -265,25 +257,6 @@ export default function TestTakingPage() {
             } catch (e) {}
           }
 
-          // 2. Check users.department_track in Supabase
-          if (!hasAccess) {
-            try {
-              const { data: uData } = await supabase
-                .from('users')
-                .select('department_track')
-                .or(`id.eq.${user?.id || profile?.id},email.eq.${user?.email || profile?.email}`)
-                .maybeSingle();
-
-              if (uData?.department_track && uData.department_track.startsWith('[')) {
-                const arr = JSON.parse(uData.department_track);
-                if (Array.isArray(arr) && arr.map(Number).includes(Number(parsedTestNum))) {
-                  hasAccess = true;
-                }
-              }
-            } catch (e) {}
-          }
-
-          // 3. Check test_entitlements table
           if (!hasAccess && userIds.length > 0) {
             try {
               const { data: entData } = await supabase
@@ -298,7 +271,6 @@ export default function TestTakingPage() {
             } catch (e) {}
           }
 
-          // 4. Check local storage
           if (!hasAccess && typeof window !== 'undefined') {
             const checkKeys = [
               ...userIds.map((id) => `marlins_entitlements_${id}`),
@@ -333,8 +305,6 @@ export default function TestTakingPage() {
 
         if (error || !data) {
           const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
-          const rawQuestions = info.questions;
-
           let randomizedList: Question[] = [];
           try {
             const cached = localStorage.getItem(`marlins_attempt_questions_${attemptId}`);
@@ -347,7 +317,7 @@ export default function TestTakingPage() {
           } catch (e) {}
 
           if (randomizedList.length === 0) {
-            randomizedList = randomizeTestQuestions(rawQuestions, attemptId);
+            randomizedList = randomizeTestQuestions(info.questions, attemptId);
             try {
               localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
             } catch (e) {}
@@ -375,11 +345,7 @@ export default function TestTakingPage() {
 
         const effectiveTestNumber = data.test_number || parsedTestNum;
         const resolvedInfo = getTestInfo(effectiveTestNumber);
-
-        const rawQuestionsList =
-          data.questions && data.questions.length >= 60
-            ? data.questions
-            : resolvedInfo.questions;
+        const rawQuestionsList = data.questions && data.questions.length >= 60 ? data.questions : resolvedInfo.questions;
 
         let randomizedList: Question[] = [];
         try {
@@ -399,7 +365,6 @@ export default function TestTakingPage() {
           } catch (e) {}
         }
 
-        // Ensure start time is synced with server data.started_at
         if (data.started_at) {
           getOrSetStartTime(attemptId, data.started_at);
         }
@@ -413,16 +378,6 @@ export default function TestTakingPage() {
         } as AttemptData);
       } catch (err: any) {
         let parsedTestNum = 1;
-        if (attemptId.includes('test-10') || attemptId.includes('test10')) parsedTestNum = 10;
-        else if (attemptId.includes('test-9') || attemptId.includes('test9')) parsedTestNum = 9;
-        else if (attemptId.includes('test-8') || attemptId.includes('test8')) parsedTestNum = 8;
-        else if (attemptId.includes('test-7') || attemptId.includes('test7')) parsedTestNum = 7;
-        else if (attemptId.includes('test-6') || attemptId.includes('test6')) parsedTestNum = 6;
-        else if (attemptId.includes('test-5') || attemptId.includes('test5')) parsedTestNum = 5;
-        else if (attemptId.includes('test-4') || attemptId.includes('test4')) parsedTestNum = 4;
-        else if (attemptId.includes('test-3') || attemptId.includes('test3')) parsedTestNum = 3;
-        else if (attemptId.includes('test-2') || attemptId.includes('test2')) parsedTestNum = 2;
-
         const info = getTestInfo(parsedTestNum);
         const startTimeIso = new Date(getOrSetStartTime(attemptId)).toISOString();
 
@@ -491,6 +446,57 @@ export default function TestTakingPage() {
     });
   };
 
+  // Keyboard Shortcuts (A/B/C/D, 1/2/3/4, Arrows, Flag)
+  useEffect(() => {
+    if (!attempt || !attempt.questions || attempt.questions.length === 0) return;
+    const currentQ = attempt.questions[currentIndex];
+    if (!currentQ) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+        return;
+      }
+
+      const key = e.key.toUpperCase();
+
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        e.preventDefault();
+        setCurrentIndex((prev) => prev - 1);
+        return;
+      }
+      if (e.key === 'ArrowRight' && currentIndex < attempt.questions.length - 1) {
+        e.preventDefault();
+        setCurrentIndex((prev) => prev + 1);
+        return;
+      }
+
+      if (key === 'F') {
+        e.preventDefault();
+        handleToggleFlag(currentIndex);
+        return;
+      }
+
+      if (currentQ.question_type === 'multiple_choice' || !currentQ.question_type) {
+        const options = currentQ.options || [];
+        let optIndex = -1;
+
+        if (key === 'A' || key === '1') optIndex = 0;
+        else if (key === 'B' || key === '2') optIndex = 1;
+        else if (key === 'C' || key === '3') optIndex = 2;
+        else if (key === 'D' || key === '4') optIndex = 3;
+
+        if (optIndex >= 0 && optIndex < options.length) {
+          e.preventDefault();
+          handleAnswer(currentQ.id, options[optIndex]);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [attempt, currentIndex]);
+
   const handleFinalSubmit = async () => {
     if (!attempt || submitting) return;
 
@@ -511,12 +517,10 @@ export default function TestTakingPage() {
       });
 
       if (error) {
-        console.warn('RPC submit failed, using client-side evaluation fallback:', error.message);
         evaluateAndSaveClientSide(formattedAnswers);
         return;
       }
 
-      // Also persist review cache for server-evaluated attempts
       try {
         localStorage.setItem(
           `marlins_review_${attemptId}`,
@@ -534,7 +538,6 @@ export default function TestTakingPage() {
 
       router.replace(`/student/test/result/${attemptId}`);
     } catch (err: any) {
-      console.error('Error submitting test:', err);
       evaluateAndSaveClientSide(
         Object.entries(answersRef.current).map(([qId, val]) => ({
           question_id: qId,
@@ -729,18 +732,15 @@ export default function TestTakingPage() {
     }
 
     try {
-      // 1. Save standard result keys to localStorage
       localStorage.setItem(`test_result_${attemptId}`, JSON.stringify(clientResult));
       localStorage.setItem(`marlins_result_${attemptId}`, JSON.stringify(clientResult));
       localStorage.setItem(`marlins_result_${resultUuid}`, JSON.stringify(clientResult));
 
-      // 2. Save certificate if passed
       if (generatedCertificate) {
         localStorage.setItem(`marlins_cert_${attemptId}`, JSON.stringify(generatedCertificate));
         localStorage.setItem(`marlins_cert_id_${generatedCertificate.id}`, JSON.stringify(generatedCertificate));
       }
 
-      // 3. Save complete review payload
       const reviewPayload = {
         attempt_id: attemptId,
         test_number: attempt.test_number,
@@ -754,7 +754,6 @@ export default function TestTakingPage() {
       };
       localStorage.setItem(`marlins_review_${attemptId}`, JSON.stringify(reviewPayload));
 
-      // 4. Append to user-scoped history lists
       const userHistKeys = [
         `marlins_history_results_${studentUserId}`,
         `marlins_history_results_${studentEmail}`,
@@ -773,39 +772,11 @@ export default function TestTakingPage() {
         historyArr.unshift(clientResult);
         localStorage.setItem(key, JSON.stringify(historyArr));
       });
-
-      // Save notification for completed test
-      try {
-        const notifKey = `marlins_notifications_${studentUserId}`;
-        const existingNotifsStr = localStorage.getItem(notifKey);
-        let notifsArr: any[] = [];
-        if (existingNotifsStr) {
-          try {
-            notifsArr = JSON.parse(existingNotifsStr);
-          } catch (e) {}
-        }
-        const newNotif = {
-          id: `notif-test-${Date.now()}`,
-          user_id: studentUserId,
-          type: 'test_result',
-          category: 'test',
-          title: `Hasil ${attempt.test_name}: ${finalPercentage}% (${isPassed ? 'LULUS' : 'REMEDIAL'})`,
-          body: `Evaluasi Anda telah selesai dengan perolehan skor ${finalPercentage}% (Level ${levelCode}). Klik untuk melihat lembar analisis nilai lengkap.`,
-          is_read: false,
-          created_at: nowIso,
-          action_url: `/student/test/result/${attemptId}`,
-          action_label: 'Lihat Analisis Nilai',
-        };
-        notifsArr = [newNotif, ...notifsArr.filter((n: any) => n.id !== newNotif.id)];
-        localStorage.setItem(notifKey, JSON.stringify(notifsArr));
-      } catch (e) {}
     } catch (e) {
       console.warn('Failed to save result to localStorage:', e);
     }
 
-    // 5. Asynchronous Dual Persistence to Supabase DB
     try {
-      // Upsert to student_results table with pure UUID
       await supabase.from('student_results').upsert({
         id: resultUuid,
         student_id: studentUserId,
@@ -826,7 +797,6 @@ export default function TestTakingPage() {
         created_at: nowIso,
       });
 
-      // Update student points and level in users table
       await supabase
         .from('users')
         .update({
@@ -837,7 +807,6 @@ export default function TestTakingPage() {
         })
         .or(`id.eq.${studentUserId},email.eq.${studentEmail}`);
 
-      // Update attempt in test_attempts table
       if (isValidUuid(attemptId)) {
         await supabase
           .from('test_attempts')
@@ -849,7 +818,6 @@ export default function TestTakingPage() {
           .eq('id', attemptId);
       }
 
-      // If passed, upsert certificate
       if (generatedCertificate) {
         await supabase.from('certificates').upsert({
           id: generatedCertificate.id,
@@ -877,25 +845,21 @@ export default function TestTakingPage() {
         });
       }
     } catch (dbErr) {
-      console.warn('Supabase DB background sync warning (offline mode active):', dbErr);
+      console.warn('Supabase DB sync note:', dbErr);
     }
 
     router.replace(`/student/test/result/${attemptId}`);
   };
 
-  const handleExit = () => {
-    router.replace('/student/dashboard');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
-        <div className="p-8 text-center bg-white border border-slate-200/80 rounded-3xl max-w-sm w-full space-y-3 shadow-sm">
+        <div className="p-8 text-center bg-white border border-slate-200 rounded-3xl max-w-sm w-full space-y-3 shadow-sm">
           <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
             <Loader2 className="w-5 h-5 animate-spin" />
           </div>
-          <h2 className="text-sm font-bold text-slate-800">Menyiapkan 60 Soal Ujian Marlins...</h2>
-          <p className="text-xs text-slate-400">Sinkronisasi snapshot soal standar IMO & Cruise...</p>
+          <h2 className="text-sm font-bold text-slate-800">Menyiapkan Lembar Soal Ujian...</h2>
+          <p className="text-xs text-slate-400">Standar Resmi Marlins Test IMO STCW</p>
         </div>
       </div>
     );
@@ -904,7 +868,7 @@ export default function TestTakingPage() {
   if (!attempt || !attempt.questions || attempt.questions.length === 0) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
-        <div className="p-8 text-center bg-white border border-slate-200/80 rounded-3xl max-w-md w-full space-y-4 shadow-sm">
+        <div className="p-8 text-center bg-white border border-slate-200 rounded-3xl max-w-md w-full space-y-4 shadow-sm">
           <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -912,7 +876,7 @@ export default function TestTakingPage() {
           <p className="text-xs text-slate-500">{errorMsg || 'Data sesi telah berakhir atau sudah diselesaikan.'}</p>
           <Link
             href="/student/tests"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs shadow-md shadow-sky-500/20"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0284C7] text-white font-bold text-xs shadow-xs"
           >
             <span>Kembali ke Katalog</span>
           </Link>
@@ -925,39 +889,24 @@ export default function TestTakingPage() {
   const currentQuestion = questions[currentIndex] || questions[0];
   const questionIds = questions.map((q) => q.id);
   const totalQuestionsCount = questions.length;
-
   const answeredCount = questionIds.filter((id) => {
     const ans = answers[id];
-    if (ans === undefined || ans === null || ans === '') return false;
-    if (typeof ans === 'object' && Object.keys(ans).length === 0) return false;
-    return true;
+    return ans !== undefined && ans !== null && ans !== '' && (typeof ans !== 'object' || Object.keys(ans).length > 0);
   }).length;
-
   const unansweredCount = totalQuestionsCount - answeredCount;
   const flaggedCount = flaggedQuestions.size;
   const categoryInfo = getCategoryInfo(currentQuestion.category);
   const progressPercentage = Math.round(((currentIndex + 1) / totalQuestionsCount) * 100);
 
   const getInstructionText = (q: Question) => {
-    if (q.question_type === 'paragraph_title_match') {
-      return 'The following text has three paragraphs. Choose the correct title for each paragraph from the dropdown options.';
-    }
-    if (q.question_type === 'gap_fill') {
-      return 'Choose the correct word or phrase from the dropdown menu to complete each blank.';
-    }
-    if (q.question_type === 'sentence_reorder') {
-      return 'Click on the words below to arrange them into a grammatically correct sentence.';
-    }
-    if (q.question_type === 'audio_listening' || q.category === 'listening_comprehension') {
-      return 'Listen to the audio prompt carefully, then select the single correct answer.';
-    }
-    if (q.category === 'time_and_numbers') {
-      return 'Look at the question and select the correct time, quantity, or number.';
-    }
+    if (q.question_type === 'paragraph_title_match') return 'Choose the correct title for each paragraph from the dropdown menu.';
+    if (q.question_type === 'gap_fill') return 'Choose the correct word or phrase from the dropdown menu to complete each blank.';
+    if (q.question_type === 'sentence_reorder') return 'Click on the words below to arrange them into a grammatically correct sentence.';
+    if (q.question_type === 'audio_listening' || q.category === 'listening_comprehension') return 'Listen to the audio prompt carefully, then select the single correct answer.';
+    if (q.category === 'time_and_numbers') return 'Look at the question and select the correct time, quantity, or number.';
     return 'Read the question carefully and select the single correct answer from the options below.';
   };
 
-  // Jump to first unanswered question helper
   const handleJumpToFirstUnanswered = () => {
     const firstEmptyIdx = questions.findIndex((q) => {
       const ans = answers[q.id];
@@ -974,48 +923,42 @@ export default function TestTakingPage() {
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
-      className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode font-sans"
+      className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode font-sans text-slate-900"
     >
-      {/* 1. TOP HEADER - Modern, Clean & Formal */}
-      <header className="shrink-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3 z-30 shadow-2xs">
+      {/* 1. TOP HEADER — Clean, Minimal, Academic Standard */}
+      <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-4 sm:px-8 py-3 z-30 shadow-2xs">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
-          {/* Left: Brand + Test Title & Standard Badge */}
+          
+          {/* Left: Logo & Test Title */}
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <Logo size="md" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
-            
-            <div className="h-5 w-px bg-slate-200 hidden sm:block" />
-            
+            <Logo size="sm" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
+            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-[#0284C7] text-[10px] font-extrabold uppercase tracking-wider">
-                  <ShieldCheck className="w-3 h-3" />
-                  <span>IMO STCW</span>
+                <span className="hidden md:inline-block px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wider">
+                  IMO STCW
                 </span>
                 <h1 className="text-xs sm:text-sm font-extrabold text-slate-900 truncate" title={attempt.test_name}>
                   {attempt.test_name || 'Marlins Test'}
                 </h1>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal hidden sm:block">
-                Sesi Ujian Resmi Standar Bahasa Inggris Maritim Internasional
-              </p>
             </div>
           </div>
 
-          {/* Right: Live Stopwatch Timer, Navigator, and Exit */}
+          {/* Right: Stopwatch, Navigator Button & Exit */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Live Stopwatch with Pulsing Indicator */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-slate-800 font-mono text-xs sm:text-sm font-bold shadow-2xs">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            {/* Stopwatch Time */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
             </div>
 
-            {/* Question Navigator Button with Progress Counter */}
+            {/* Navigator Trigger */}
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[#0284C7] text-xs font-bold transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-              title="Buka Daftar Soal"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] text-xs font-bold transition-all cursor-pointer"
             >
               <Grid className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Daftar Soal</span>
@@ -1024,63 +967,62 @@ export default function TestTakingPage() {
               </span>
             </button>
 
-            {/* Exit Button */}
+            {/* Exit Trigger */}
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="w-9 h-9 rounded-full text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200/70 hover:border-rose-200 flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0"
+              className="w-8 h-8 rounded-full text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               title="Keluar dari Ujian"
-              aria-label="Keluar"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN QUESTION WORKSPACE - Clean, Spacious & Focused */}
-      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center">
-        <div className="w-full max-w-3xl space-y-5 my-auto pb-6">
+      {/* 2. MAIN QUESTION WORKSPACE */}
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col items-center">
+        <div className="w-full max-w-3xl space-y-4 my-auto pb-4">
           
           {/* Active Question Card */}
-          <div className="bg-white rounded-[28px] p-6 sm:p-8 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.03)] relative overflow-hidden space-y-5">
+          <div className="bg-white rounded-[24px] p-5 sm:p-8 border border-slate-200 shadow-2xs space-y-4 relative">
             
-            {/* Top Card Bar: Number Badge, Category Pill & Flag Toggle */}
-            <div className="flex items-center justify-between gap-3 pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-[#0B192C] text-white text-xs font-mono font-bold tracking-wider shadow-2xs">
+            {/* Question Header: Number Pill, Category Pill & Flag Toggle */}
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide font-mono">
                   SOAL {currentIndex + 1}
                 </span>
 
                 <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${categoryInfo.bg} ${categoryInfo.color} border-slate-200/60`}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${categoryInfo.bg} ${categoryInfo.color} border-slate-200/60`}
                 >
-                  <span>{categoryInfo.name}</span>
+                  {categoryInfo.name}
                 </span>
               </div>
 
-              {/* Ragu-Ragu / Flag Checkbox Button */}
+              {/* Ragu-Ragu Checkbox Button */}
               <button
                 type="button"
                 onClick={() => handleToggleFlag(currentIndex)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                   flaggedQuestions.has(currentIndex)
-                    ? 'bg-amber-400 text-amber-950 hover:bg-amber-500 scale-102 ring-2 ring-amber-300'
+                    ? 'bg-amber-400 text-amber-950 font-bold ring-2 ring-amber-300'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
                 }`}
               >
                 <Flag className={`w-3.5 h-3.5 ${flaggedQuestions.has(currentIndex) ? 'fill-amber-950' : ''}`} />
-                <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu (Ditandai)' : 'Tandai Ragu'}</span>
+                <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu' : 'Tandai Ragu'}</span>
               </button>
             </div>
 
             {/* Instruction Notice */}
-            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100 text-xs text-sky-950 font-medium flex items-start gap-2.5">
-              <span className="text-[#0284C7] font-bold text-sm shrink-0 leading-none mt-0.5">ℹ️</span>
-              <p className="leading-relaxed">{getInstructionText(currentQuestion)}</p>
+            <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-100 text-xs text-sky-950 font-medium flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-[#0284C7] shrink-0" />
+              <p className="leading-snug">{getInstructionText(currentQuestion)}</p>
             </div>
 
-            {/* Optional Audio Component for Listening Questions */}
+            {/* Audio Component for Listening Questions */}
             {(currentQuestion.question_type === 'audio_listening' ||
               currentQuestion.category === 'listening_comprehension') && (
               <AudioListeningQuestion
@@ -1095,25 +1037,25 @@ export default function TestTakingPage() {
 
             {/* Question Text */}
             {currentQuestion.question_type !== 'paragraph_title_match' && (
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed text-left break-words">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug break-words">
                 {currentQuestion.question_text}
               </h2>
             )}
 
-            {/* Optional Visual Image */}
+            {/* Optional Image Illustration */}
             {currentQuestion.image_url && (
-              <div className="flex justify-center p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 shadow-inner">
+              <div className="flex justify-center p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80">
                 <img
                   src={currentQuestion.image_url}
                   alt="Ilustrasi Soal Marlins"
                   draggable={false}
-                  className="max-h-48 sm:max-h-60 object-contain rounded-xl shadow-xs pointer-events-none select-none"
+                  className="max-h-48 sm:max-h-56 object-contain rounded-lg pointer-events-none select-none"
                 />
               </div>
             )}
 
             {/* Interactive Question Input Renderer */}
-            <div className="pt-2">
+            <div className="pt-1">
               {currentQuestion.question_type === 'paragraph_title_match' ? (
                 <ParagraphTitleMatchQuestion
                   question={currentQuestion}
@@ -1156,34 +1098,34 @@ export default function TestTakingPage() {
         </div>
       </main>
 
-      {/* 3. BOTTOM STICKY CONTROL BAR - High-End Exam Controls */}
-      <footer className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 sm:px-8 py-3.5 pb-[max(0.85rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_25px_rgba(0,0,0,0.04)]">
-        <div className="max-w-5xl mx-auto space-y-3">
+      {/* 3. BOTTOM CONTROL BAR */}
+      <footer className="shrink-0 w-full bg-white border-t border-slate-200/90 px-4 sm:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-2xs">
+        <div className="max-w-3xl mx-auto space-y-2.5">
           
-          {/* Linear Progress Indicator */}
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+          {/* Progress Bar */}
+          <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
-          {/* Controls Navigation Row */}
+          {/* Navigation Controls */}
           <div className="flex items-center justify-between gap-3">
-            {/* Back Button */}
+            {/* Previous Button */}
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-2 h-10 px-4 sm:px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0 active:scale-95"
+              className="inline-flex items-center justify-center gap-1.5 h-9 px-4 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer active:scale-95"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Sebelumnya</span>
             </button>
 
-            {/* Question Counter Center Status */}
+            {/* Question Progress Indicator */}
             <div className="text-center font-mono">
-              <span className="text-xs sm:text-sm font-extrabold text-slate-900 block">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 block">
                 Soal {currentIndex + 1} / {totalQuestionsCount}
               </span>
               <span className="text-[10px] text-slate-400 font-sans hidden sm:block">
@@ -1191,13 +1133,13 @@ export default function TestTakingPage() {
               </span>
             </div>
 
-            {/* Next or Submit Button */}
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Next or Finish Button */}
+            <div>
               {currentIndex < totalQuestionsCount - 1 ? (
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-2 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-9 px-5 sm:px-6 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
                 >
                   <span>Berikutnya</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1206,10 +1148,10 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 h-9 px-5 sm:px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Selesaikan Ujian</span>
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Selesai Ujian</span>
                 </button>
               )}
             </div>
@@ -1217,48 +1159,48 @@ export default function TestTakingPage() {
         </div>
       </footer>
 
-      {/* MODAL: 60 Question Grid Navigator - Modern Executive Design */}
+      {/* MODAL: 60 Question Grid Navigator */}
       {navigatorModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[28px] p-5 sm:p-7 max-w-2xl w-full max-h-[88vh] overflow-y-auto space-y-4 shadow-2xl border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[24px] p-5 sm:p-6 max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-4 shadow-xl border border-slate-100">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="space-y-0.5">
-                <h3 className="font-heading text-base sm:text-lg font-extrabold text-slate-900">
-                  Daftar Soal Ujian ({totalQuestionsCount} Butir)
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  Daftar Soal ({totalQuestionsCount} Butir)
                 </h3>
                 <p className="text-xs text-slate-500 font-normal">
-                  Klik nomor soal di bawah untuk langsung menuju butir soal yang diinginkan.
+                  Pilih nomor soal untuk langsung menuju soal tersebut.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {/* KPI Summary Status Strip */}
+            {/* KPI Summary Status */}
             <div className="grid grid-cols-3 gap-2 py-1">
-              <div className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200/70 text-center">
-                <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Terjawab</span>
-                <span className="font-mono text-base font-extrabold text-emerald-900">{answeredCount}</span>
+              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+                <span className="text-[10px] font-bold text-emerald-800 uppercase block">Terjawab</span>
+                <span className="font-mono text-sm font-bold text-emerald-900">{answeredCount}</span>
               </div>
-              <div className="p-2.5 rounded-2xl bg-amber-50 border border-amber-200/70 text-center">
-                <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Ragu-Ragu</span>
-                <span className="font-mono text-base font-extrabold text-amber-900">{flaggedCount}</span>
+              <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-center">
+                <span className="text-[10px] font-bold text-amber-800 uppercase block">Ragu-Ragu</span>
+                <span className="font-mono text-sm font-bold text-amber-900">{flaggedCount}</span>
               </div>
-              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-center">
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Belum Dijawab</span>
-                <span className="font-mono text-base font-extrabold text-slate-800">{unansweredCount}</span>
+              <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <span className="text-[10px] font-bold text-slate-600 uppercase block">Belum</span>
+                <span className="font-mono text-sm font-bold text-slate-800">{unansweredCount}</span>
               </div>
             </div>
 
-            {/* 60 Question Grid (6 cols on mobile, 10 cols on tablet/desktop) */}
-            <div className="grid grid-cols-6 sm:grid-cols-10 gap-2 pt-1">
+            {/* 60 Question Grid */}
+            <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5 pt-1">
               {questions.map((q, idx) => {
                 const isAnswered =
                   answers[q.id] !== undefined &&
@@ -1275,45 +1217,45 @@ export default function TestTakingPage() {
                       setCurrentIndex(idx);
                       setNavigatorModalOpen(false);
                     }}
-                    className={`h-9 sm:h-10 rounded-xl font-mono text-xs font-extrabold transition-all cursor-pointer relative flex items-center justify-center ${
+                    className={`h-8 sm:h-9 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer relative flex items-center justify-center ${
                       isCurrent
-                        ? 'ring-2 ring-[#0284C7] ring-offset-2 bg-[#0284C7] text-white shadow-sm'
+                        ? 'ring-2 ring-[#0284C7] ring-offset-1 bg-[#0284C7] text-white'
                         : isFlagged
-                        ? 'bg-amber-400 text-amber-950 hover:bg-amber-500 shadow-2xs'
+                        ? 'bg-amber-400 text-amber-950'
                         : isAnswered
-                        ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-2xs'
+                        ? 'bg-emerald-500 text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     <span>{idx + 1}</span>
                     {isFlagged && !isCurrent && (
-                      <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-950" />
+                      <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-amber-950" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Modal Actions Footer */}
-            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+            {/* Modal Footer */}
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2">
               {unansweredCount > 0 ? (
                 <button
                   type="button"
                   onClick={handleJumpToFirstUnanswered}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs border border-sky-200/80 transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs border border-sky-200 transition-colors cursor-pointer"
                 >
-                  <span>Lompat ke Soal Kosong Pertama →</span>
+                  <span>Lompat ke Soal Kosong →</span>
                 </button>
               ) : (
                 <span className="text-xs font-bold text-emerald-600">
-                  🎉 Semua {totalQuestionsCount} soal telah terisi!
+                  Semua soal telah terisi.
                 </span>
               )}
 
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="w-full sm:w-auto px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
               >
                 Tutup
               </button>
@@ -1322,34 +1264,34 @@ export default function TestTakingPage() {
         </div>
       )}
 
-      {/* MODAL: Submit Test Confirmation */}
+      {/* MODAL: Submit Confirmation */}
       {submitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-8 max-w-md w-full space-y-4 shadow-2xl text-center border border-slate-100">
-            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100 shadow-2xs">
-              <FileCheck2 className="w-7 h-7" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[24px] p-6 max-w-sm w-full space-y-4 shadow-xl text-center border border-slate-100">
+            <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
+              <FileCheck2 className="w-6 h-6" />
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-heading text-lg font-extrabold text-slate-900">
-                Kirim Lembar Jawaban Ujian?
+            <div className="space-y-1.5">
+              <h3 className="text-base font-bold text-slate-900">
+                Selesaikan Ujian Sekarang?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800 font-bold">{totalQuestionsCount}</strong> butir soal.
                 {unansweredCount > 0 && (
-                  <span className="block text-amber-600 font-bold mt-1.5 p-2 rounded-xl bg-amber-50 border border-amber-200">
-                    ⚠️ Masih ada {unansweredCount} soal yang belum Anda isi!
+                  <span className="block text-amber-700 font-bold mt-1.5 p-2 rounded-lg bg-amber-50 border border-amber-200">
+                    Masih ada {unansweredCount} soal yang belum Anda isi!
                   </span>
                 )}
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-3 pt-2">
+            <div className="flex items-center justify-center gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={() => setSubmitModalOpen(false)}
                 disabled={submitting}
-                className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
               >
                 Periksa Kembali
               </button>
@@ -1358,17 +1300,17 @@ export default function TestTakingPage() {
                 type="button"
                 onClick={handleFinalSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/25 cursor-pointer disabled:opacity-50"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Menilai Hasil...</span>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Menilai...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
-                    <span>Kirim Sekarang</span>
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Kirim Jawaban</span>
                   </>
                 )}
               </button>
@@ -1377,34 +1319,34 @@ export default function TestTakingPage() {
         </div>
       )}
 
-      {/* MODAL: Exit / Akhiri Ujian Confirmation */}
+      {/* MODAL: Exit Confirmation */}
       {exitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl text-center border border-slate-100">
-            <div className="w-13 h-13 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100 shadow-2xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[24px] p-6 max-w-sm w-full space-y-4 shadow-xl text-center border border-slate-100">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
-            <div className="space-y-1.5">
-              <h3 className="font-heading text-base sm:text-lg font-extrabold text-slate-900">
-                Keluar & Akhiri Sesi Ujian?
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-slate-900">
+                Keluar dari Sesi Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Seluruh jawaban yang telah Anda isi dan waktu pengerjaan telah <strong className="text-slate-800 font-bold">tersimpan otomatis</strong>. Anda dapat melanjutkannya kapan saja.
+                Seluruh jawaban yang telah Anda isi telah <strong className="text-slate-800 font-bold">tersimpan otomatis</strong>.
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-2.5 pt-2">
+            <div className="flex items-center justify-center gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={() => setExitModalOpen(false)}
-                className="flex-1 py-2.5 px-4 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
               >
                 Lanjutkan Ujian
               </button>
               <Link
                 href="/student/tests"
-                className="flex-1 py-2.5 px-4 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20 text-center transition-all"
+                className="flex-1 py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs text-center transition-all"
               >
                 Ya, Keluar
               </Link>

@@ -394,8 +394,8 @@ export default function StudentDashboardPage() {
             </Link>
           </div>
 
-          {/* Desktop Table View */}
-          <div className="overflow-x-auto">
+          {/* Desktop Table View (md+ screens only) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
@@ -407,59 +407,62 @@ export default function StudentDashboardPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {recentResults.length > 0 ? (
-                  recentResults.map((res) => (
-                    <tr key={res.id || res.attempt_id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 pr-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                            <FileCheck2 className="w-4 h-4" />
+                  recentResults.map((res) => {
+                    const testTitle = res.test_name ? res.test_name.replace(/Marlint/gi, 'Marlins') : 'Marlins Test';
+                    return (
+                      <tr key={res.attempt_id || res.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 pr-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                              <FileCheck2 className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="font-extrabold text-slate-900 leading-tight">{testTitle}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5">{formatDateIndo(res.created_at)}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-extrabold text-slate-900 leading-tight">{res.test_name}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">{formatDateIndo(res.created_at)}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3.5 pr-4">
-                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
-                          STANDAR CEFR
-                        </span>
-                      </td>
-                      <td className="py-3.5 pr-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-black text-slate-900 text-xs">{res.score}%</span>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-2xs ${
-                              res.is_passed
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/90'
-                                : 'bg-rose-50 text-rose-700 border border-rose-200/90'
-                            }`}
-                          >
-                            {res.is_passed ? (
-                              <>
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                <span>LULUS</span>
-                              </>
-                            ) : (
-                              <>
-                                <AlertCircle className="w-3 h-3 text-rose-600" />
-                                <span>REMEDIAL</span>
-                              </>
-                            )}
+                        </td>
+                        <td className="py-3.5 pr-4">
+                          <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
+                            STANDAR CEFR
                           </span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 text-right">
-                        <Link
-                          href={`/student/test/result/${res.attempt_id || res.id}`}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-[#0284C7] text-slate-400 hover:text-[#0284C7] hover:bg-sky-50 transition-all shadow-2xs"
-                          title="Lihat Rincian Hasil"
-                        >
-                          <ArrowUpRight className="w-4 h-4" />
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className="py-3.5 pr-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-black text-slate-900 text-xs">{res.score}%</span>
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-2xs ${
+                                res.is_passed
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/90'
+                                  : 'bg-rose-50 text-rose-700 border border-rose-200/90'
+                              }`}
+                            >
+                              {res.is_passed ? (
+                                <>
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                  <span>LULUS</span>
+                                </>
+                              ) : (
+                                <>
+                                  <AlertCircle className="w-3 h-3 text-rose-600" />
+                                  <span>REMEDIAL</span>
+                                </>
+                              )}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 text-right">
+                          <Link
+                            href={`/student/test/result/${res.attempt_id || res.id}`}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 hover:border-[#0284C7] text-slate-400 hover:text-[#0284C7] hover:bg-sky-50 transition-all shadow-2xs"
+                            title="Lihat Rincian Hasil"
+                          >
+                            <ArrowUpRight className="w-4 h-4" />
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : articles.length > 0 ? (
                   articles.map((art) => (
                     <tr key={art.id} className="hover:bg-slate-50/70 transition-colors">
@@ -547,58 +550,102 @@ export default function StudentDashboardPage() {
             </table>
           </div>
 
-          {/* Mobile Card List (< md screens) */}
+          {/* Mobile Card List (< md screens only) */}
           <div className="block md:hidden space-y-3">
             {recentResults.length > 0 ? (
-              recentResults.map((res) => (
-                <div
-                  key={res.id}
-                  className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0">
-                        <FileCheck2 className="w-4 h-4" />
+              recentResults.map((res) => {
+                const testTitle = res.test_name ? res.test_name.replace(/Marlint/gi, 'Marlins') : 'Marlins Test';
+                return (
+                  <div
+                    key={res.attempt_id || res.id}
+                    className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs hover:border-sky-300 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                          <FileCheck2 className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-extrabold text-slate-900 text-xs leading-snug break-words">{testTitle}</p>
+                          <p className="text-[10px] text-slate-400 mt-1 font-medium">{formatDateIndo(res.created_at)}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-xs leading-snug truncate">{res.test_name}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{formatDateIndo(res.created_at)}</p>
+                      <div className="text-right shrink-0">
+                        <span className="font-mono font-black text-slate-900 text-sm">{res.score}%</span>
                       </div>
                     </div>
-                    <span className="font-mono font-black text-slate-900 text-xs shrink-0">{res.score}%</span>
+
+                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
+                          STANDAR CEFR
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${
+                            res.is_passed
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          }`}
+                        >
+                          {res.is_passed ? (
+                            <>
+                              <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                              <span>LULUS</span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
+                              <span>REMEDIAL</span>
+                            </>
+                          )}
+                        </span>
+                      </div>
+
+                      <Link
+                        href={`/student/test/result/${res.attempt_id || res.id}`}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
+                      >
+                        <span>Lihat Hasil</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })
+            ) : articles.length > 0 ? (
+              articles.map((art) => (
+                <div
+                  key={art.id}
+                  className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs hover:border-sky-300 transition-all"
+                >
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-extrabold text-slate-900 text-xs leading-snug break-words">{art.title}</p>
+                        <p className="text-[10px] text-slate-400 mt-1 font-medium">{formatDateIndo(art.created_at)}</p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-sky-50 text-[#0284C7] border border-sky-100 uppercase tracking-wider">
-                        STANDAR CEFR
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wider">
+                        {art.category || 'IMO SMCP'}
                       </span>
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${
-                          res.is_passed
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
-                      >
-                        {res.is_passed ? (
-                          <>
-                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-                            <span>LULUS</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
-                            <span>REMEDIAL</span>
-                          </>
-                        )}
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-sky-50 text-[#0284C7] border border-sky-200/80">
+                        <BookOpen className="w-2.5 h-2.5" />
+                        <span>Modul Terverifikasi</span>
                       </span>
                     </div>
 
                     <Link
-                      href={`/student/test/result/${res.attempt_id || res.id}`}
+                      href={`/student/articles/${art.id}`}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
                     >
-                      <span>Lihat Hasil</span>
+                      <span>Baca Modul</span>
                       <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
@@ -610,16 +657,19 @@ export default function StudentDashboardPage() {
                   key={row.id}
                   className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3 shadow-xs"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                         <FileCheck2 className="w-4 h-4" />
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-xs leading-snug truncate">{row.title}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{row.date}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-extrabold text-slate-900 text-xs leading-snug break-words">{row.title}</p>
+                        <p className="text-[10px] text-slate-400 mt-1">{row.date}</p>
                       </div>
                     </div>
+                    {row.score !== null && (
+                      <span className="font-mono font-black text-slate-900 text-sm shrink-0">{row.score}%</span>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">

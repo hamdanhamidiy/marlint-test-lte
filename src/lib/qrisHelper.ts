@@ -1,5 +1,5 @@
 /**
- * QRIS (Quick Response Code Indonesian Standard) Dynamic Amount Generator
+ * QRIS (Quick Response Code Indonesian Standard) Dynamic & Static Amount Generator
  * Sesuai Standar Bank Indonesia & ASPI (EMVCo QR Code Specification)
  */
 
@@ -22,14 +22,37 @@ export function calculateCRC16(data: string): string {
 }
 
 /**
- * Template QRIS Statis Standar Resmi (Default Marlin Test / LTE Cruise Training Center)
- * Merchant: LTE CRUISE TRAINING CENTER (NMID: ID1024358901234)
+ * Template QRIS Statis Standar Resmi Pemilik (GoPay / QRIS Merchant Real)
+ * Merchant: Hamdan Hamidiy, Digital & (NMID: ID1025422240032)
  */
 export const DEFAULT_STATIC_QRIS =
-  '00020101021126670016ID.CO.QRIS.WWW01189360050300000889900215ID10243589012340303UME51440014ID.DANA.WWW01189360091100210088990208123456780303UME5204581253033605802ID5924LTE CRUISE MARLINS TEST6008DENPASAR61058023462070703A016304A1B2';
+  '00020101021126610014COM.GO-JEK.WWW01189360091435809969220210G5809969220303UMI51440014ID.CO.QRIS.WWW0215ID10254222400320303UMI5204899953033605802ID5925Hamdan Hamidiy, Digital &6007SUMENEP61056941262070703A01630464B7';
+
+export interface QrisTLV {
+  tag: string;
+  len: number;
+  val: string;
+}
 
 /**
- * Mengubah string QRIS Statis menjadi QRIS Dinamis dengan Nominal Otomatis
+ * Mem-parse string QRIS menjadi deretan TLV (Tag-Length-Value) EMVCo
+ */
+export function parseQrisTLV(qris: string): QrisTLV[] {
+  const tags: QrisTLV[] = [];
+  let i = 0;
+  while (i < qris.length) {
+    const tag = qris.substring(i, i + 2);
+    const len = parseInt(qris.substring(i + 2, i + 4), 10);
+    if (isNaN(len)) break;
+    const val = qris.substring(i + 4, i + 4 + len);
+    tags.push({ tag, len, val });
+    i += 4 + len;
+  }
+  return tags;
+}
+
+/**
+ * Mengubah string QRIS Statis menjadi QRIS Dinamis dengan Nominal Otomatis (Tag 54 EMVCo)
  * @param staticQris String QRIS statis (hasil scan QRIS toko/merchant Anda)
  * @param amount Nominal tagihan (angka bulat dalam Rupiah, misal 49000)
  * @param taxFee Optional biaya layanan / tax (jika ada)
@@ -45,103 +68,126 @@ export function convertStaticToDynamicQris(
   }
 
   let raw = staticQris.trim();
-
-  // 1. Validasi awal panjang dan header QRIS (harus diawali 000201)
   if (!raw.startsWith('000201')) {
     raw = DEFAULT_STATIC_QRIS;
   }
 
-  // 2. Hapus CRC lama (8 karakter terakhir jika berformat 6304XXXX)
-  if (raw.includes('6304')) {
-    const last63Index = raw.lastIndexOf('6304');
-    raw = raw.substring(0, last63Index);
-  }
-
-  // 3. Ubah Tag 01 (Point of Initiation Method) dari 11 (Static) menjadi 12 (Dynamic)
-  // Format Tag 01: '010211' -> ubah jadi '010212'
-  if (raw.includes('010211')) {
-    raw = raw.replace('010211', '010212');
-  } else if (!raw.includes('010212')) {
-    // Jika belum ada Tag 01, sisipkan setelah 000201
-    raw = raw.replace('000201', '000201010212');
-  }
-
-  // 4. Hapus Tag 54 lama jika sebelumnya sudah ada (54 = Transaction Amount)
-  // Regex mencari Tag 54 + 2 digit panjang + digit nominal
-  raw = raw.replace(/54\d{2}\d+(\.\d+)?/g, '');
-
-  // 5. Hapus Tag 55/56/57 lama jika ada
-  raw = raw.replace(/55\d{2}\d+/g, '');
-
-  // 6. Buat payload Tag 54 baru dengan nominal
+  const tags = parseQrisTLV(raw);
   const totalAmount = Math.round(amount + taxFee);
   const amountStr = totalAmount.toString();
-  const amountLength = amountStr.length.toString().padStart(2, '0');
-  const tag54 = `54${amountLength}${amountStr}`;
 
-  // 7. Sisipkan Tag 54 sebelum Tag 58 (Country Code '5802ID')
-  if (raw.includes('5802ID') || raw.includes('5802id')) {
-    const splitIndex = raw.toUpperCase().indexOf('5802ID');
-    raw = raw.slice(0, splitIndex) + tag54 + raw.slice(splitIndex);
-  } else if (raw.includes('5303360')) {
-    // Alternatif: setelah Tag 53 (Currency IDR = 360)
-    const splitIndex = raw.indexOf('5303360') + 7;
-    raw = raw.slice(0, splitIndex) + tag54 + raw.slice(splitIndex);
-  } else {
-    // Fallback: tambahkan sebelum Tag 63
-    raw = raw + tag54;
+  const newTags: QrisTLV[] = [];
+  let inserted54 = false;
+
+  for (const item of tags) {
+    // 1. Lewati CRC tag 63 lama
+    if (item.tag === '63') {
+      continue;
+    }
+
+    // 2. Ubah Tag 01 (Point of Initiation Method) dari '11' (Static) menjadi '12' (Dynamic)
+    if (item.tag === '01') {
+      newTags.push({ tag: '01', len: 2, val: '12' });
+      continue;
+    }
+
+    // 3. Lewati Tag 54/55 lama jika ada
+    if (item.tag === '54' || item.tag === '55') {
+      continue;
+    }
+
+    // 4. Sisipkan Tag 54 tepat setelah Tag 53 (atau sebelum Tag 58)
+    if ((item.tag === '58' || parseInt(item.tag, 10) > 54) && !inserted54) {
+      newTags.push({ tag: '54', len: amountStr.length, val: amountStr });
+      inserted54 = true;
+    }
+
+    newTags.push(item);
   }
 
-  // 8. Tambahkan Header Tag 63 (CRC Tag = '6304')
-  const payloadForChecksum = raw + '6304';
+  // Jika belum disisipkan
+  if (!inserted54) {
+    newTags.push({ tag: '54', len: amountStr.length, val: amountStr });
+  }
 
-  // 9. Hitung CRC16 CCITT
-  const crc = calculateCRC16(payloadForChecksum);
+  // Rekonstruksi string QRIS tanpa CRC
+  let payload = '';
+  for (const item of newTags) {
+    const lenStr = item.val.length.toString().padStart(2, '0');
+    payload += item.tag + lenStr + item.val;
+  }
 
-  // 10. Gabungkan menjadi QRIS Dinamis Final yang Valid
-  return payloadForChecksum + crc;
+  // Tambahkan Header Tag 63 (CRC Tag = '6304')
+  payload += '6304';
+
+  // Hitung ulang CRC16 CCITT yang valid
+  const crc = calculateCRC16(payload);
+
+  return payload + crc;
 }
 
 /**
- * Ekstrak informasi merchant dari string QRIS
+ * Ekstrak informasi merchant lengkap dari string QRIS
  */
 export function parseQrisMerchantInfo(qrisString: string): {
   merchantName: string;
   merchantCity: string;
   postalCode: string;
+  nmid: string;
+  acquirer: string;
   isDynamic: boolean;
 } {
   try {
-    const isDynamic = qrisString.includes('010212');
-    
+    const tags = parseQrisTLV(qrisString);
+    const tagMap: Record<string, string> = {};
+    tags.forEach((t) => (tagMap[t.tag] = t.val));
+
     // Tag 59: Merchant Name
-    const tag59Match = qrisString.match(/59(\d{2})([A-Za-z0-9\s\.\,\-\_]+)/);
-    let merchantName = 'LTE CRUISE TRAINING CENTER';
-    if (tag59Match) {
-      const len = parseInt(tag59Match[1], 10);
-      merchantName = tag59Match[2].substring(0, len).trim();
-    }
+    const merchantName = tagMap['59'] || 'Hamdan Hamidiy, Digital &';
 
     // Tag 60: Merchant City
-    const tag60Match = qrisString.match(/60(\d{2})([A-Za-z0-9\s]+)/);
-    let merchantCity = 'Denpasar / Surabaya';
-    if (tag60Match) {
-      const len = parseInt(tag60Match[1], 10);
-      merchantCity = tag60Match[2].substring(0, len).trim();
+    const merchantCity = tagMap['60'] || 'SUMENEP';
+
+    // Tag 61: Postal Code
+    const postalCode = tagMap['61'] || '69412';
+
+    // NMID: Extract from Tag 51 or Tag 26 (ID1025422240032)
+    let nmid = 'ID1025422240032';
+    if (tagMap['51'] && tagMap['51'].includes('ID1025422240032')) {
+      nmid = 'ID1025422240032';
+    } else {
+      const match = qrisString.match(/ID\d{13}/);
+      if (match) nmid = match[0];
+    }
+
+    // Acquirer info
+    let acquirer = 'GoPay / QRIS Nasional';
+    if (qrisString.includes('GO-JEK') || qrisString.includes('COM.GO-JEK')) {
+      acquirer = 'GoPay Merchant / QRIS';
+    } else if (qrisString.includes('DANA')) {
+      acquirer = 'DANA Bisnis / QRIS';
+    } else if (qrisString.includes('BCA')) {
+      acquirer = 'BCA Merchant / QRIS';
     }
 
     return {
       merchantName,
       merchantCity,
-      postalCode: '80234',
-      isDynamic,
+      postalCode,
+      nmid,
+      acquirer,
+      isDynamic: tagMap['01'] === '12',
     };
   } catch {
     return {
-      merchantName: 'LTE CRUISE TRAINING CENTER',
-      merchantCity: 'Indonesia',
-      postalCode: '80234',
-      isDynamic: false,
+      merchantName: 'Hamdan Hamidiy, Digital &',
+      merchantCity: 'SUMENEP',
+      postalCode: '69412',
+      nmid: 'ID1025422240032',
+      acquirer: 'GoPay / QRIS Nasional',
+      isDynamic: true,
     };
   }
 }
+
+

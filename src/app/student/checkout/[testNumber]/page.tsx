@@ -375,14 +375,12 @@ export default function CheckoutPage() {
             <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 space-y-2 text-xs">
               <div className="flex items-center gap-1.5 font-bold text-sky-900">
                 <Zap className="w-4 h-4 text-[#0284C7]" />
-                <span>Cara Bayar dengan QRIS:</span>
+                <span>Panduan Pembayaran QRIS:</span>
               </div>
-              <ol className="list-decimal list-inside space-y-1 text-[11px] text-sky-800 leading-relaxed">
-                <li>Buka aplikasi m-Banking atau E-Wallet apa saja di HP Anda.</li>
-                <li>Pilih menu <strong>Scan / Bayar QRIS</strong>.</li>
-                <li>Arahkan kamera ke QR Code di samping.</li>
-                <li>Nominal <strong>{formatPriceIDR(price)}</strong> otomatis tertera tanpa perlu ketik manual.</li>
-                <li>Konfirmasi PIN, lalu klik tombol verifikasi di bawah.</li>
+              <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-sky-800 leading-relaxed">
+                <li>Buka menu <strong>Scan QRIS</strong> di m-Banking (BCA, Livin, BRImo, BNI) atau E-Wallet (DANA, GoPay, OVO, ShopeePay).</li>
+                <li>Arahkan kamera ke QR Code. Pastikan nama merchant <strong className="text-slate-900">Hamdan Hamidiy, Digital &</strong> dan nominal <strong className="text-slate-900">{formatPriceIDR(price)}</strong>.</li>
+                <li>Konfirmasi PIN, lalu klik tombol <strong className="text-slate-900">Saya Sudah Bayar</strong> untuk aktivasi instan.</li>
               </ol>
             </div>
 

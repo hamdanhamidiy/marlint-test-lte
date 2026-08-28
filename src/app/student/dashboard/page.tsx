@@ -72,54 +72,52 @@ export default function StudentDashboardPage() {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, phraseIndex]);
 
-  const loadData = async () => {
+  const loadData = async (silent: boolean = false) => {
     try {
-      setLoading(true);
-      const { data: testsData } = await supabase
-        .from('marlint_tests')
-        .select('*')
-        .eq('is_active', true)
-        .order('test_number', { ascending: true })
-        .limit(6);
+      if (!silent) setLoading(true);
+      const activeId = user?.id || profile?.id;
 
-      if (testsData) setTests(testsData as MarlintTest[]);
+      // Parallelize all queries into 1 single network trip
+      const [testsRes, resultsRes, unlockedTests, articlesRes] = await Promise.all([
+        supabase
+          .from('marlint_tests')
+          .select('*')
+          .eq('is_active', true)
+          .order('test_number', { ascending: true })
+          .limit(6),
+        user
+          ? supabase
+              .from('student_results')
+              .select('*')
+              .eq('student_id', user.id)
+              .order('created_at', { ascending: false })
+              .limit(5)
+          : Promise.resolve({ data: null, error: null }),
+        user
+          ? getUserUnlockedTests(user.id, user.email, isStaff)
+          : Promise.resolve(new Set<number>([1])),
+        supabase
+          .from('articles')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false })
+          .limit(4),
+      ]);
 
-      if (user) {
-        const [resultsRes, unlockedTests] = await Promise.all([
-          supabase
-            .from('student_results')
-            .select('*')
-            .eq('student_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(5),
-          getUserUnlockedTests(user.id, user.email, isStaff),
-        ]);
+      if (testsRes.data) setTests(testsRes.data as MarlintTest[]);
 
-        const activeId = user?.id || profile?.id;
+      if (resultsRes.data && resultsRes.data.length > 0) {
+        const resList = [...(resultsRes.data as StudentResult[])];
+        resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
+        setRecentResults(resList.slice(0, 5));
 
-        let resList: StudentResult[] = [];
-        if (resultsRes.data && resultsRes.data.length > 0) {
-          resList = [...(resultsRes.data as StudentResult[])];
-        }
-
-        // Overwrite client-side history cache with Supabase data
         if (typeof window !== 'undefined' && activeId) {
           localStorage.setItem(`marlins_history_results_${activeId}`, JSON.stringify(resList));
         }
-
-        resList.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
-        setRecentResults(resList.slice(0, 5));
-        setEntitlements(unlockedTests);
       }
 
-      const { data: articlesData } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .limit(4);
-
-      if (articlesData) setArticles(articlesData as Article[]);
+      setEntitlements(unlockedTests);
+      if (articlesRes.data) setArticles(articlesRes.data as Article[]);
     } catch (err) {
       console.error('Error loading dashboard data:', err);
     } finally {
@@ -138,7 +136,7 @@ export default function StudentDashboardPage() {
           'postgres_changes',
           { event: '*', schema: 'public', table: 'test_entitlements', filter: `user_id=eq.${user.id}` },
           () => {
-            loadData();
+            loadData(true);
           }
         )
         .subscribe();

@@ -902,6 +902,8 @@ export default function TestTakingPage() {
     return true;
   }).length;
 
+  const unansweredCount = totalQuestionsCount - answeredCount;
+  const flaggedCount = flaggedQuestions.size;
   const categoryInfo = getCategoryInfo(currentQuestion.category);
   const progressPercentage = Math.round(((currentIndex + 1) / totalQuestionsCount) * 100);
 
@@ -924,74 +926,103 @@ export default function TestTakingPage() {
     return 'Read the question carefully and select the single correct answer from the options below.';
   };
 
+  // Jump to first unanswered question helper
+  const handleJumpToFirstUnanswered = () => {
+    const firstEmptyIdx = questions.findIndex((q) => {
+      const ans = answers[q.id];
+      return ans === undefined || ans === null || ans === '' || (typeof ans === 'object' && Object.keys(ans).length === 0);
+    });
+    if (firstEmptyIdx !== -1) {
+      setCurrentIndex(firstEmptyIdx);
+      setNavigatorModalOpen(false);
+    }
+  };
+
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
-      className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode"
+      className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode font-sans"
     >
-      {/* 1. TOP HEADER (Simple, Clean, Modern) */}
-      <header className="shrink-0 w-full bg-white border-b border-slate-200/80 px-3.5 sm:px-6 py-2.5 z-30 shadow-2xs">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2.5 sm:gap-4">
-          {/* Left: Test Branding & Title */}
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+      {/* 1. TOP HEADER - Modern, Clean & Formal */}
+      <header className="shrink-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3 z-30 shadow-2xs">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          {/* Left: Brand + Test Title & Standard Badge */}
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <Logo size="md" showSubtitle={false} href="/student/dashboard" hideTextOnMobile={true} />
-            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+            
+            <div className="h-5 w-px bg-slate-200 hidden sm:block" />
+            
             <div className="min-w-0 flex-1">
-              <h1 className="text-xs sm:text-sm font-bold text-slate-800 truncate" title={attempt.test_name}>
-                {attempt.test_name || 'Marlins Test 1'}
-              </h1>
+              <div className="flex items-center gap-2">
+                <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-[#0284C7] text-[10px] font-extrabold uppercase tracking-wider">
+                  <ShieldCheck className="w-3 h-3" />
+                  <span>IMO STCW</span>
+                </span>
+                <h1 className="text-xs sm:text-sm font-extrabold text-slate-900 truncate" title={attempt.test_name}>
+                  {attempt.test_name || 'Marlins Test'}
+                </h1>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-slate-500 font-normal hidden sm:block">
+                Sesi Ujian Resmi Standar Bahasa Inggris Maritim Internasional
+              </p>
             </div>
           </div>
 
-          {/* Right: Minimalist Timer, Daftar Soal, Keluar */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Simple Minimalist Timer */}
-            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-mono text-xs sm:text-sm font-semibold border border-slate-200/60 shadow-2xs">
-              <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          {/* Right: Live Stopwatch Timer, Navigator, and Exit */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Live Stopwatch with Pulsing Indicator */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-slate-800 font-mono text-xs sm:text-sm font-bold shadow-2xs">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
             </div>
 
-            {/* Question Navigator Button (Icon Only) */}
+            {/* Question Navigator Button with Progress Counter */}
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-sky-50 hover:bg-sky-100/80 border border-sky-200/80 text-[#0284C7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
-              title="Daftar Soal"
-              aria-label="Daftar Soal"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[#0284C7] text-xs font-bold transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+              title="Buka Daftar Soal"
             >
-              <Grid className="w-4 h-4" />
+              <Grid className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Daftar Soal</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-[#0284C7] text-white text-[10px] font-mono">
+                {answeredCount}/{totalQuestionsCount}
+              </span>
             </button>
 
             {/* Exit Button */}
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full text-slate-500 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 border border-transparent hover:border-rose-200 flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+              className="w-9 h-9 rounded-full text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200/70 hover:border-rose-200 flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0"
               title="Keluar dari Ujian"
               aria-label="Keluar"
             >
-              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN SCROLLABLE QUESTION WORKSPACE */}
-      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col items-center">
-        <div className="w-full max-w-3xl space-y-4 my-auto">
+      {/* 2. MAIN QUESTION WORKSPACE - Clean, Spacious & Focused */}
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center">
+        <div className="w-full max-w-3xl space-y-5 my-auto pb-6">
+          
           {/* Active Question Card */}
-          <div className="bg-white rounded-[26px] p-5 sm:p-7 border border-slate-200/90 shadow-xs relative">
-            {/* Category Tag Header & Flag Toggle */}
-            <div className="flex items-center justify-between gap-3 pb-3.5 border-b border-slate-100">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-mono font-bold">
-                  Q{currentIndex + 1}
+          <div className="bg-white rounded-[28px] p-6 sm:p-8 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.03)] relative overflow-hidden space-y-5">
+            
+            {/* Top Card Bar: Number Badge, Category Pill & Flag Toggle */}
+            <div className="flex items-center justify-between gap-3 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="px-3 py-1 rounded-full bg-[#0B192C] text-white text-xs font-mono font-bold tracking-wider shadow-2xs">
+                  SOAL {currentIndex + 1}
                 </span>
 
                 <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold ${categoryInfo.bg} ${categoryInfo.color}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${categoryInfo.bg} ${categoryInfo.color} border-slate-200/60`}
                 >
                   <span>{categoryInfo.name}</span>
                 </span>
@@ -1001,139 +1032,141 @@ export default function TestTakingPage() {
               <button
                 type="button"
                 onClick={() => handleToggleFlag(currentIndex)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                   flaggedQuestions.has(currentIndex)
                     ? 'bg-amber-400 text-amber-950 hover:bg-amber-500 scale-102 ring-2 ring-amber-300'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
                 }`}
               >
-                <Flag className="w-3.5 h-3.5" />
-                <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu' : 'Tandai Ragu'}</span>
+                <Flag className={`w-3.5 h-3.5 ${flaggedQuestions.has(currentIndex) ? 'fill-amber-950' : ''}`} />
+                <span>{flaggedQuestions.has(currentIndex) ? 'Ragu-ragu (Ditandai)' : 'Tandai Ragu'}</span>
               </button>
             </div>
 
-            {/* Question Body */}
-            <div className="pt-4 space-y-4">
-              {/* Question Instruction Header */}
-              <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 text-xs text-slate-600 font-medium">
-                <p>{getInstructionText(currentQuestion)}</p>
-              </div>
+            {/* Instruction Notice */}
+            <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100 text-xs text-sky-950 font-medium flex items-start gap-2.5">
+              <span className="text-[#0284C7] font-bold text-sm shrink-0 leading-none mt-0.5">ℹ️</span>
+              <p className="leading-relaxed">{getInstructionText(currentQuestion)}</p>
+            </div>
 
-              {/* Optional Audio Component for Listening Questions */}
-              {(currentQuestion.question_type === 'audio_listening' ||
-                currentQuestion.category === 'listening_comprehension') && (
-                <AudioListeningQuestion
-                  audioUrl={currentQuestion.audio_url || undefined}
-                  pronunciationText={
-                    currentQuestion.pronunciation_text ||
-                    currentQuestion.question_text ||
-                    undefined
-                  }
+            {/* Optional Audio Component for Listening Questions */}
+            {(currentQuestion.question_type === 'audio_listening' ||
+              currentQuestion.category === 'listening_comprehension') && (
+              <AudioListeningQuestion
+                audioUrl={currentQuestion.audio_url || undefined}
+                pronunciationText={
+                  currentQuestion.pronunciation_text ||
+                  currentQuestion.question_text ||
+                  undefined
+                }
+              />
+            )}
+
+            {/* Question Text */}
+            {currentQuestion.question_type !== 'paragraph_title_match' && (
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed text-left break-words">
+                {currentQuestion.question_text}
+              </h2>
+            )}
+
+            {/* Optional Visual Image */}
+            {currentQuestion.image_url && (
+              <div className="flex justify-center p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 shadow-inner">
+                <img
+                  src={currentQuestion.image_url}
+                  alt="Ilustrasi Soal Marlins"
+                  draggable={false}
+                  className="max-h-48 sm:max-h-60 object-contain rounded-xl shadow-xs pointer-events-none select-none"
+                />
+              </div>
+            )}
+
+            {/* Interactive Question Input Renderer */}
+            <div className="pt-2">
+              {currentQuestion.question_type === 'paragraph_title_match' ? (
+                <ParagraphTitleMatchQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'gap_fill' ? (
+                <GapFillQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'sentence_reorder' ? (
+                <SentenceReorderQuestion
+                  question={currentQuestion}
+                  selectedOrder={answers[currentQuestion.id] || []}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'drag_drop_label' ? (
+                <DragDropLabelQuestion
+                  question={currentQuestion}
+                  selectedAnswers={answers[currentQuestion.id] || {}}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : currentQuestion.question_type === 'image_choice' ? (
+                <ImageChoiceQuestion
+                  question={currentQuestion}
+                  selectedAnswer={answers[currentQuestion.id]}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
+                />
+              ) : (
+                <MultipleChoiceQuestion
+                  question={currentQuestion}
+                  selectedAnswer={answers[currentQuestion.id]}
+                  onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
                 />
               )}
-
-              {/* Question Text */}
-              {currentQuestion.question_type !== 'paragraph_title_match' && (
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed text-left break-words">
-                  {currentQuestion.question_text}
-                </h2>
-              )}
-
-              {/* Optional Image */}
-              {currentQuestion.image_url && (
-                <div className="flex justify-center p-3 rounded-2xl bg-slate-50 border border-slate-100/90">
-                  <img
-                    src={currentQuestion.image_url}
-                    alt="Question Visual"
-                    draggable={false}
-                    className="max-h-44 sm:max-h-56 object-contain rounded-xl shadow-2xs pointer-events-none select-none"
-                  />
-                </div>
-              )}
-
-              {/* Interactive Question Input Renderer */}
-              <div className="pt-1">
-                {currentQuestion.question_type === 'paragraph_title_match' ? (
-                  <ParagraphTitleMatchQuestion
-                    question={currentQuestion}
-                    selectedAnswers={answers[currentQuestion.id] || {}}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                ) : currentQuestion.question_type === 'gap_fill' ? (
-                  <GapFillQuestion
-                    question={currentQuestion}
-                    selectedAnswers={answers[currentQuestion.id] || {}}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                ) : currentQuestion.question_type === 'sentence_reorder' ? (
-                  <SentenceReorderQuestion
-                    question={currentQuestion}
-                    selectedOrder={answers[currentQuestion.id] || []}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                ) : currentQuestion.question_type === 'drag_drop_label' ? (
-                  <DragDropLabelQuestion
-                    question={currentQuestion}
-                    selectedAnswers={answers[currentQuestion.id] || {}}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                ) : currentQuestion.question_type === 'image_choice' ? (
-                  <ImageChoiceQuestion
-                    question={currentQuestion}
-                    selectedAnswer={answers[currentQuestion.id]}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                ) : (
-                  <MultipleChoiceQuestion
-                    question={currentQuestion}
-                    selectedAnswer={answers[currentQuestion.id]}
-                    onAnswer={(ans) => handleAnswer(currentQuestion.id, ans)}
-                  />
-                )}
-              </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* 3. BOTTOM CONTROL BAR */}
-      <footer className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 sm:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-        <div className="max-w-4xl mx-auto space-y-2.5">
-          {/* Progress Track */}
+      {/* 3. BOTTOM STICKY CONTROL BAR - High-End Exam Controls */}
+      <footer className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 sm:px-8 py-3.5 pb-[max(0.85rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_25px_rgba(0,0,0,0.04)]">
+        <div className="max-w-5xl mx-auto space-y-3">
+          
+          {/* Linear Progress Indicator */}
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
-          {/* Controls Row */}
+          {/* Controls Navigation Row */}
           <div className="flex items-center justify-between gap-3">
             {/* Back Button */}
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-2 h-10 px-4 sm:px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer shrink-0 active:scale-95"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Sebelumnya</span>
             </button>
 
-            {/* Question Counter Indicator */}
+            {/* Question Counter Center Status */}
             <div className="text-center font-mono">
-              <span className="text-xs sm:text-sm font-bold text-slate-800">
+              <span className="text-xs sm:text-sm font-extrabold text-slate-900 block">
                 Soal {currentIndex + 1} / {totalQuestionsCount}
+              </span>
+              <span className="text-[10px] text-slate-400 font-sans hidden sm:block">
+                {answeredCount} Terjawab • {unansweredCount} Belum
               </span>
             </div>
 
-            {/* Next or Finish Button */}
+            {/* Next or Submit Button */}
             <div className="flex items-center gap-2 shrink-0">
               {currentIndex < totalQuestionsCount - 1 ? (
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Berikutnya</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1142,7 +1175,7 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 h-10 px-5 sm:px-7 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/25 transition-all cursor-pointer shrink-0 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Send className="w-4 h-4" />
                   <span>Selesaikan Ujian</span>
@@ -1153,38 +1186,48 @@ export default function TestTakingPage() {
         </div>
       </footer>
 
-      {/* MODAL: 60 Question Grid Navigator */}
+      {/* MODAL: 60 Question Grid Navigator - Modern Executive Design */}
       {navigatorModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white text-slate-900 rounded-3xl p-4 sm:p-7 max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-3.5 shadow-2xl">
-            <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-              <h3 className="font-heading text-sm sm:text-base font-bold text-slate-900">
-                Daftar Soal Marlins ({totalQuestionsCount} Butir)
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-5 sm:p-7 max-w-2xl w-full max-h-[88vh] overflow-y-auto space-y-4 shadow-2xl border border-slate-100">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="space-y-0.5">
+                <h3 className="font-heading text-base sm:text-lg font-extrabold text-slate-900">
+                  Daftar Soal Ujian ({totalQuestionsCount} Butir)
+                </h3>
+                <p className="text-xs text-slate-500 font-normal">
+                  Klik nomor soal di bawah untuk langsung menuju butir soal yang diinginkan.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="p-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Legend */}
-            <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-slate-500 font-medium pb-1">
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-emerald-500 inline-block" /> Terjawab
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-amber-400 inline-block" /> Ragu
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded bg-slate-100 border border-slate-200 inline-block" /> Belum
-              </span>
+            {/* KPI Summary Status Strip */}
+            <div className="grid grid-cols-3 gap-2 py-1">
+              <div className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200/70 text-center">
+                <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Terjawab</span>
+                <span className="font-mono text-base font-extrabold text-emerald-900">{answeredCount}</span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-amber-50 border border-amber-200/70 text-center">
+                <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Ragu-Ragu</span>
+                <span className="font-mono text-base font-extrabold text-amber-900">{flaggedCount}</span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-center">
+                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Belum Dijawab</span>
+                <span className="font-mono text-base font-extrabold text-slate-800">{unansweredCount}</span>
+              </div>
             </div>
 
-            {/* 60 Question Grid (6 cols on mobile, 10 cols on desktop) */}
-            <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5 sm:gap-2">
+            {/* 60 Question Grid (6 cols on mobile, 10 cols on tablet/desktop) */}
+            <div className="grid grid-cols-6 sm:grid-cols-10 gap-2 pt-1">
               {questions.map((q, idx) => {
                 const isAnswered =
                   answers[q.id] !== undefined &&
@@ -1201,27 +1244,45 @@ export default function TestTakingPage() {
                       setCurrentIndex(idx);
                       setNavigatorModalOpen(false);
                     }}
-                    className={`h-8 sm:h-9 rounded-xl font-mono text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    className={`h-9 sm:h-10 rounded-xl font-mono text-xs font-extrabold transition-all cursor-pointer relative flex items-center justify-center ${
                       isCurrent
-                        ? 'ring-2 ring-[#0284C7] bg-[#0284C7] text-white shadow-xs'
+                        ? 'ring-2 ring-[#0284C7] ring-offset-2 bg-[#0284C7] text-white shadow-sm'
                         : isFlagged
-                        ? 'bg-amber-400 text-amber-950'
+                        ? 'bg-amber-400 text-amber-950 hover:bg-amber-500 shadow-2xs'
                         : isAnswered
-                        ? 'bg-emerald-500 text-white'
+                        ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-2xs'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    {idx + 1}
+                    <span>{idx + 1}</span>
+                    {isFlagged && !isCurrent && (
+                      <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-950" />
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            <div className="pt-2.5 border-t border-slate-100 flex justify-end">
+            {/* Modal Actions Footer */}
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              {unansweredCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={handleJumpToFirstUnanswered}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs border border-sky-200/80 transition-colors cursor-pointer"
+                >
+                  <span>Lompat ke Soal Kosong Pertama →</span>
+                </button>
+              ) : (
+                <span className="text-xs font-bold text-emerald-600">
+                  🎉 Semua {totalQuestionsCount} soal telah terisi!
+                </span>
+              )}
+
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold text-xs"
+                className="w-full sm:w-auto px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
               >
                 Tutup
               </button>
@@ -1232,50 +1293,50 @@ export default function TestTakingPage() {
 
       {/* MODAL: Submit Test Confirmation */}
       {submitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-7 max-w-md w-full space-y-4 sm:space-y-5 shadow-2xl text-center">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
-              <FileCheck2 className="w-6 h-6 sm:w-7 sm:h-7" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-8 max-w-md w-full space-y-4 shadow-2xl text-center border border-slate-100">
+            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100 shadow-2xs">
+              <FileCheck2 className="w-7 h-7" />
             </div>
 
-            <div className="space-y-1.5">
-              <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900">
+            <div className="space-y-2">
+              <h3 className="font-heading text-lg font-extrabold text-slate-900">
                 Kirim Lembar Jawaban Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800">{totalQuestionsCount}</strong> butir soal.
-                {answeredCount < totalQuestionsCount && (
-                  <span className="block text-amber-600 font-semibold mt-1">
-                    ⚠️ Masih ada {totalQuestionsCount - answeredCount} soal yang belum dijawab.
+                Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800 font-bold">{totalQuestionsCount}</strong> butir soal.
+                {unansweredCount > 0 && (
+                  <span className="block text-amber-600 font-bold mt-1.5 p-2 rounded-xl bg-amber-50 border border-amber-200">
+                    ⚠️ Masih ada {unansweredCount} soal yang belum Anda isi!
                   </span>
                 )}
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-2.5 pt-2">
+            <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setSubmitModalOpen(false)}
                 disabled={submitting}
-                className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
               >
-                Lanjutkan
+                Periksa Kembali
               </button>
 
               <button
                 type="button"
                 onClick={handleFinalSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/25 cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold text-xs transition-all shadow-md shadow-sky-500/25 cursor-pointer disabled:opacity-50"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Menilai...</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Menilai Hasil...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                     <span>Kirim Sekarang</span>
                   </>
                 )}
@@ -1287,34 +1348,34 @@ export default function TestTakingPage() {
 
       {/* MODAL: Exit Confirmation */}
       {exitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-6 max-w-sm w-full space-y-3.5 shadow-2xl text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
-              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl text-center border border-slate-100">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100">
+              <AlertTriangle className="w-6 h-6" />
             </div>
 
-            <div className="space-y-1">
-              <h3 className="font-heading text-sm sm:text-base font-bold text-slate-900">
-                Keluar dari Ujian?
+            <div className="space-y-1.5">
+              <h3 className="font-heading text-base font-extrabold text-slate-900">
+                Keluar dari Sesi Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Jawaban Anda saat ini akan tetap tersimpan dan Anda dapat melanjutkan kapan saja.
+                Jawaban Anda saat ini akan tetap tersimpan dan Anda dapat melanjutkan ujian ini kapan saja.
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-2.5 pt-1.5">
+            <div className="flex items-center justify-center gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setExitModalOpen(false)}
-                className="px-4 py-2 rounded-full bg-slate-100 text-slate-700 font-bold text-xs cursor-pointer"
+                className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
               >
                 Batal
               </button>
               <Link
                 href="/student/tests"
-                className="px-5 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs"
+                className="px-5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20"
               >
-                Keluar
+                Keluar ke Katalog
               </Link>
             </div>
           </div>

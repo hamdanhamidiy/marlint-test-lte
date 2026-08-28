@@ -453,11 +453,16 @@ export default function AdminStudentsPage() {
       }
 
       try {
-        if (st.id) {
-          await supabase.from('test_entitlements').delete().or(`user_id.eq.${st.id},user_id.eq.${st.email}`);
-          await supabase.from('student_results').delete().or(`student_id.eq.${st.id},student_id.eq.${st.email}`);
+        const isValidUuid = (str?: string | null): boolean =>
+          !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
+        if (st.id && isValidUuid(st.id)) {
+          await supabase.from('test_entitlements').delete().eq('user_id', st.id);
+          await supabase.from('student_results').delete().eq('student_id', st.id);
+          await supabase.from('users').delete().eq('id', st.id);
+        } else if (st.email) {
+          await supabase.from('users').delete().eq('email', st.email);
         }
-        await supabase.from('users').delete().or(`id.eq.${st.id},email.eq.${st.email}`);
       } catch (dbErr) {
         console.warn('Supabase delete student note:', dbErr);
       }
@@ -543,17 +548,19 @@ export default function AdminStudentsPage() {
       }
 
       // B. Check test_entitlements table
-      try {
-        const { data: ents } = await supabase
-          .from('test_entitlements')
-          .select('test_number, is_active')
-          .or(`user_id.eq.${studentRecord.id},user_id.eq.${studentRecord.email}`)
-          .eq('is_active', true);
+      if (targetUuid) {
+        try {
+          const { data: ents } = await supabase
+            .from('test_entitlements')
+            .select('test_number, is_active')
+            .eq('user_id', targetUuid)
+            .eq('is_active', true);
 
-        if (ents && ents.length > 0) {
-          ents.forEach((e) => entSet.add(e.test_number));
-        }
-      } catch (e) {}
+          if (ents && ents.length > 0) {
+            ents.forEach((e) => entSet.add(e.test_number));
+          }
+        } catch (e) {}
+      }
 
       // C. Check localStorage entitlements
       if (typeof window !== 'undefined') {
@@ -585,33 +592,40 @@ export default function AdminStudentsPage() {
       setUpdatingAccess(true);
       const hasAccess = studentEntitlements.includes(testNumber);
       const marlintTestId = MARLINT_TEST_UUIDS[testNumber] || 'c943bc21-c159-4c8f-9af0-2f8be1582b0f';
+      const isValidUuid = (str?: string | null): boolean =>
+        !!str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+      const validStudentId = isValidUuid(selectedStudent.id) ? selectedStudent.id : null;
 
       let nextEnts: number[] = [];
       if (hasAccess) {
         // Revoke access
         nextEnts = studentEntitlements.filter((t) => t !== testNumber);
-        try {
-          await supabase
-            .from('test_entitlements')
-            .delete()
-            .or(`user_id.eq.${selectedStudent.id},user_id.eq.${selectedStudent.email}`)
-            .eq('test_number', testNumber);
-        } catch (e) {}
+        if (validStudentId) {
+          try {
+            await supabase
+              .from('test_entitlements')
+              .delete()
+              .eq('user_id', validStudentId)
+              .eq('test_number', testNumber);
+          } catch (e) {}
+        }
       } else {
         // Grant access
         nextEnts = Array.from(new Set([...studentEntitlements, testNumber]));
-        try {
-          await supabase.from('test_entitlements').insert([
-            {
-              user_id: selectedStudent.id,
-              marlint_test_id: marlintTestId,
-              test_number: testNumber,
-              source: 'super_admin_grant',
-              is_active: true,
-              granted_at: new Date().toISOString(),
-            },
-          ]);
-        } catch (e) {}
+        if (validStudentId) {
+          try {
+            await supabase.from('test_entitlements').insert([
+              {
+                user_id: validStudentId,
+                marlint_test_id: marlintTestId,
+                test_number: testNumber,
+                source: 'super_admin_grant',
+                is_active: true,
+                granted_at: new Date().toISOString(),
+              },
+            ]);
+          } catch (e) {}
+        }
       }
 
       // Synchronize directly to users.department_track in Supabase

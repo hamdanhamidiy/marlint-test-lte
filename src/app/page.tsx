@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import {
-  Sparkles,
   ShieldCheck,
   ArrowRight,
   LayoutDashboard,
@@ -11,20 +10,18 @@ import {
   CheckCircle2,
   FileCheck2,
   Utensils,
-  Hotel,
   QrCode,
   Clock,
-  Check,
   ArrowUpRight,
   Headphones,
-  BookOpen,
-  Anchor,
   Compass,
   ChevronRight,
-  Layers,
-  Flag,
   Radio,
+  BookOpen,
+  Sparkles,
+  Flag,
   Info,
+  Timer,
 } from 'lucide-react';
 import PublicNavbar from '@/components/navbar/PublicNavbar';
 import Logo from '@/components/brand/Logo';
@@ -33,13 +30,13 @@ import { MarlintTest } from '@/lib/supabase/types';
 import { formatPriceIDR } from '@/lib/utils';
 import { useAuth } from '@/lib/context/AuthContext';
 
-// Standard 6 packages seed data
+// Standard 6 official packages
 const DEFAULT_6_TESTS: MarlintTest[] = [
   {
     id: 'test-1',
     test_number: 1,
     test_name: 'Marlins Test 1 – Cruise Hospitality & Maritime English',
-    description: 'Placement & Diagnostic Maritime English Standard Assessment untuk staf F&B, Housekeeping, dan Guest Service.',
+    description: 'Placement & Diagnostic assessment untuk departemen Food & Beverage, Housekeeping, dan Guest Service.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -52,7 +49,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
     id: 'test-2',
     test_number: 2,
     test_name: 'Marlins Test 2 – Deck & Engine Operations',
-    description: 'Elementary maritime communication, deck work routines, safety commands, and engine room vocabulary.',
+    description: 'Komunikasi operasional dek kapal, perintah keselamatan, dan terminologi kamar mesin standar IMO STCW.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -65,7 +62,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
     id: 'test-3',
     test_number: 3,
     test_name: 'Marlins Test 3 – Bridge Watchkeeping & COLREGs',
-    description: 'VHF radio protocol, lookout procedures, compass bearings, and navigational watchkeeping communication.',
+    description: 'Protokol radio komunikasi VHF, prosedur lookout, navigasi anjungan, dan koordinasi alur pelayaran.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -78,7 +75,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
     id: 'test-4',
     test_number: 4,
     test_name: 'Marlins Test 4 – Tanker Operations & IMDG Cargo Handling',
-    description: 'Hazardous chemical communication, inert gas protocols, MSDS reading, and cargo transfer safety.',
+    description: 'Komunikasi penanganan kargo berbahaya, protokol gas inert, lembar MSDS, dan keselamatan transfer muatan.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -91,7 +88,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
     id: 'test-5',
     test_number: 5,
     test_name: 'Marlins Test 5 – Offshore & Dynamic Positioning',
-    description: 'Offshore support vessel logistics, DP station keeping communication, and helideck operations.',
+    description: 'Logistik kapal pendukung lepas pantai, komunikasi station-keeping DP, dan prosedur helideck maritim.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -104,7 +101,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
     id: 'test-6',
     test_number: 6,
     test_name: 'Marlins Test 6 – Container & Bulk Operations',
-    description: 'Bulk carrier IMSBC code, container lashing communication, and maritime cyber security compliance.',
+    description: 'Kepatuhan kode IMSBC bulk carrier, komunikasi lashing kontainer, dan protokol terminal pelabuhan.',
     duration: 60,
     total_questions: 60,
     passing_grade: 70,
@@ -115,7 +112,7 @@ const DEFAULT_6_TESTS: MarlintTest[] = [
   } as MarlintTest,
 ];
 
-// Modern Scroll Reveal Hook with progressive entry
+// Modern Scroll Reveal Hook
 function useScrollReveal(threshold = 0.08) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -144,7 +141,6 @@ function useScrollReveal(threshold = 0.08) {
 
     observer.observe(node);
 
-    // Initial check in case already inside viewport
     const rect = node.getBoundingClientRect();
     if (rect.top < window.innerHeight) {
       setIsVisible(true);
@@ -162,11 +158,9 @@ export default function LandingPage() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'specialist'>('all');
   const [demoSelectedOption, setDemoSelectedOption] = useState<string>('Seven – zero – four – two');
 
-  // Scroll reveal observers for smooth sectional storytelling
   const heroReveal = useScrollReveal(0.02);
-  const statsReveal = useScrollReveal(0.08);
+  const statsReveal = useScrollReveal(0.06);
   const featuresReveal = useScrollReveal(0.08);
-  const stepsReveal = useScrollReveal(0.08);
   const testsReveal = useScrollReveal(0.08);
   const certReveal = useScrollReveal(0.08);
 
@@ -205,50 +199,45 @@ export default function LandingPage() {
       <PublicNavbar />
 
       {/* =========================================================================
-          HERO SECTION — Clean, Minimal, Exam-Accurate Typography
+          HERO SECTION — Clean, High-End & Interactive Maritime Portal
           ========================================================================= */}
-      <section className="relative pt-8 pb-16 sm:pt-14 sm:pb-20 md:pt-16 md:pb-24 overflow-hidden">
-        {/* Soft Background Radial Ambient */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[420px] bg-[radial-gradient(ellipse_at_top,rgba(2,132,199,0.08),transparent_70%)] pointer-events-none" />
+      <section className="relative pt-10 pb-16 sm:pt-16 sm:pb-20 overflow-hidden bg-gradient-to-b from-white via-sky-50/20 to-[#F8FAFC] border-b border-slate-200/70">
+        {/* Soft Background Glow Accent */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-[radial-gradient(ellipse_at_top,rgba(2,132,199,0.08),transparent_70%)] pointer-events-none" />
 
         <div
           ref={heroReveal.ref}
-          className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 sm:space-y-8 relative z-10 reveal-init ${
+          className={`max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 sm:space-y-7 relative z-10 reveal-init ${
             heroReveal.isVisible ? 'reveal-active' : ''
           }`}
         >
-          {/* Header Badges matching the Exam Header */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-[#0284C7] text-xs font-bold shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse" />
-              <span>IMO STCW 2010</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-semibold shadow-2xs">
-              <span className="font-extrabold text-[#0284C7]">LTE CRUISE</span>
-              <span className="text-slate-300">•</span>
-              <span>Standar Resmi Marlins Test</span>
-            </div>
+          {/* Official Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 text-slate-700 text-xs font-bold shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
+            <span className="text-[#0284C7] font-extrabold">LTE CRUISE</span>
+            <span className="text-slate-300">•</span>
+            <span>Standar Resmi Marlins Test STCW</span>
           </div>
 
-          {/* Main Title & Subtitle */}
+          {/* Main Hero Header */}
           <div className="space-y-3.5 max-w-3xl mx-auto">
-            <h1 className="font-heading text-3xl sm:text-5xl lg:text-[52px] font-extrabold text-slate-950 tracking-tight leading-[1.15]">
+            <h1 className="font-heading text-3xl sm:text-5xl lg:text-[50px] font-extrabold text-slate-950 tracking-tight leading-[1.15]">
               Standardized Marlins Test <br className="hidden sm:inline" />
               <span className="bg-gradient-to-r from-slate-950 via-[#0369A1] to-[#0284C7] bg-clip-text text-transparent">
                 Perhotelan & Kapal Pesiar
               </span>
             </h1>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
               Platform evaluasi kecakapan Bahasa Inggris standar internasional Marlins Test untuk peserta didik sekolah perhotelan dan calon kru kapal pesiar dunia.
             </p>
           </div>
 
-          {/* Call to Actions */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <Link
               href={user ? (isAdmin ? '/admin/dashboard' : '/student/dashboard') : '/student/test/1'}
-              className="w-full sm:w-auto group flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-lg shadow-sky-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-lg shadow-sky-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               <LayoutDashboard className="w-4 h-4 text-cyan-200" />
               <span>{user ? (isAdmin ? 'Buka Portal Admin' : 'Buka Dashboard Siswa') : 'Mulai Ujian Gratis (Tes #1)'}</span>
@@ -257,7 +246,7 @@ export default function LandingPage() {
 
             <Link
               href="/verify"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 hover:text-[#0284C7] shadow-2xs transition-all duration-200"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 hover:text-[#0284C7] shadow-2xs transition-all duration-200"
             >
               <QrCode className="w-4 h-4 text-[#0284C7]" />
               <span>Verifikasi Sertifikat</span>
@@ -266,45 +255,45 @@ export default function LandingPage() {
           </div>
 
           {/* =========================================================================
-              LIVE EXAM EXPERIENCE PREVIEW CARD (Matches User's Screenshot Exactly)
+              MODERN INTERACTIVE CBT EXAM PREVIEW (Ultra-Clean & Responsive)
               ========================================================================= */}
-          <div className="pt-6 sm:pt-10 max-w-3xl mx-auto text-left">
-            <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 sm:p-8 shadow-md shadow-slate-200/50 space-y-5 relative">
-              {/* Question Header Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="pt-4 sm:pt-8 max-w-2xl mx-auto text-left">
+            <div className="bg-white rounded-2xl sm:rounded-[26px] border border-slate-200/90 p-4.5 sm:p-7 shadow-md shadow-slate-200/50 space-y-4 relative">
+              {/* Question Header */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-black tracking-wide">
+                  <span className="px-3 py-1 rounded-md bg-slate-900 text-white text-[11px] font-black tracking-wider">
                     SOAL 1
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/60 text-xs font-semibold">
+                  <span className="px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/80 text-[11px] font-bold">
                     Time & Numbers
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center gap-1.5">
-                    <Flag className="w-3.5 h-3.5 text-slate-400" />
-                    Tandai Ragu
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-[11px] font-semibold flex items-center gap-1">
+                    <Flag className="w-3 h-3 text-slate-400" />
+                    Ragu
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200 text-xs font-bold">
+                  <span className="px-2.5 py-1 rounded-md bg-sky-50 text-[#0284C7] border border-sky-200 text-[11px] font-bold">
                     Daftar Soal 0/60
                   </span>
                 </div>
               </div>
 
-              {/* Instruction Hint */}
-              <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-150 flex items-center gap-2.5 text-xs text-[#0369A1] font-medium">
+              {/* Instruction Banner */}
+              <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-100 flex items-center gap-2 text-xs text-[#0369A1] font-medium">
                 <Info className="w-4 h-4 text-[#0284C7] shrink-0" />
                 <span>Look at the question and select the correct time, quantity, or number.</span>
               </div>
 
-              {/* Question Text */}
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+              {/* Question Prompt */}
+              <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                 How do you say the cabin number &ldquo;7042&rdquo; in English standard maritime radiotelephony (SMCP)?
               </h3>
 
-              {/* Interactive Options List */}
-              <div className="grid grid-cols-1 gap-2.5 pt-1">
+              {/* Options */}
+              <div className="grid grid-cols-1 gap-2 pt-0.5">
                 {[
                   { label: 'A', text: 'Seven – zero – four – two' },
                   { label: 'B', text: 'Seventy – forty-two' },
@@ -317,30 +306,26 @@ export default function LandingPage() {
                       key={opt.label}
                       type="button"
                       onClick={() => setDemoSelectedOption(opt.text)}
-                      className={`w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-150 cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-150 cursor-pointer ${
                         isSelected
-                          ? 'bg-sky-50/90 border-[#0284C7] text-slate-950 shadow-xs font-bold ring-1 ring-[#0284C7]'
-                          : 'bg-white border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-normal'
+                          ? 'bg-sky-50/90 border-[#0284C7] text-slate-950 font-bold shadow-2xs ring-1 ring-[#0284C7]'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-medium'
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <span
-                          className={`w-7 h-7 rounded-xl font-mono text-xs font-black flex items-center justify-center shrink-0 ${
-                            isSelected
-                              ? 'bg-[#0284C7] text-white shadow-xs'
-                              : 'bg-slate-100 text-slate-700'
+                          className={`w-6 h-6 rounded-lg font-mono text-xs font-black flex items-center justify-center shrink-0 ${
+                            isSelected ? 'bg-[#0284C7] text-white' : 'bg-slate-100 text-slate-600'
                           }`}
                         >
                           {opt.label}
                         </span>
-                        <span className="text-xs sm:text-sm font-semibold">{opt.text}</span>
+                        <span className="text-xs sm:text-sm truncate">{opt.text}</span>
                       </div>
 
                       <div
-                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                          isSelected
-                            ? 'bg-[#0284C7] border-[#0284C7] text-white'
-                            : 'border-slate-300 bg-white'
+                        className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
+                          isSelected ? 'bg-[#0284C7] border-[#0284C7]' : 'border-slate-300 bg-white'
                         }`}
                       >
                         {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -350,13 +335,13 @@ export default function LandingPage() {
                 })}
               </div>
 
-              {/* Bottom Bar Preview */}
+              {/* Bottom Card Navigation */}
               <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-semibold text-slate-500">
                 <span className="text-slate-400">← Sebelumnya</span>
                 <span className="font-mono text-slate-700">Soal 1 / 60</span>
                 <Link
                   href="/student/test/1"
-                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold hover:opacity-95 shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white font-bold text-xs hover:opacity-95 shadow-2xs"
                 >
                   <span>Mulai Ujian</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -367,39 +352,39 @@ export default function LandingPage() {
         </div>
 
         {/* =========================================================================
-            STATS STRIP — Clean & Minimalist
+            STATS METRICS STRIP
             ========================================================================= */}
         <div
           ref={statsReveal.ref}
-          className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-14 reveal-init ${
+          className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12 reveal-init ${
             statsReveal.isVisible ? 'reveal-active' : ''
           }`}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-[24px] bg-white border border-slate-200/90 shadow-2xs text-center">
-            <div className="p-3 space-y-1">
-              <span className="font-heading text-xl sm:text-2xl font-extrabold text-slate-950 block">6 Paket</span>
-              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Pilihan Lengkap</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs text-center">
+            <div className="p-2 space-y-0.5">
+              <span className="font-heading text-lg sm:text-xl font-black text-slate-950 block">6 Paket</span>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Pilihan Ujian</p>
             </div>
-            <div className="p-3 space-y-1 border-l border-slate-100">
-              <span className="font-heading text-xl sm:text-2xl font-extrabold text-[#0284C7] block">60 Menit</span>
-              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Stopwatch Resmi</p>
+            <div className="p-2 space-y-0.5 border-l border-slate-100">
+              <span className="font-heading text-lg sm:text-xl font-black text-[#0284C7] block">60 Menit</span>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Stopwatch Resmi</p>
             </div>
-            <div className="p-3 space-y-1 border-l border-slate-100">
-              <span className="font-heading text-xl sm:text-2xl font-extrabold text-emerald-600 block">A1–C1</span>
-              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Standar CEFR</p>
+            <div className="p-2 space-y-0.5 border-l border-slate-100">
+              <span className="font-heading text-lg sm:text-xl font-black text-emerald-600 block">A1–C1</span>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Standar CEFR</p>
             </div>
-            <div className="p-3 space-y-1 border-l border-slate-100">
-              <span className="font-heading text-xl sm:text-2xl font-extrabold text-amber-500 block">100% Valid</span>
-              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">QR Code Terdaftar</p>
+            <div className="p-2 space-y-0.5 border-l border-slate-100">
+              <span className="font-heading text-lg sm:text-xl font-black text-amber-600 block">QR Resmi</span>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Verifikasi 24/7</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          CORE FEATURES — 3 Essential Highlights Only
+          CORE EVALUATION PILLARS — 3 Concise Highlights
           ========================================================================= */}
-      <section id="features" className="py-14 md:py-20 bg-white border-y border-slate-200/70">
+      <section id="features" className="py-14 md:py-20 bg-white border-b border-slate-200/70">
         <div
           ref={featuresReveal.ref}
           className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 reveal-init ${
@@ -407,72 +392,72 @@ export default function LandingPage() {
           }`}
         >
           <div className="text-center space-y-2 max-w-xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-100 text-[11px] font-bold uppercase tracking-wider">
-              <span>Keunggulan Platform</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wider">
+              <span>Keunggulan Penilaian</span>
             </div>
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
-              Standar Evaluasi Bahasa Internasional
+              Standar Evaluasi Kompetensi Maritim
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
-              Disusun untuk menguji pemahaman instruksi, komunikasi tamu, dan koordinasi kerja di atas kapal pesiar internasional.
+            <p className="text-xs sm:text-sm text-slate-500 font-normal">
+              Dirancang untuk mengukur kecakapan bahasa dan kesiapan kerja kru kapal pesiar internasional.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Card 1 */}
-            <div className="bg-[#F8FAFC] p-6 sm:p-7 rounded-[24px] border border-slate-200/80 card-modern-hover flex flex-col justify-between space-y-4 group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-2xl bg-white text-[#0284C7] border border-slate-200 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+            <div className="bg-[#F8FAFC] p-6 rounded-2xl border border-slate-200/80 hover:border-sky-300 transition-all flex flex-col justify-between space-y-3.5 group">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-xl bg-white text-[#0284C7] border border-slate-200/80 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
                   <Utensils className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors">
-                  Cruise Hospitality & Maritime English
+                  Cruise Hospitality & Pelayanan Tamu
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                  Kosakata praktis dan dialog interaktif untuk departemen Food & Beverage, Housekeeping, Culinary, dan pelayanan tamu internasional.
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  Kosakata praktis dan dialog interaktif departemen Food & Beverage, Housekeeping, dan pelayanan tamu berstandar internasional.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0284C7]">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Simulasi percakapan nyata</span>
+                <span>Simulasi percakapan operasional</span>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-[#F8FAFC] p-6 sm:p-7 rounded-[24px] border border-slate-200/80 card-modern-hover flex flex-col justify-between space-y-4 group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-2xl bg-white text-[#0284C7] border border-slate-200 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
-                  <Headphones className="w-5 h-5" />
+            <div className="bg-[#F8FAFC] p-6 rounded-2xl border border-slate-200/80 hover:border-sky-300 transition-all flex flex-col justify-between space-y-3.5 group">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-xl bg-white text-[#0284C7] border border-slate-200/80 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                  <Radio className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors">
-                  7 Tipe Interaksi & Audio VHF
+                  Keselamatan & Standar IMO SMCP
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                  Dilengkapi audio percakapan radio VHF, penyusunan kalimat acak, isian kata rumpang, dan pengenalan diagram teknis maritim.
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  Uji pemahaman instruksi darurat maritim, protokol komunikasi radio VHF, terminologi SOLAS, dan komando evakuasi keselamatan kapal.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0284C7]">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Format evaluasi interaktif</span>
+                <span>Format audio & visual listening</span>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-[#F8FAFC] p-6 sm:p-7 rounded-[24px] border border-slate-200/80 card-modern-hover flex flex-col justify-between space-y-4 group">
-              <div className="space-y-3">
-                <div className="w-10 h-10 rounded-2xl bg-white text-[#0284C7] border border-slate-200 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+            <div className="bg-[#F8FAFC] p-6 rounded-2xl border border-slate-200/80 hover:border-sky-300 transition-all flex flex-col justify-between space-y-3.5 group">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-xl bg-white text-[#0284C7] border border-slate-200/80 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
                   <Award className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors">
                   Sertifikasi & Verifikasi Instan
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                  e-Sertifikat kelulusan terbit seketika dengan QR Code resmi untuk validasi keaslian oleh agensi pelayaran internasional.
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  Penerbitan e-Sertifikat kelulusan ber-QR Code dengan pemetaan level CEFR (A1–C1) yang dapat divalidasi langsung oleh agensi pelayaran.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0284C7]">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Validasi online 24/7 di portal</span>
+                <span>Otentikasi QR Code resmi</span>
               </div>
             </div>
           </div>
@@ -480,71 +465,9 @@ export default function LandingPage() {
       </section>
 
       {/* =========================================================================
-          3 SIMPLE STEPS FLOW — Clean Process
+          EXAM CATALOG SHOWCASE — Structured Test Packages
           ========================================================================= */}
-      <section className="py-14 md:py-20 bg-[#F8FAFC]">
-        <div
-          ref={stepsReveal.ref}
-          className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 reveal-init ${
-            stepsReveal.isVisible ? 'reveal-active' : ''
-          }`}
-        >
-          <div className="text-center space-y-2 max-w-xl mx-auto">
-            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
-              Alur Mengikuti Evaluasi Ujian
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal">
-              Tiga langkah mudah untuk menyelesaikan asesmen dan memperoleh sertifikat kelulusan.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative">
-            {/* Step 1 */}
-            <div className="p-6 rounded-[24px] bg-white border border-slate-200/80 space-y-3 relative card-modern-hover shadow-2xs">
-              <span className="w-8 h-8 rounded-full bg-[#0284C7] text-white text-xs font-mono font-extrabold flex items-center justify-center shadow-xs">
-                1
-              </span>
-              <h3 className="font-heading text-base font-bold text-slate-900">
-                Pilih Paket Ujian
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Mulai dengan Placement Test gratis (Tes #1) atau aktifkan paket spesialisasi departemen menggunakan kode token / pembayaran QRIS.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="p-6 rounded-[24px] bg-white border border-slate-200/80 space-y-3 relative card-modern-hover shadow-2xs">
-              <span className="w-8 h-8 rounded-full bg-[#0284C7] text-white text-xs font-mono font-extrabold flex items-center justify-center shadow-xs">
-                2
-              </span>
-              <h3 className="font-heading text-base font-bold text-slate-900">
-                Kerjakan 60 Soal
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Jawab soal dalam durasi stopwatch 60 menit dengan navigasi fleksibel, audio listening, dan penyimpanan jawaban otomatis.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="p-6 rounded-[24px] bg-white border border-slate-200/80 space-y-3 relative card-modern-hover shadow-2xs">
-              <span className="w-8 h-8 rounded-full bg-emerald-600 text-white text-xs font-mono font-extrabold flex items-center justify-center shadow-xs">
-                3
-              </span>
-              <h3 className="font-heading text-base font-bold text-slate-900">
-                Dapatkan Sertifikat
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Lihat skor instan, pemetaan level CEFR (A1–C1), pembahasan ilmiah soal, dan unduh e-Sertifikat resmi standar STCW.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          EXAM CATALOG SHOWCASE — Exactly 6 Test Packages
-          ========================================================================= */}
-      <section id="tests" className="py-14 md:py-20 bg-white border-t border-slate-200/70">
+      <section id="tests" className="py-14 md:py-20 bg-[#F8FAFC] border-b border-slate-200/70">
         <div
           ref={testsReveal.ref}
           className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 reveal-init ${
@@ -553,20 +476,20 @@ export default function LandingPage() {
         >
           {/* Header & Filter Controls */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-100 text-[11px] font-bold uppercase tracking-wider">
-                <span>Katalog Evaluasi</span>
+            <div className="space-y-1.5 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-100 text-[10px] font-bold uppercase tracking-wider">
+                <span>Katalog Asesmen</span>
               </div>
               <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
                 Paket Ujian Marlins Test Pilihan
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 font-normal">
-                Menampilkan 6 paket evaluasi standar IMO SMCP terpopuler sesuai jenjang karier kapal Anda.
+              <p className="text-xs sm:text-sm text-slate-500 font-normal">
+                Pilih paket evaluasi kompetensi sesuai divisi kerja dan jenjang karier pelayaran Anda.
               </p>
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 p-1 bg-[#F8FAFC] border border-slate-200 rounded-full self-start md:self-auto shadow-2xs">
+            <div className="flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-full self-start md:self-auto shadow-2xs">
               <button
                 type="button"
                 onClick={() => setActiveFilter('all')}
@@ -603,24 +526,24 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Cards Grid — Strictly 6 Packages */}
+          {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredTests.slice(0, 6).map((test, idx) => (
+            {filteredTests.slice(0, 6).map((test) => (
               <div
                 key={test.id}
-                className={`bg-white p-6 rounded-[24px] border border-slate-200/90 shadow-2xs card-modern-hover flex flex-col justify-between space-y-4 group reveal-delay-${idx + 1}`}
+                className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
               >
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-full bg-slate-900 text-white text-[11px] font-mono font-bold">
-                      Tes #{test.test_number}
+                    <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 text-[10px] font-bold">
+                      Paket #{test.test_number}
                     </span>
-                    <span className="text-xs font-extrabold text-emerald-700">
+                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
                       {test.is_free || test.test_number === 1 ? 'GRATIS' : formatPriceIDR(test.price || 49000)}
                     </span>
                   </div>
 
-                  <h3 className="font-heading text-base font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors leading-snug">
+                  <h3 className="font-heading text-base font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors leading-snug">
                     {test.test_name}
                   </h3>
 
@@ -636,12 +559,12 @@ export default function LandingPage() {
                       60 Menit
                     </span>
                     <span>60 Soal</span>
-                    <span>Pass: <strong className="text-emerald-600 font-bold">{test.passing_grade || 70}%</strong></span>
+                    <span>Pass: <strong className="text-emerald-700 font-bold">{test.passing_grade || 70}%</strong></span>
                   </div>
 
                   <Link
                     href={`/student/test/${test.test_number}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all active:scale-98"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-sm transition-all active:scale-98"
                   >
                     <span>Mulai Ujian</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -651,23 +574,23 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Banner Link to All 10 Packages */}
-          <div className="p-4 sm:p-5 rounded-[22px] bg-[#F8FAFC] border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          {/* Clean Catalog Footer Banner */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div className="space-y-0.5">
               <span className="text-xs font-extrabold text-slate-900 flex items-center justify-center sm:justify-start gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#0284C7]" />
-                <span>Tersedia 10 Paket Ujian Lengkap Standar IMO STCW</span>
+                <span>Tersedia 10 Paket Ujian Resmi di Portal Siswa</span>
               </span>
               <p className="text-[11px] text-slate-500">
-                Akses seluruh paket mulai dari Foundation hingga Master Level di katalog portal siswa.
+                Akses katalog lengkap untuk persiapan wawancara kapal pesiar dan sertifikasi kompetensi.
               </p>
             </div>
 
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#0284C7] hover:text-white border border-slate-200 text-slate-800 text-xs font-bold transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-[#0284C7] hover:text-white text-slate-800 text-xs font-bold transition-all shrink-0"
             >
-              <span>Buka Semua 10 Paket</span>
+              <span>Lihat Semua Paket (10)</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -675,33 +598,33 @@ export default function LandingPage() {
       </section>
 
       {/* =========================================================================
-          CERTIFICATE VERIFICATION SPOTLIGHT — Clean Verification CTA
+          VERIFICATION SPOTLIGHT — Clean Institutional Banner
           ========================================================================= */}
-      <section className="py-14 md:py-20 bg-[#F8FAFC]">
+      <section className="py-14 md:py-18 bg-white">
         <div
           ref={certReveal.ref}
           className={`max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 reveal-init ${
             certReveal.isVisible ? 'reveal-active' : ''
           }`}
         >
-          <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-7 sm:p-12 text-white shadow-xl shadow-sky-900/10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-3.5 max-w-lg text-center md:text-left">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-[24px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-6 sm:p-10 text-white shadow-xl shadow-sky-900/10 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div className="space-y-2.5 max-w-lg text-center md:text-left">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-cyan-200 text-[10px] font-bold uppercase tracking-wider">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Validasi Resmi Agensi Pelayaran</span>
+                <span>Otentikasi Dokumen Resmi</span>
               </div>
               <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-                Verifikasi Keaslian Dokumen Sertifikat Marlins
+                Verifikasi Keaslian Sertifikat Marlins
               </h2>
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
-                Perusahaan pelayaran dan agen pengawakan (*crewing agencies*) dapat langsung memverifikasi keaslian dokumen kelulusan kandidat secara realtime.
+                Perusahaan pelayaran dan agensi pengawakan kapal (*crewing agencies*) dapat langsung memvalidasi keaslian dokumen kelulusan kandidat secara instan melalui sistem QR terpusat.
               </p>
             </div>
 
             <div className="shrink-0 w-full md:w-auto">
               <Link
                 href="/verify"
-                className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-900 bg-white hover:bg-slate-100 shadow-lg transition-all hover:scale-105 active:scale-98"
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-950 bg-white hover:bg-slate-100 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <QrCode className="w-4 h-4 text-[#0284C7]" />
                 <span>Buka Portal Verifikasi</span>
@@ -713,9 +636,9 @@ export default function LandingPage() {
       </section>
 
       {/* =========================================================================
-          FOOTER — Clean, Minimal, Professional
+          FOOTER — Clean, Formal, Enterprise
           ========================================================================= */}
-      <footer className="border-t border-slate-200/80 bg-white py-8 mt-auto">
+      <footer className="border-t border-slate-200 bg-[#F8FAFC] py-8 mt-auto">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
           <Logo size="sm" showSubtitle={true} subtitleText="LTE Cruise Training Center" variant="dark" />
           <p className="text-center sm:text-right">
@@ -726,5 +649,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-

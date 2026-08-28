@@ -13,13 +13,13 @@ import {
   Flag,
   AlertCircle,
   Clock,
-  ShieldCheck,
   LogOut,
   AlertTriangle,
   Loader2,
   Grid,
   X,
   HelpCircle,
+  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -200,7 +200,7 @@ export default function TestTakingPage() {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = 'Sesi ujian sedang berlangsung. Jawaban Anda tersimpan otomatis.';
+      e.returnValue = 'Sesi ujian sedang berlangsung. Keluar akan membatalkan sesi ujian.';
       return e.returnValue;
     };
 
@@ -497,6 +497,21 @@ export default function TestTakingPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [attempt, currentIndex]);
 
+  // Handler: When user confirms to exit without completing, clear all stored session answers & progress
+  const handleExitAndResetSession = () => {
+    try {
+      localStorage.removeItem(`marlins_attempt_answers_${attemptId}`);
+      localStorage.removeItem(`marlins_attempt_questions_${attemptId}`);
+      localStorage.removeItem(`marlins_attempt_start_${attemptId}`);
+      localStorage.removeItem(`marlins_attempt_elapsed_${attemptId}`);
+      localStorage.removeItem(`marlins_review_${attemptId}`);
+    } catch (err) {}
+
+    setAnswers({});
+    setExitModalOpen(false);
+    router.replace('/student/tests');
+  };
+
   const handleFinalSubmit = async () => {
     if (!attempt || submitting) return;
 
@@ -698,7 +713,6 @@ export default function TestTakingPage() {
       user_answers: userAnswers,
     };
 
-    // Synthesize certificate if passed
     let generatedCertificate: any = null;
     if (isPassed) {
       const studentName = profile?.full_name || user?.user_metadata?.full_name || 'Budi Santoso';
@@ -926,7 +940,7 @@ export default function TestTakingPage() {
       className="fixed inset-0 h-[100dvh] w-screen bg-[#F8FAFC] flex flex-col overflow-hidden select-none touch-manipulation exam-secure-mode font-sans text-slate-900"
     >
       {/* 1. TOP HEADER — Clean, Minimal, Academic Standard */}
-      <header className="shrink-0 w-full bg-white border-b border-slate-200/90 px-4 sm:px-8 py-3 z-30 shadow-2xs">
+      <header className="shrink-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3 z-30 shadow-2xs">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
           
           {/* Left: Logo & Test Title */}
@@ -948,7 +962,7 @@ export default function TestTakingPage() {
           {/* Right: Stopwatch, Navigator Button & Exit */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Stopwatch Time */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm font-bold">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm font-bold shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{formatStopwatch(elapsedSeconds)}</span>
@@ -958,11 +972,11 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setNavigatorModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] text-xs font-bold transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100/90 border border-sky-200/90 text-[#0284C7] text-xs font-bold transition-all duration-200 cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
             >
               <Grid className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Daftar Soal</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-[#0284C7] text-white text-[10px] font-mono">
+              <span className="px-1.5 py-0.2 rounded-full bg-[#0284C7] text-white text-[10px] font-mono shadow-2xs">
                 {answeredCount}/{totalQuestionsCount}
               </span>
             </button>
@@ -971,7 +985,7 @@ export default function TestTakingPage() {
             <button
               type="button"
               onClick={() => setExitModalOpen(true)}
-              className="w-8 h-8 rounded-full text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              className="w-8 h-8 rounded-full text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 hover:scale-105 active:scale-95"
               title="Keluar dari Ujian"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -985,12 +999,12 @@ export default function TestTakingPage() {
         <div className="w-full max-w-3xl space-y-4 my-auto pb-4">
           
           {/* Active Question Card */}
-          <div className="bg-white rounded-[24px] p-5 sm:p-8 border border-slate-200 shadow-2xs space-y-4 relative">
+          <div className="bg-white rounded-[24px] p-5 sm:p-8 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-4 relative">
             
             {/* Question Header: Number Pill, Category Pill & Flag Toggle */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide font-mono">
+                <span className="px-3.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide font-mono shadow-2xs">
                   SOAL {currentIndex + 1}
                 </span>
 
@@ -1005,10 +1019,10 @@ export default function TestTakingPage() {
               <button
                 type="button"
                 onClick={() => handleToggleFlag(currentIndex)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-2xs ${
                   flaggedQuestions.has(currentIndex)
-                    ? 'bg-amber-400 text-amber-950 font-bold ring-2 ring-amber-300'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    ? 'bg-amber-400 text-amber-950 font-bold ring-2 ring-amber-300 scale-102'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800'
                 }`}
               >
                 <Flag className={`w-3.5 h-3.5 ${flaggedQuestions.has(currentIndex) ? 'fill-amber-950' : ''}`} />
@@ -1017,7 +1031,7 @@ export default function TestTakingPage() {
             </div>
 
             {/* Instruction Notice */}
-            <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-100 text-xs text-sky-950 font-medium flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-100/90 text-xs text-sky-950 font-medium flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-[#0284C7] shrink-0" />
               <p className="leading-snug">{getInstructionText(currentQuestion)}</p>
             </div>
@@ -1099,11 +1113,11 @@ export default function TestTakingPage() {
       </main>
 
       {/* 3. BOTTOM CONTROL BAR */}
-      <footer className="shrink-0 w-full bg-white border-t border-slate-200/90 px-4 sm:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-2xs">
+      <footer className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-4 sm:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <div className="max-w-3xl mx-auto space-y-2.5">
           
           {/* Progress Bar */}
-          <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#0284C7] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
@@ -1117,7 +1131,7 @@ export default function TestTakingPage() {
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="inline-flex items-center justify-center gap-1.5 h-9 px-4 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer active:scale-95"
+              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 sm:px-5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 cursor-pointer active:scale-95 hover:-translate-x-0.5"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Sebelumnya</span>
@@ -1139,7 +1153,7 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
-                  className="inline-flex items-center justify-center gap-1.5 h-9 px-5 sm:px-6 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-6 rounded-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs shadow-sm shadow-sky-500/20 transition-all duration-200 cursor-pointer active:scale-95 hover:translate-x-0.5"
                 >
                   <span>Berikutnya</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1148,7 +1162,7 @@ export default function TestTakingPage() {
                 <button
                   type="button"
                   onClick={() => setSubmitModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 h-9 px-5 sm:px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 sm:px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm shadow-emerald-600/20 transition-all duration-200 cursor-pointer active:scale-95 hover:scale-[1.02]"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Selesai Ujian</span>
@@ -1161,8 +1175,8 @@ export default function TestTakingPage() {
 
       {/* MODAL: 60 Question Grid Navigator */}
       {navigatorModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[24px] p-5 sm:p-6 max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-4 shadow-xl border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-5 sm:p-6 max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-4 shadow-2xl border border-slate-100">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -1177,25 +1191,25 @@ export default function TestTakingPage() {
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* KPI Summary Status */}
-            <div className="grid grid-cols-3 gap-2 py-1">
-              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
-                <span className="text-[10px] font-bold text-emerald-800 uppercase block">Terjawab</span>
-                <span className="font-mono text-sm font-bold text-emerald-900">{answeredCount}</span>
+            <div className="grid grid-cols-3 gap-2.5 py-1">
+              <div className="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 text-center transition-all">
+                <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Terjawab</span>
+                <span className="font-mono text-base font-extrabold text-emerald-900">{answeredCount}</span>
               </div>
-              <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-center">
-                <span className="text-[10px] font-bold text-amber-800 uppercase block">Ragu-Ragu</span>
-                <span className="font-mono text-sm font-bold text-amber-900">{flaggedCount}</span>
+              <div className="p-2.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-center transition-all">
+                <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Ragu-Ragu</span>
+                <span className="font-mono text-base font-extrabold text-amber-900">{flaggedCount}</span>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                <span className="text-[10px] font-bold text-slate-600 uppercase block">Belum</span>
-                <span className="font-mono text-sm font-bold text-slate-800">{unansweredCount}</span>
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center transition-all">
+                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Belum</span>
+                <span className="font-mono text-base font-extrabold text-slate-800">{unansweredCount}</span>
               </div>
             </div>
 
@@ -1217,19 +1231,19 @@ export default function TestTakingPage() {
                       setCurrentIndex(idx);
                       setNavigatorModalOpen(false);
                     }}
-                    className={`h-8 sm:h-9 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer relative flex items-center justify-center ${
+                    className={`h-9 sm:h-10 rounded-xl font-mono text-xs font-extrabold transition-all duration-200 cursor-pointer relative flex items-center justify-center ${
                       isCurrent
-                        ? 'ring-2 ring-[#0284C7] ring-offset-1 bg-[#0284C7] text-white'
+                        ? 'ring-2 ring-[#0284C7] ring-offset-2 bg-[#0284C7] text-white shadow-sm scale-105 z-10'
                         : isFlagged
-                        ? 'bg-amber-400 text-amber-950'
+                        ? 'bg-amber-400 text-amber-950 font-bold hover:bg-amber-500 shadow-2xs hover:-translate-y-0.5'
                         : isAnswered
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-emerald-500 text-white font-bold hover:bg-emerald-600 shadow-2xs hover:-translate-y-0.5'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-950 hover:-translate-y-0.5'
                     }`}
                   >
                     <span>{idx + 1}</span>
                     {isFlagged && !isCurrent && (
-                      <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-amber-950" />
+                      <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-950" />
                     )}
                   </button>
                 );
@@ -1237,25 +1251,26 @@ export default function TestTakingPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5">
               {unansweredCount > 0 ? (
                 <button
                   type="button"
                   onClick={handleJumpToFirstUnanswered}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs border border-sky-200 transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs border border-sky-200/90 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Lompat ke Soal Kosong →</span>
                 </button>
               ) : (
-                <span className="text-xs font-bold text-emerald-600">
-                  Semua soal telah terisi.
+                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Semua {totalQuestionsCount} soal telah terisi!</span>
                 </span>
               )}
 
               <button
                 type="button"
                 onClick={() => setNavigatorModalOpen(false)}
-                className="w-full sm:w-auto px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all duration-200 cursor-pointer active:scale-95"
               >
                 Tutup
               </button>
@@ -1266,9 +1281,9 @@ export default function TestTakingPage() {
 
       {/* MODAL: Submit Confirmation */}
       {submitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[24px] p-6 max-w-sm w-full space-y-4 shadow-xl text-center border border-slate-100">
-            <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl text-center border border-slate-100">
+            <div className="w-13 h-13 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto border border-sky-100 shadow-2xs">
               <FileCheck2 className="w-6 h-6" />
             </div>
 
@@ -1279,8 +1294,8 @@ export default function TestTakingPage() {
               <p className="text-xs text-slate-500 leading-relaxed">
                 Anda telah menjawab <strong className="text-[#0284C7] font-bold">{answeredCount}</strong> dari <strong className="text-slate-800 font-bold">{totalQuestionsCount}</strong> butir soal.
                 {unansweredCount > 0 && (
-                  <span className="block text-amber-700 font-bold mt-1.5 p-2 rounded-lg bg-amber-50 border border-amber-200">
-                    Masih ada {unansweredCount} soal yang belum Anda isi!
+                  <span className="block text-amber-800 font-bold mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-left">
+                    ⚠️ Masih ada {unansweredCount} soal yang belum Anda isi!
                   </span>
                 )}
               </p>
@@ -1291,7 +1306,7 @@ export default function TestTakingPage() {
                 type="button"
                 onClick={() => setSubmitModalOpen(false)}
                 disabled={submitting}
-                className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all duration-200 cursor-pointer active:scale-95"
               >
                 Periksa Kembali
               </button>
@@ -1300,7 +1315,7 @@ export default function TestTakingPage() {
                 type="button"
                 onClick={handleFinalSubmit}
                 disabled={submitting}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-all duration-200 shadow-sm shadow-sky-500/20 cursor-pointer disabled:opacity-50 active:scale-95"
               >
                 {submitting ? (
                   <>
@@ -1319,37 +1334,38 @@ export default function TestTakingPage() {
         </div>
       )}
 
-      {/* MODAL: Exit Confirmation */}
+      {/* MODAL: Exit Confirmation (Answers will NOT be saved) */}
       {exitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white text-slate-900 rounded-[24px] p-6 max-w-sm w-full space-y-4 shadow-xl text-center border border-slate-100">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in">
+          <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl text-center border border-slate-100">
+            <div className="w-13 h-13 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100/90 shadow-2xs">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h3 className="text-base font-bold text-slate-900">
                 Keluar dari Sesi Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Seluruh jawaban yang telah Anda isi telah <strong className="text-slate-800 font-bold">tersimpan otomatis</strong>.
+                Jika Anda keluar sekarang, sesi ujian akan dibatalkan dan progres jawaban Anda <strong className="text-rose-600 font-bold">tidak akan disimpan</strong>.
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-2.5 pt-1">
+            <div className="flex items-center justify-center gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setExitModalOpen(false)}
-                className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all duration-200 cursor-pointer active:scale-95"
               >
                 Lanjutkan Ujian
               </button>
-              <Link
-                href="/student/tests"
-                className="flex-1 py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs text-center transition-all"
+              <button
+                type="button"
+                onClick={handleExitAndResetSession}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs text-center shadow-sm shadow-rose-600/20 transition-all duration-200 cursor-pointer active:scale-95"
               >
                 Ya, Keluar
-              </Link>
+              </button>
             </div>
           </div>
         </div>

@@ -188,6 +188,35 @@ export default function TestTakingPage() {
     return () => clearInterval(timer);
   }, [attemptId, attempt?.started_at, getOrSetStartTime]);
 
+  // Intercept browser back button & phone back gestures to trigger exit confirmation modal
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Push initial history state to capture back button
+    window.history.pushState({ marlinsExamActive: true }, '', window.location.href);
+
+    const handlePopState = () => {
+      // Re-push history state so URL doesn't leave the exam screen
+      window.history.pushState({ marlinsExamActive: true }, '', window.location.href);
+      // Trigger confirmation modal
+      setExitModalOpen(true);
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = 'Sesi ujian sedang berlangsung. Jawaban Anda tersimpan otomatis.';
+      return e.returnValue;
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   // Load Attempt Data with 60 questions fallback
   useEffect(() => {
     async function loadAttempt() {
@@ -1346,20 +1375,20 @@ export default function TestTakingPage() {
         </div>
       )}
 
-      {/* MODAL: Exit Confirmation */}
+      {/* MODAL: Exit / Akhiri Ujian Confirmation */}
       {exitModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="bg-white text-slate-900 rounded-[28px] p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl text-center border border-slate-100">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100">
+            <div className="w-13 h-13 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-100 shadow-2xs">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
             <div className="space-y-1.5">
-              <h3 className="font-heading text-base font-extrabold text-slate-900">
-                Keluar dari Sesi Ujian?
+              <h3 className="font-heading text-base sm:text-lg font-extrabold text-slate-900">
+                Keluar & Akhiri Sesi Ujian?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Jawaban Anda saat ini akan tetap tersimpan dan Anda dapat melanjutkan ujian ini kapan saja.
+                Seluruh jawaban yang telah Anda isi dan waktu pengerjaan telah <strong className="text-slate-800 font-bold">tersimpan otomatis</strong>. Anda dapat melanjutkannya kapan saja.
               </p>
             </div>
 
@@ -1367,15 +1396,15 @@ export default function TestTakingPage() {
               <button
                 type="button"
                 onClick={() => setExitModalOpen(false)}
-                className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
               >
-                Batal
+                Lanjutkan Ujian
               </button>
               <Link
                 href="/student/tests"
-                className="px-5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20"
+                className="flex-1 py-2.5 px-4 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20 text-center transition-all"
               >
-                Keluar ke Katalog
+                Ya, Keluar
               </Link>
             </div>
           </div>

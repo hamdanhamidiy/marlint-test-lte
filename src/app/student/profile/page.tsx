@@ -237,10 +237,10 @@ export default function StudentProfilePage() {
         {/* Subtle Top Ambient Gradient Line */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
 
-        <div className="flex items-center gap-4 sm:gap-5">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 min-w-0 flex-1">
           {/* Avatar with Click-to-Upload Trigger */}
-          <div className="relative group shrink-0">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-sm">
+          <div className="relative group shrink-0 mx-auto sm:mx-0">
+            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-sm shrink-0 overflow-hidden">
               <div className="w-full h-full bg-amber-50 rounded-[14px] flex items-center justify-center font-heading text-2xl font-black text-slate-800 overflow-hidden relative">
                 {uploadingPhoto ? (
                   <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
@@ -282,9 +282,9 @@ export default function StudentProfilePage() {
             </button>
           </div>
 
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-heading text-lg sm:text-xl font-bold text-slate-900 truncate">
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+              <h1 className="font-heading text-lg sm:text-xl font-bold text-slate-900">
                 {profile?.full_name || 'Siswa LTE Cruise'}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
@@ -292,12 +292,12 @@ export default function StudentProfilePage() {
               </span>
             </div>
 
-            <p className="text-xs text-slate-500 font-normal truncate">
-              {profile?.job_title || 'F&B Service / Waiter'} • <span className="text-slate-400 font-mono">{profile?.email}</span>
+            <p className="text-xs text-slate-500 font-normal">
+              {profile?.job_title || 'F&B Service / Waiter'} • <span className="text-slate-400 font-mono break-all">{profile?.email}</span>
             </p>
 
             {/* Action Buttons & Badges Row */}
-            <div className="flex items-center gap-2 pt-1.5 flex-wrap text-xs">
+            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1.5 flex-wrap text-xs">
               <button
                 type="button"
                 onClick={handleSelectPhoto}
@@ -335,7 +335,7 @@ export default function StudentProfilePage() {
         <button
           type="button"
           onClick={() => signOut()}
-          className="flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-colors shrink-0 cursor-pointer self-start sm:self-auto"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-colors shrink-0 cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Keluar Akun</span>

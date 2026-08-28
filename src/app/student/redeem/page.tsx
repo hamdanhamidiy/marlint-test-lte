@@ -100,7 +100,7 @@ function RedeemContent() {
 
         {/* Icon & Title */}
         <div className="space-y-2 pt-1">
-          <div className="w-13 h-13 rounded-2xl bg-sky-50 text-[#0284C7] border border-sky-200/70 flex items-center justify-center mx-auto shadow-2xs">
+          <div className="w-14 h-14 rounded-2xl bg-sky-50 text-[#0284C7] border border-sky-200/70 flex items-center justify-center mx-auto shadow-2xs">
             <KeyRound className="w-6 h-6" />
           </div>
           <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">

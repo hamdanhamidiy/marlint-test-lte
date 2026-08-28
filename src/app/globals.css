@@ -140,6 +140,38 @@
 
 /* ===== MODERN ANIMATIONS & KEYFRAMES ===== */
 
+/* Modern Smooth Scroll Reveal & Transitions */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-active {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Stagger delays for grid items */
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+.reveal-delay-6 { transition-delay: 0.48s; }
+
+/* Interactive Modern Card with Glass Aura Hover */
+.card-modern-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-modern-hover:hover {
+  transform: translateY(-3px) scale(1.005);
+  border-color: rgba(2, 132, 199, 0.45);
+  box-shadow: 0 16px 36px -12px rgba(2, 132, 199, 0.14), 0 4px 16px -4px rgba(15, 23, 42, 0.04);
+}
+
 /* Fade In Up — for smooth scroll reveal */
 @keyframes fade-in-up {
   0% {

@@ -131,7 +131,7 @@ export default function AdminPaymentsPage() {
             marlint_test_id: e.marlint_test_id,
             test_number: e.test_number,
             source: e.source || 'qris_checkout',
-            source_id: e.source_id,
+            source_id: parsedMeta.invoice_id || e.source_id || `INV-${e.id.substring(0, 8)}`,
             is_active: e.is_active === true,
             granted_at: e.granted_at || e.created_at || new Date().toISOString(),
             revoked_at: e.revoked_at,

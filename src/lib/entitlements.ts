@@ -83,6 +83,11 @@ export async function getUserUnlockedTests(
   return unlockedTests;
 }
 
+const isValidUuid = (str?: string | null): boolean => {
+  if (!str) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
+};
+
 /**
  * Siswa mengajukan konfirmasi pembayaran QRIS (Status PENDING menunggu verifikasi Admin)
  */
@@ -109,6 +114,7 @@ export async function submitQrisPaymentRequest(
     const marlintTestId = testData?.id || null;
 
     const metaJson = JSON.stringify({
+      invoice_id: invoiceId,
       sender_name: paymentDetails.sender_name,
       sender_phone: paymentDetails.sender_phone || '',
       proof_url: paymentDetails.proof_url || null,
@@ -118,6 +124,8 @@ export async function submitQrisPaymentRequest(
     });
 
     // 2. Insert ke test_entitlements dengan is_active: false (PENDING!)
+    // Note: source_id di database bertipe UUID, jadi kita isi null atau UUID valid,
+    // sedangkan invoice_id string disimpan di dalam metaJson (revoke_reason).
     const { data, error } = await supabase
       .from('test_entitlements')
       .insert({
@@ -125,7 +133,7 @@ export async function submitQrisPaymentRequest(
         marlint_test_id: marlintTestId,
         test_number: testNumber,
         source: 'qris_pending',
-        source_id: invoiceId,
+        source_id: null,
         is_active: false, // PENDING: Belum aktif sampai disetujui Admin!
         granted_at: new Date().toISOString(),
         revoke_reason: metaJson,
@@ -209,7 +217,7 @@ export async function grantTestEntitlement(
   userId: string,
   testNumber: number,
   source: string = 'manual_admin',
-  sourceId: string = `MANUAL-${Date.now()}`
+  sourceId?: string | null
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const { data: testData } = await supabase
@@ -219,13 +227,14 @@ export async function grantTestEntitlement(
       .maybeSingle();
 
     const marlintTestId = testData?.id || null;
+    const cleanSourceId = isValidUuid(sourceId) ? sourceId : null;
 
     const { error } = await supabase.from('test_entitlements').insert({
       user_id: userId,
       marlint_test_id: marlintTestId,
       test_number: testNumber,
       source: source,
-      source_id: sourceId,
+      source_id: cleanSourceId,
       is_active: true,
       granted_at: new Date().toISOString(),
     });

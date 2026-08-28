@@ -112,12 +112,22 @@ export default function CheckoutPage() {
 
           if (entData && entData.length > 0) {
             const ent = entData[0];
+            let parsedMeta: any = {};
+            if (ent.revoke_reason && ent.revoke_reason.startsWith('{')) {
+              try {
+                parsedMeta = JSON.parse(ent.revoke_reason);
+              } catch {}
+            }
+            const realInvoice = parsedMeta.invoice_id || ent.source_id || `INV-${ent.id.substring(0, 8)}`;
+            if (parsedMeta.sender_name) setSenderName(parsedMeta.sender_name);
+            if (parsedMeta.sender_phone) setSenderPhone(parsedMeta.sender_phone);
+
             if (ent.is_active) {
               setPaymentStatus('verified');
-              setInvoiceId(ent.source_id || `INV-${ent.id.substring(0, 8)}`);
+              setInvoiceId(realInvoice);
             } else if (ent.source === 'qris_pending') {
               setPaymentStatus('pending');
-              setInvoiceId(ent.source_id || `INV-PENDING-${ent.id.substring(0, 8)}`);
+              setInvoiceId(realInvoice);
               setPendingEntitlementId(ent.id);
             }
           }

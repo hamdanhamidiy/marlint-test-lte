@@ -267,6 +267,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       aud: 'authenticated',
       created_at: prof.created_at,
     } as User);
+
+    // Auto-sync into Supabase users table so it permanently exists in Database
+    try {
+      await supabase.from('users').upsert({
+        id: prof.id,
+        email: prof.email,
+        full_name: prof.full_name,
+        role: prof.role,
+        status: prof.status || 'active',
+        level: prof.level || 'A1',
+        level_code: prof.level_code || 'A1',
+        total_points: prof.total_points || 0,
+        phone_number: prof.phone_number || null,
+        photo_url: prof.photo_url || null,
+        job_title: prof.job_title || null,
+        about: prof.about || null,
+        placement_test_taken: true,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'id' });
+    } catch (upsertErr) {
+      console.warn('Sync profile to Supabase notice:', upsertErr);
+    }
   };
 
   const signIn = async (email: string, password: string) => {

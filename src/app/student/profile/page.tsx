@@ -9,12 +9,12 @@ import {
   Calendar,
   Save,
   CheckCircle2,
-  Sparkles,
   LogOut,
   Camera,
   Trash2,
   Loader2,
   AlertCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -200,7 +200,7 @@ export default function StudentProfilePage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 font-sans pb-8">
+    <div className="max-w-2xl mx-auto space-y-4 font-sans pb-10">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -210,13 +210,16 @@ export default function StudentProfilePage() {
         className="hidden"
       />
 
-      {/* Header Profile Card */}
+      {/* Header Profile Card — Perfectly Responsive on Mobile & Desktop */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5 sm:gap-4 min-w-0 flex-1">
-          {/* Avatar with Click-to-Upload */}
-          <div className="relative group shrink-0">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-2xs overflow-hidden">
-              <div className="w-full h-full bg-slate-100 rounded-[14px] flex items-center justify-center font-heading text-xl font-bold text-slate-700 overflow-hidden relative">
+        
+        {/* Left: Avatar + Details */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3.5 sm:gap-4 min-w-0">
+          
+          {/* Avatar Container with Fixed Dimension */}
+          <div className="relative group shrink-0 w-20 h-20 sm:w-22 sm:h-22 aspect-square">
+            <div className="w-20 h-20 sm:w-22 sm:h-22 aspect-square rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-2xs overflow-hidden">
+              <div className="w-full h-full bg-slate-100 rounded-[14px] flex items-center justify-center font-heading text-2xl font-bold text-slate-700 overflow-hidden relative">
                 {uploadingPhoto ? (
                   <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -225,7 +228,7 @@ export default function StudentProfilePage() {
                   <img
                     src={profile.photo_url}
                     alt={profile.full_name || 'Foto Profil'}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover aspect-square"
                   />
                 ) : (
                   <span>👨‍✈️</span>
@@ -235,7 +238,7 @@ export default function StudentProfilePage() {
                   type="button"
                   onClick={handleSelectPhoto}
                   disabled={uploadingPhoto}
-                  className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold cursor-pointer"
+                  className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-bold cursor-pointer"
                   title="Ganti Foto"
                 >
                   <Camera className="w-4 h-4" />
@@ -247,14 +250,15 @@ export default function StudentProfilePage() {
               type="button"
               onClick={handleSelectPhoto}
               disabled={uploadingPhoto}
-              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0284C7] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+              className="absolute -bottom-1 -right-1 w-6.5 h-6.5 rounded-full bg-[#0284C7] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
               title="Unggah Foto"
             >
-              <Camera className="w-3 h-3" />
+              <Camera className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-1 min-w-0 flex-1">
+          {/* Text Information */}
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
               <h1 className="font-heading text-base sm:text-lg font-extrabold text-slate-900 truncate">
                 {profile?.full_name || 'Siswa LTE Cruise'}
@@ -270,13 +274,8 @@ export default function StudentProfilePage() {
 
             {/* Badges & Actions */}
             <div className="flex items-center justify-center sm:justify-start gap-1.5 pt-1 flex-wrap text-xs">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200/80">
                 Level {profile?.level_code || 'A1'}
-              </span>
-
-              <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-bold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-600" />
-                <span>{profile?.total_points || 0} XP</span>
               </span>
 
               {profile?.photo_url && (
@@ -294,14 +293,17 @@ export default function StudentProfilePage() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => signOut()}
-          className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-colors shrink-0 cursor-pointer"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Keluar</span>
-        </button>
+        {/* Right / Bottom: Logout Action */}
+        <div className="pt-2 sm:pt-0 border-t sm:border-0 border-slate-100 flex justify-center sm:justify-end">
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Keluar Akun</span>
+          </button>
+        </div>
       </div>
 
       {/* Alert Banners */}
@@ -418,7 +420,7 @@ export default function StudentProfilePage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all disabled:opacity-50 cursor-pointer active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-150 disabled:opacity-50 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Profil'}</span>

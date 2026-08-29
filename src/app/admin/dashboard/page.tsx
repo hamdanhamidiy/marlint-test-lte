@@ -75,7 +75,12 @@ export default function AdminDashboardPage() {
           { count: sCount },
           { count: cCount },
         ] = await Promise.all([
-          supabase.from('users').select('*', { count: 'exact', head: true }),
+          supabase
+            .from('users')
+            .select('*', { count: 'exact', head: true })
+            .neq('role', 'instructor')
+            .neq('role', 'super_admin')
+            .neq('role', 'admin'),
           supabase.from('questions').select('*', { count: 'exact', head: true }),
           supabase.from('marlint_tests').select('*', { count: 'exact', head: true }),
           supabase.from('test_attempts').select('*', { count: 'exact', head: true }),

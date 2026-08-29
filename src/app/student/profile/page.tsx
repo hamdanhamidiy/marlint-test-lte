@@ -14,7 +14,7 @@ import {
   Trash2,
   Loader2,
   AlertCircle,
-  ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -200,7 +200,7 @@ export default function StudentProfilePage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 font-sans pb-10">
+    <div className="max-w-2xl mx-auto space-y-3.5 font-sans pb-8">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -210,99 +210,103 @@ export default function StudentProfilePage() {
         className="hidden"
       />
 
-      {/* Header Profile Card — Perfectly Responsive on Mobile & Desktop */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        
-        {/* Left: Avatar + Details */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3.5 sm:gap-4 min-w-0">
+      {/* Header Profile Card — Compact Horizontal Layout on all Screens */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative">
+        <div className="flex items-center justify-between gap-3">
           
-          {/* Avatar Container with Fixed Dimension */}
-          <div className="relative group shrink-0 w-20 h-20 sm:w-22 sm:h-22 aspect-square">
-            <div className="w-20 h-20 sm:w-22 sm:h-22 aspect-square rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-2xs overflow-hidden">
-              <div className="w-full h-full bg-slate-100 rounded-[14px] flex items-center justify-center font-heading text-2xl font-bold text-slate-700 overflow-hidden relative">
-                {uploadingPhoto ? (
-                  <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
-                    <Loader2 className="w-5 h-5 animate-spin text-white" />
-                  </div>
-                ) : profile?.photo_url ? (
-                  <img
-                    src={profile.photo_url}
-                    alt={profile.full_name || 'Foto Profil'}
-                    className="w-full h-full object-cover aspect-square"
-                  />
-                ) : (
-                  <span>👨‍✈️</span>
-                )}
+          {/* Left Avatar + User Details in single clean row */}
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+            
+            {/* Avatar Container with fixed square size */}
+            <div className="relative group shrink-0 w-14 h-14 sm:w-16 sm:h-16 aspect-square">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 aspect-square rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-2xs overflow-hidden">
+                <div className="w-full h-full bg-slate-100 rounded-[14px] flex items-center justify-center font-heading text-xl font-bold text-slate-700 overflow-hidden relative">
+                  {uploadingPhoto ? (
+                    <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    </div>
+                  ) : profile?.photo_url ? (
+                    <img
+                      src={profile.photo_url}
+                      alt={profile.full_name || 'Foto Profil'}
+                      className="w-full h-full object-cover aspect-square"
+                    />
+                  ) : (
+                    <span>👨‍✈️</span>
+                  )}
 
-                <button
-                  type="button"
-                  onClick={handleSelectPhoto}
-                  disabled={uploadingPhoto}
-                  className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-bold cursor-pointer"
-                  title="Ganti Foto"
-                >
-                  <Camera className="w-4 h-4" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleSelectPhoto}
+                    disabled={uploadingPhoto}
+                    className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[9px] font-bold cursor-pointer"
+                    title="Ganti Foto"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSelectPhoto}
+                disabled={uploadingPhoto}
+                className="absolute -bottom-1 -right-1 w-5.5 h-5.5 rounded-full bg-[#0284C7] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+                title="Unggah Foto"
+              >
+                <Camera className="w-3 h-3" />
+              </button>
+            </div>
+
+            {/* Name, Role & Email */}
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h1 className="font-heading text-sm sm:text-base font-extrabold text-slate-900 truncate">
+                  {profile?.full_name || 'Siswa LTE Cruise'}
+                </h1>
+                <span className="px-2 py-0.2 rounded-md bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[9px] font-extrabold uppercase tracking-wider">
+                  {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur' : 'Siswa'}
+                </span>
+              </div>
+
+              <p className="text-[11px] sm:text-xs text-slate-500 font-normal truncate">
+                {profile?.email}
+              </p>
+
+              <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                <span className="px-2 py-0.2 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200/80">
+                  Level {profile?.level_code || 'A1'}
+                </span>
+
+                {profile?.photo_url && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    disabled={uploadingPhoto}
+                    className="inline-flex items-center gap-1 px-2 py-0.2 rounded-md text-[10px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3 h-3 text-rose-500" />
+                    <span>Hapus Foto</span>
+                  </button>
+                )}
               </div>
             </div>
 
+          </div>
+
+          {/* Right: Compact Logout Action Button */}
+          <div className="shrink-0">
             <button
               type="button"
-              onClick={handleSelectPhoto}
-              disabled={uploadingPhoto}
-              className="absolute -bottom-1 -right-1 w-6.5 h-6.5 rounded-full bg-[#0284C7] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
-              title="Unggah Foto"
+              onClick={() => signOut()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              title="Keluar dari akun ini"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
 
-          {/* Text Information */}
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-              <h1 className="font-heading text-base sm:text-lg font-extrabold text-slate-900 truncate">
-                {profile?.full_name || 'Siswa LTE Cruise'}
-              </h1>
-              <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
-                {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur' : 'Siswa'}
-              </span>
-            </div>
-
-            <p className="text-xs text-slate-500 font-normal truncate">
-              {profile?.email}
-            </p>
-
-            {/* Badges & Actions */}
-            <div className="flex items-center justify-center sm:justify-start gap-1.5 pt-1 flex-wrap text-xs">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200/80">
-                Level {profile?.level_code || 'A1'}
-              </span>
-
-              {profile?.photo_url && (
-                <button
-                  type="button"
-                  onClick={handleRemovePhoto}
-                  disabled={uploadingPhoto}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
-                >
-                  <Trash2 className="w-3 h-3 text-rose-500" />
-                  <span>Hapus Foto</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Right / Bottom: Logout Action */}
-        <div className="pt-2 sm:pt-0 border-t sm:border-0 border-slate-100 flex justify-center sm:justify-end">
-          <button
-            type="button"
-            onClick={() => signOut()}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Keluar Akun</span>
-          </button>
         </div>
       </div>
 
@@ -321,9 +325,9 @@ export default function StudentProfilePage() {
         </div>
       )}
 
-      {/* Profile Form */}
-      <div className="bg-white p-4.5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-4">
-        <div className="border-b border-slate-100 pb-3">
+      {/* Profile Form Card */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3.5">
+        <div className="border-b border-slate-100 pb-2.5">
           <h2 className="font-heading text-sm sm:text-base font-extrabold text-slate-900">
             Informasi Data Diri Siswa
           </h2>
@@ -332,20 +336,20 @@ export default function StudentProfilePage() {
           </p>
         </div>
 
-        <form onSubmit={handleSave} className="space-y-3.5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <form onSubmit={handleSave} className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">Nama Lengkap (Sesuai KTP/Paspor):</label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
                   placeholder="Nama Lengkap"
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
@@ -354,12 +358,12 @@ export default function StudentProfilePage() {
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">Alamat Email Login:</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
                   value={profile?.email || ''}
                   disabled
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-100/80 border border-slate-200 text-xs text-slate-500 cursor-not-allowed font-medium"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-100/80 border border-slate-200 text-xs text-slate-500 cursor-not-allowed font-medium"
                 />
               </div>
             </div>
@@ -368,13 +372,13 @@ export default function StudentProfilePage() {
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">Departemen & Posisi Kerja:</label>
               <div className="relative">
-                <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Briefcase className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Contoh: F&B Service, Housekeeping, Deck, Engine"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
@@ -383,13 +387,13 @@ export default function StudentProfilePage() {
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">Nomor WhatsApp / HP:</label>
               <div className="relative">
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="tel"
                   placeholder="Contoh: 081234567890"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
@@ -398,29 +402,29 @@ export default function StudentProfilePage() {
             <div className="space-y-1 sm:col-span-2">
               <label className="block text-xs font-bold text-slate-700">Tanggal Lahir (Opsional):</label>
               <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="date"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
           </div>
 
           {saveSuccess && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Data profil berhasil disimpan!</span>
             </div>
           )}
 
-          <div className="pt-2 flex justify-end">
+          <div className="pt-1.5 flex justify-end">
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-150 disabled:opacity-50 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all duration-150 disabled:opacity-50 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Profil'}</span>

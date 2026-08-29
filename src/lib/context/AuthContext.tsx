@@ -50,18 +50,18 @@ export const REAL_STUDENT_PROFILE: UserProfile = {
 };
 
 export const REAL_INSTRUCTOR_PROFILE: UserProfile = {
-  id: 'f1e178ba-78d7-46dc-a982-9df5736c21e6',
-  email: 'hamdan1@gmail.com',
-  full_name: 'Hamdan Guru',
+  id: 'b0000000-0000-0000-0000-000000000001',
+  email: 'instruktur@marlinstest.com',
+  full_name: 'Hamdan Guru (Instruktur)',
   role: 'instructor',
   status: 'active',
   level: 'C1',
   level_code: 'C1',
   total_points: 1500,
-  phone_number: '0813318044694',
+  phone_number: null,
   photo_url: null,
-  job_title: 'Lead Instructor & Assessor - Marlins Cruise English',
-  date_of_birth: '1982-08-20',
+  job_title: 'Instruktur & Penguji Marlins Test STCW',
+  date_of_birth: '1985-05-20',
   nationality: 'Indonesia',
   about: 'Instruktur & penilai resmi evaluasi Marlins Test Bahasa Inggris Perhotelan & Kapal Pesiar LTE Cruise.',
   placement_test_taken: true,
@@ -71,7 +71,7 @@ export const REAL_INSTRUCTOR_PROFILE: UserProfile = {
 };
 
 export const REAL_SUPER_ADMIN_PROFILE: UserProfile = {
-  id: '00000000-0000-0000-0000-000000000003',
+  id: 'a0000000-0000-0000-0000-000000000001',
   email: 'superadmin@marlinstest.com',
   full_name: 'Super Administrator (Admin Utama)',
   role: 'super_admin',

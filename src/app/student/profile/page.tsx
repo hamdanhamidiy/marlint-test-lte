@@ -6,7 +6,6 @@ import {
   Mail,
   Phone,
   Briefcase,
-  Globe,
   Calendar,
   Save,
   CheckCircle2,
@@ -16,12 +15,9 @@ import {
   Trash2,
   Loader2,
   AlertCircle,
-  Shield,
-  Award,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
-import { getLevelBadge } from '@/lib/utils';
 
 export default function StudentProfilePage() {
   const { profile, user, updateProfile, signOut } = useAuth();
@@ -30,9 +26,7 @@ export default function StudentProfilePage() {
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [phoneNumber, setPhoneNumber] = useState(profile?.phone_number || '');
   const [jobTitle, setJobTitle] = useState(profile?.job_title || '');
-  const [nationality, setNationality] = useState(profile?.nationality || 'Indonesia');
   const [dateOfBirth, setDateOfBirth] = useState(profile?.date_of_birth || '');
-  const [about, setAbout] = useState(profile?.about || '');
 
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -40,14 +34,12 @@ export default function StudentProfilePage() {
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [photoSuccess, setPhotoSuccess] = useState<string | null>(null);
 
-  // Trigger file selection
   const handleSelectPhoto = () => {
     setPhotoError(null);
     setPhotoSuccess(null);
     fileInputRef.current?.click();
   };
 
-  // Convert and compress file to base64 helper
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -57,8 +49,8 @@ export default function StudentProfilePage() {
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 500;
-          const MAX_HEIGHT = 500;
+          const MAX_WIDTH = 400;
+          const MAX_HEIGHT = 400;
           let width = img.width;
           let height = img.height;
 
@@ -95,7 +87,7 @@ export default function StudentProfilePage() {
     }
 
     if (!file.type.startsWith('image/')) {
-      setPhotoError('Format file harus berupa gambar (JPG, PNG, WEBP, atau JPEG).');
+      setPhotoError('Format file harus berupa gambar (JPG, PNG, WEBP, JPEG).');
       return;
     }
 
@@ -104,12 +96,9 @@ export default function StudentProfilePage() {
       setPhotoError(null);
       setPhotoSuccess(null);
 
-      // 1. Resize and compress image client-side to crisp, lightweight JPEG
       const base64Data = await fileToBase64(file);
       let finalPhotoUrl: string = base64Data;
-      let uploadedToCloud = false;
 
-      // 2. Convert base64 to Blob for Supabase Storage upload
       try {
         const response = await fetch(base64Data);
         const imageBlob = await response.blob();
@@ -130,16 +119,12 @@ export default function StudentProfilePage() {
 
           if (publicUrlData?.publicUrl) {
             finalPhotoUrl = publicUrlData.publicUrl;
-            uploadedToCloud = true;
           }
-        } else if (uploadError) {
-          console.warn('Supabase storage upload error:', uploadError);
         }
       } catch (storageErr) {
-        console.warn('Storage bucket upload fallback to Base64:', storageErr);
+        console.warn('Storage fallback:', storageErr);
       }
 
-      // 3. Update active user profile
       const { error: updateErr } = await updateProfile({
         photo_url: finalPhotoUrl,
       });
@@ -148,12 +133,8 @@ export default function StudentProfilePage() {
         throw new Error(updateErr.message || 'Gagal menyimpan foto profil.');
       }
 
-      if (uploadedToCloud) {
-        setPhotoSuccess('Foto profil berhasil diunggah ke cloud database (tersinkron di semua perangkat)!');
-      } else {
-        setPhotoSuccess('Foto profil berhasil diperbarui.');
-      }
-      setTimeout(() => setPhotoSuccess(null), 4000);
+      setPhotoSuccess('Foto profil berhasil diperbarui.');
+      setTimeout(() => setPhotoSuccess(null), 3000);
     } catch (err: any) {
       console.error('Error uploading photo:', err);
       setPhotoError(err.message || 'Gagal mengunggah foto profil.');
@@ -204,9 +185,7 @@ export default function StudentProfilePage() {
         full_name: fullName,
         phone_number: phoneNumber,
         job_title: jobTitle,
-        nationality: nationality,
         date_of_birth: dateOfBirth || null,
-        about: about,
       });
 
       if (!error) {
@@ -221,7 +200,7 @@ export default function StudentProfilePage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-5 font-sans pb-10">
+    <div className="max-w-3xl mx-auto space-y-4 font-sans pb-8">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -231,17 +210,13 @@ export default function StudentProfilePage() {
         className="hidden"
       />
 
-      {/* Header Profile Card (Clean Modern Antigravity Aesthetic) */}
-      <div className="bg-white rounded-[26px] p-5 sm:p-6 border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        
-        {/* Subtle Top Ambient Gradient Line */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] opacity-90" />
-
-        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 min-w-0 flex-1">
-          {/* Avatar with Click-to-Upload Trigger */}
-          <div className="relative group shrink-0 mx-auto sm:mx-0">
-            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-sm shrink-0 overflow-hidden">
-              <div className="w-full h-full bg-amber-50 rounded-[14px] flex items-center justify-center font-heading text-2xl font-black text-slate-800 overflow-hidden relative">
+      {/* Header Profile Card */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5 sm:gap-4 min-w-0 flex-1">
+          {/* Avatar with Click-to-Upload */}
+          <div className="relative group shrink-0">
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-amber-500 p-0.5 shadow-2xs overflow-hidden">
+              <div className="w-full h-full bg-slate-100 rounded-[14px] flex items-center justify-center font-heading text-xl font-bold text-slate-700 overflow-hidden relative">
                 {uploadingPhoto ? (
                   <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white z-10">
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -256,78 +231,65 @@ export default function StudentProfilePage() {
                   <span>👨‍✈️</span>
                 )}
 
-                {/* Hover Overlay Button */}
                 <button
                   type="button"
                   onClick={handleSelectPhoto}
                   disabled={uploadingPhoto}
-                  className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[10px] font-bold gap-0.5 cursor-pointer"
-                  title="Ganti Foto Profil"
+                  className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold cursor-pointer"
+                  title="Ganti Foto"
                 >
-                  <Camera className="w-4 h-4 text-white" />
-                  <span>Ubah</span>
+                  <Camera className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Quick Action Floating Camera Badge */}
             <button
               type="button"
               onClick={handleSelectPhoto}
               disabled={uploadingPhoto}
-              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
-              title="Unggah Foto Baru"
+              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0284C7] text-white border-2 border-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+              title="Unggah Foto"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3 h-3" />
             </button>
           </div>
 
           <div className="space-y-1 min-w-0 flex-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-              <h1 className="font-heading text-lg sm:text-xl font-bold text-slate-900">
+              <h1 className="font-heading text-base sm:text-lg font-extrabold text-slate-900 truncate">
                 {profile?.full_name || 'Siswa LTE Cruise'}
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
-                {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur Penguji' : 'Siswa LTE Cruise'}
+              <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-bold uppercase tracking-wider">
+                {profile?.role === 'super_admin' ? 'Super Admin' : profile?.role === 'instructor' ? 'Instruktur' : 'Siswa'}
               </span>
             </div>
 
-            <p className="text-xs text-slate-500 font-normal">
-              {profile?.job_title || 'F&B Service / Waiter'} • <span className="text-slate-400 font-mono break-all">{profile?.email}</span>
+            <p className="text-xs text-slate-500 font-normal truncate">
+              {profile?.email}
             </p>
 
-            {/* Action Buttons & Badges Row */}
-            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1.5 flex-wrap text-xs">
-              <button
-                type="button"
-                onClick={handleSelectPhoto}
-                disabled={uploadingPhoto}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
-              >
-                <Camera className="w-3.5 h-3.5 text-slate-500" />
-                <span>{profile?.photo_url ? 'Ganti Foto' : 'Unggah Foto'}</span>
-              </button>
+            {/* Badges & Actions */}
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 pt-1 flex-wrap text-xs">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold">
+                Level {profile?.level_code || 'A1'}
+              </span>
+
+              <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-bold flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-amber-600" />
+                <span>{profile?.total_points || 0} XP</span>
+              </span>
 
               {profile?.photo_url && (
                 <button
                   type="button"
                   onClick={handleRemovePhoto}
                   disabled={uploadingPhoto}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                  <span>Hapus</span>
+                  <Trash2 className="w-3 h-3 text-rose-500" />
+                  <span>Hapus Foto</span>
                 </button>
               )}
-
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
-                Level {profile?.level_code || 'A1'}
-              </span>
-
-              <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-[#C2410C] border border-orange-200 text-[11px] font-bold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#EA580C]" />
-                {profile?.total_points || 0} XP
-              </span>
             </div>
           </div>
         </div>
@@ -335,40 +297,44 @@ export default function StudentProfilePage() {
         <button
           type="button"
           onClick={() => signOut()}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-colors shrink-0 cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/70 transition-colors shrink-0 cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
-          <span>Keluar Akun</span>
+          <span>Keluar</span>
         </button>
       </div>
 
-      {/* Alerts for Photo Actions */}
+      {/* Alert Banners */}
       {photoSuccess && (
-        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs animate-in fade-in duration-150">
+        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{photoSuccess}</span>
         </div>
       )}
 
       {photoError && (
-        <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 font-semibold shadow-2xs animate-in fade-in duration-150">
+        <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
           <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
           <span>{photoError}</span>
         </div>
       )}
 
-      {/* Profile Edit Form */}
-      <div className="bg-white p-5 sm:p-7 rounded-[26px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-5">
-        <div>
-          <h2 className="font-heading text-base sm:text-lg font-bold text-slate-900">Data Diri & Departemen Kapal Pesiar</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Informasi ini akan tercantum pada sertifikat kelulusan Marlins resmi Anda di LTE Cruise Training Center.</p>
+      {/* Profile Form */}
+      <div className="bg-white p-4.5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-4">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="font-heading text-sm sm:text-base font-extrabold text-slate-900">
+            Informasi Data Diri Siswa
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Data ini digunakan untuk penerbitan sertifikat kelulusan Marlins Test resmi Anda.
+          </p>
         </div>
 
-        <form onSubmit={handleSave} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSave} className="space-y-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Full Name */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Nama Lengkap (Sesuai Paspor / KTP):</label>
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-slate-700">Nama Lengkap (Sesuai KTP/Paspor):</label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -376,43 +342,44 @@ export default function StudentProfilePage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
+                  placeholder="Nama Lengkap"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
 
             {/* Email (Readonly) */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Alamat Email Login:</label>
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-slate-700">Alamat Email Login:</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
                   value={profile?.email || ''}
                   disabled
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-slate-100/80 border border-slate-200 text-xs text-slate-500 cursor-not-allowed font-medium"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-100/80 border border-slate-200 text-xs text-slate-500 cursor-not-allowed font-medium"
                 />
               </div>
             </div>
 
-            {/* Job Title / Cruise Hospitality Department */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Departemen & Posisi Kerja di Kapal Pesiar:</label>
+            {/* Department / Position */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-slate-700">Departemen & Posisi Kerja:</label>
               <div className="relative">
                 <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Contoh: F&B Service / Waiter, Housekeeping / Cabin Steward, Culinary, Guest Service"
+                  placeholder="Contoh: F&B Service, Housekeeping, Deck, Engine"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
 
             {/* Phone Number */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Nomor Telepon / WhatsApp:</label>
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-slate-700">Nomor WhatsApp / HP:</label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -420,57 +387,30 @@ export default function StudentProfilePage() {
                   placeholder="Contoh: 081234567890"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Nationality */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Kewarganegaraan:</label>
-              <div className="relative">
-                <Globe className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Indonesia"
-                  value={nationality}
-                  onChange={(e) => setNationality(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
 
             {/* Date of Birth */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">Tanggal Lahir:</label>
+            <div className="space-y-1 sm:col-span-2">
+              <label className="block text-xs font-bold text-slate-700">Tanggal Lahir (Opsional):</label>
               <div className="relative">
                 <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="date"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-1 focus:ring-[#0284C7] font-medium transition-all"
                 />
               </div>
             </div>
           </div>
 
-          {/* About / Bio */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Tentang / Minat Bidang Perhotelan & Kapal Pesiar:</label>
-            <textarea
-              rows={3}
-              placeholder="Ceritakan pelatihan perhotelan di LTE Cruise, keahlian bahasa Inggris perhotelan, atau posisi kerja kapal pesiar yang diminati..."
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 font-medium transition-all"
-            />
-          </div>
-
           {saveSuccess && (
-            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-semibold shadow-2xs">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Perubahan data diri berhasil disimpan!</span>
+              <span>Data profil berhasil disimpan!</span>
             </div>
           )}
 
@@ -478,7 +418,7 @@ export default function StudentProfilePage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-xs text-white bg-black hover:bg-neutral-800 transition-all disabled:opacity-50 cursor-pointer shadow-xs active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-md shadow-sky-500/20 transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Profil'}</span>

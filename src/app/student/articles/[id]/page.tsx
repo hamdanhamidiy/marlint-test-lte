@@ -14,14 +14,11 @@ import {
   ArrowRight,
   Sparkles,
   Volume2,
-  VolumeX,
-  Play,
   Square,
   Pause,
   Share2,
   CheckCircle2,
   Bookmark,
-  ShieldCheck,
   Radio,
   FileText,
   Copy,
@@ -30,9 +27,6 @@ import {
   ChevronLeft,
   HelpCircle,
   Award,
-  Maximize2,
-  Type,
-  ListOrdered,
   RotateCcw,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
@@ -100,6 +94,29 @@ const SAMPLE_MODULE_QUIZZES: Record<string, MiniQuizQuestion[]> = {
 
 const ALL_MODULE_IDS = ['art-1', 'art-2', 'art-3', 'art-4'];
 
+// Helper to parse inline markdown like **bold** text and *italic* text
+function parseInlineMarkdown(text: string): React.ReactNode[] {
+  if (!text) return [];
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={index} className="font-bold text-slate-900">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return (
+        <em key={index} className="italic text-slate-800">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+    return part;
+  });
+}
+
 export default function SingleArticlePage() {
   const params = useParams();
   const router = useRouter();
@@ -145,29 +162,24 @@ export default function SingleArticlePage() {
     async function loadArticle() {
       try {
         setLoading(true);
-        // Reset speech
         if (typeof window !== 'undefined' && window.speechSynthesis) {
           window.speechSynthesis.cancel();
           setIsPlayingAudio(false);
           setIsPausedAudio(false);
         }
 
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('articles')
           .select('*')
           .eq('id', articleId)
           .maybeSingle();
 
-        if (data) {
-          setArticle(data as Article);
-        } else {
-          // Fallback articles data
-          const fallbackData: Record<string, Article> = {
-            'art-1': {
-              id: 'art-1',
-              title: 'Standard Marine Communication Phrases (SMCP) Essentials',
-              summary: 'Panduan lengkap frasa komunikasi standar IMO untuk percakapan radio VHF antar kapal, VTS, dan stasiun pandu pelabuhan.',
-              content: `Standard Marine Communication Phrases (SMCP) merupakan instrumen penting keselamatan maritim internasional yang ditetapkan oleh International Maritime Organization (IMO).
+        const fallbackData: Record<string, Article> = {
+          'art-1': {
+            id: 'art-1',
+            title: 'Standard Marine Communication Phrases (SMCP) Essentials',
+            summary: 'Panduan lengkap frasa komunikasi standar IMO untuk percakapan radio VHF antar kapal, VTS, dan stasiun pandu pelabuhan.',
+            content: `Standard Marine Communication Phrases (SMCP) merupakan instrumen penting keselamatan maritim internasional yang ditetapkan oleh International Maritime Organization (IMO).
 
 Dalam komunikasi navigasi maritim, kejelasan informasi dan penggunaan frasa yang seragam adalah kunci utama untuk mencegah salah pengertian dan bahaya tabrakan di laut.
 
@@ -188,17 +200,17 @@ Dalam komunikasi SMCP, setiap respons harus ringkas, tegas, dan tidak boleh ambi
 - Gunakan frasa resmi: "Understood", "Mistake - correction", "Say again", dan "Stand by on VHF Channel 16".
 
 Pelajari dan praktikkan frasa ini secara teratur untuk memastikan kesiapan penuh menghadapi evaluasi Marlins English Test.`,
-              category: 'Radio Communication',
-              author: 'Capt. Maritime Instructor',
-              read_time_minutes: 6,
-              is_published: true,
-              created_at: new Date().toISOString(),
-            },
-            'art-2': {
-              id: 'art-2',
-              title: 'Essential Maritime Vocabulary: Deck & Engine Terminology',
-              summary: 'Daftar istilah kunci kosakata maritim seputar peralatan geladak kapal, kamar mesin, tali-temali, dan penataan kargo.',
-              content: `Penguasaan kosakata teknis geladak (deck) dan kamar mesin (engine room) adalah fondasi mutlak bagi setiap pelaut yang bekerja di armada niaga maupun kapal pesiar internasional.
+            category: 'Radio Communication',
+            author: 'Capt. Maritime Instructor',
+            read_time_minutes: 6,
+            is_published: true,
+            created_at: new Date().toISOString(),
+          },
+          'art-2': {
+            id: 'art-2',
+            title: 'Essential Maritime Vocabulary: Deck & Engine Terminology',
+            summary: 'Daftar istilah kunci kosakata maritim seputar peralatan geladak kapal, kamar mesin, tali-temali, dan penataan kargo.',
+            content: `Penguasaan kosakata teknis geladak (deck) dan kamar mesin (engine room) adalah fondasi mutlak bagi setiap pelaut yang bekerja di armada niaga maupun kapal pesiar internasional.
 
 ### 1. Istilah Geladak & Olah Gerak (Deck Terminology)
 Kosakata harian operasional geladak kapal:
@@ -214,17 +226,17 @@ Istilah penting permesinan kapal:
 - **Bilge Pump**: Pompa khusus untuk membuang akumulasi air got dari bagian terendah lambung kapal.
 - **Scavenge Air**: Udara bertekanan bersih yang disuplai ke silinder mesin untuk pembakaran optimal.
 - **Fuel Oil Purifier**: Alat pemisah sentrifugal untuk memurnikan bahan bakar minyak dari kotoran dan air.`,
-              category: 'Vocabulary',
-              author: 'Chief Engineer Consultant',
-              read_time_minutes: 5,
-              is_published: true,
-              created_at: new Date().toISOString(),
-            },
-            'art-3': {
-              id: 'art-3',
-              title: 'Mastering Prepositions and Directions at Sea',
-              summary: 'Memahami preposisi arah navigasi kapal: Ahead, Astern, Abeam, Port side, Starboard side, Forward, dan Aft.',
-              content: `Bahasa Inggris Maritim memiliki tata cara penunjukan arah dan posisi spasial yang sangat spesifik untuk mencegah kesalahan navigasi antar perwira jaga di anjungan (bridge).
+            category: 'Vocabulary',
+            author: 'Chief Engineer Consultant',
+            read_time_minutes: 5,
+            is_published: true,
+            created_at: new Date().toISOString(),
+          },
+          'art-3': {
+            id: 'art-3',
+            title: 'Mastering Prepositions and Directions at Sea',
+            summary: 'Memahami preposisi arah navigasi kapal: Ahead, Astern, Abeam, Port side, Starboard side, Forward, dan Aft.',
+            content: `Bahasa Inggris Maritim memiliki tata cara penunjukan arah dan posisi spasial yang sangat spesifik untuk mencegah kesalahan navigasi antar perwira jaga di anjungan (bridge).
 
 ### 1. Kuadran Posisi Kapal (Relative Bearings)
 Penunjukan posisi relatif objek terhadap haluan kapal:
@@ -240,17 +252,17 @@ Pergerakan di atas kapal:
 - **Forward (Fwd)**: Bergerak menuju ke arah haluan (depan kapal).
 - **Aft**: Bergerak menuju ke arah buritan (belakang kapal).
 - **Athwartships**: Melintang dari satu sisi lambung ke sisi lambung lainnya.`,
-              category: 'Grammar & Navigation',
-              author: 'Navigation Deck Officer',
-              read_time_minutes: 4,
-              is_published: true,
-              created_at: new Date().toISOString(),
-            },
-            'art-4': {
-              id: 'art-4',
-              title: 'Emergency Drill Commands and Life-Saving Appliances (LSA)',
-              summary: 'Perintah baku saat latihan darurat kapal: Fire Drill, Abandon Ship, Man Overboard (MOB), dan pengoperasian LSA.',
-              content: `Kesiapan menghadapi situasi darurat di laut diatur secara ketat oleh konvensi SOLAS (Safety of Life at Sea). Setiap kru kapal wajib memahami komando audio dan terminologi keselamatan internasional.
+            category: 'Grammar & Navigation',
+            author: 'Navigation Deck Officer',
+            read_time_minutes: 4,
+            is_published: true,
+            created_at: new Date().toISOString(),
+          },
+          'art-4': {
+            id: 'art-4',
+            title: 'Emergency Drill Commands and Life-Saving Appliances (LSA)',
+            summary: 'Perintah baku saat latihan darurat kapal: Fire Drill, Abandon Ship, Man Overboard (MOB), dan pengoperasian LSA.',
+            content: `Kesiapan menghadapi situasi darurat di laut diatur secara ketat oleh konvensi SOLAS (Safety of Life at Sea). Setiap kru kapal wajib memahami komando audio dan terminologi keselamatan internasional.
 
 ### 1. Isyarat Darurat Umum (Alarm Signals)
 Kenali bunyi tanda bahaya di atas kapal:
@@ -265,16 +277,16 @@ Peralatan wajib standar IMO SOLAS:
 - **EPIRB (Emergency Position Indicating Radio Beacon)**: Pemancar sinyal darurat satelit otomatis untuk lokasi kapal tenggelam.
 - **SART (Search and Rescue Transponder)**: Perangkat radar pencari lokasi sekoci penolong oleh kapal penolong.
 - **Lifebuoy with Self-Igniting Light**: Pelampung penolong yang dilengkapi lampu otomatis menyala saat tercebur ke laut.`,
-              category: 'Safety & Emergency',
-              author: 'Safety Officer & Auditor',
-              read_time_minutes: 7,
-              is_published: true,
-              created_at: new Date().toISOString(),
-            },
-          };
+            category: 'Safety & Emergency',
+            author: 'Safety Officer & Auditor',
+            read_time_minutes: 7,
+            is_published: true,
+            created_at: new Date().toISOString(),
+          },
+        };
 
-          setArticle(fallbackData[articleId] || fallbackData['art-1']);
-        }
+        const currentArticle = (data as Article) || fallbackData[articleId] || fallbackData['art-1'];
+        setArticle(currentArticle);
 
         // Restore bookmarks & completed status from localStorage
         if (typeof window !== 'undefined') {
@@ -322,12 +334,11 @@ Peralatan wajib standar IMO SOLAS:
     // Start fresh audio playback
     window.speechSynthesis.cancel();
 
-    const plainText = `${article?.title}. ${article?.summary || ''}. ${article?.content.replace(/[#*_-]/g, '') || ''}`;
+    const plainText = `${article?.title}. ${article?.summary || ''}. ${article?.content?.replace(/[#*_-]/g, '') || ''}`;
     const utterance = new SpeechSynthesisUtterance(plainText);
     utterance.lang = 'en-US';
     utterance.rate = playbackSpeed;
 
-    // Pick natural English voice if available
     const voices = window.speechSynthesis.getVoices();
     const enVoice = voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha')));
     if (enVoice) utterance.voice = enVoice;
@@ -432,6 +443,202 @@ Peralatan wajib standar IMO SOLAS:
       : fontSize === 'medium'
       ? 'text-sm sm:text-base leading-relaxed'
       : 'text-xs sm:text-sm leading-relaxed';
+
+  /**
+   * ROBUST ARTICLE PARSER:
+   * Accurately parses and structures markdown content into headings,
+   * definition cards for key terms, bullet lists, and paragraphs.
+   */
+  const renderStructuredContent = (rawText: string) => {
+    if (!rawText) return null;
+
+    // 1. Normalize line endings and inline bullet points
+    let normalized = rawText
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+
+    // Split concatenated inline bullets like "...disampaikan: - **INSTRUCTION**: ... - **ADVICE**: ..."
+    normalized = normalized.replace(/([^\n])\s+-\s+\*\*/g, '$1\n- **');
+    normalized = normalized.replace(/([^\n])\s+-\s+([A-Z])/g, '$1\n- $2');
+
+    // Separate headings if stuck to preceding text
+    normalized = normalized.replace(/([^\n])\s*(###?\s*\d+\.|\d+\.\s+[A-Z])/g, '$1\n\n$2');
+
+    const rawBlocks = normalized.split(/\n\n+/);
+
+    let globalItemCounter = 0;
+
+    return rawBlocks.map((block, blockIdx) => {
+      const trimmed = block.trim();
+      if (!trimmed) return null;
+
+      // Case A: Section Headings (e.g. "### 1. Penggunaan Message Markers" or "1. Penggunaan Message Markers")
+      const headingMatch = trimmed.match(/^(?:###?\s*)?(\d+)\.\s+(.*)$/);
+      if (headingMatch && !trimmed.includes('\n')) {
+        const [, num, headingTitle] = headingMatch;
+        return (
+          <div key={blockIdx} className="pt-6 pb-2 border-t border-slate-100 first:pt-0 first:border-0 space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-[#0284C7] font-mono text-[11px] font-extrabold tracking-wider border border-sky-100">
+              <span>BAGIAN #{num}</span>
+            </div>
+            <h2 className="font-heading text-lg sm:text-2xl font-extrabold text-slate-950 flex items-center gap-2.5 tracking-tight text-[#0B192C]">
+              <span className="w-1.5 h-6 rounded-full bg-[#0284C7] shrink-0" />
+              <span>{headingTitle}</span>
+            </h2>
+          </div>
+        );
+      }
+
+      // If a heading was combined with description text in the same block (e.g. "### 1. Title\nDescription text...")
+      const firstLine = trimmed.split('\n')[0].trim();
+      const combinedHeadingMatch = firstLine.match(/^(?:###?\s*)?(\d+)\.\s+(.*)$/);
+      if (combinedHeadingMatch) {
+        const [, num, headingTitle] = combinedHeadingMatch;
+        const restOfBlock = trimmed.split('\n').slice(1).join('\n').trim();
+
+        return (
+          <div key={blockIdx} className="space-y-4 pt-6 border-t border-slate-100 first:pt-0 first:border-0">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-[#0284C7] font-mono text-[11px] font-extrabold tracking-wider border border-sky-100">
+                <span>BAGIAN #{num}</span>
+              </div>
+              <h2 className="font-heading text-lg sm:text-2xl font-extrabold text-slate-950 flex items-center gap-2.5 tracking-tight text-[#0B192C]">
+                <span className="w-1.5 h-6 rounded-full bg-[#0284C7] shrink-0" />
+                <span>{headingTitle}</span>
+              </h2>
+            </div>
+
+            {restOfBlock && renderSubContent(restOfBlock, blockIdx, globalItemCounter, (val) => { globalItemCounter = val; })}
+          </div>
+        );
+      }
+
+      return renderSubContent(trimmed, blockIdx, globalItemCounter, (val) => { globalItemCounter = val; });
+    });
+  };
+
+  const renderSubContent = (
+    subText: string,
+    keyPrefix: string | number,
+    itemCounter: number,
+    updateCounter: (val: number) => void
+  ) => {
+    const lines = subText.split('\n').map((l) => l.trim()).filter(Boolean);
+
+    // Extract bullet items vs normal paragraphs
+    const isBulletList = lines.every((l) => l.startsWith('- ') || l.startsWith('* '));
+
+    if (isBulletList) {
+      // Check if items follow the key-value dictionary pattern: "- **KEY**: Description"
+      const isKeyValue = lines.some((l) => l.includes('**') && l.includes(':'));
+
+      if (isKeyValue) {
+        return (
+          <div key={keyPrefix} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2 pb-2">
+            {lines.map((line, lIdx) => {
+              const cleanLine = line.replace(/^[-*]\s*/, '');
+              const match = cleanLine.match(/^\*\*(.*?)\*\*:\s*(.*)$/);
+              const currentIndex = itemCounter + lIdx;
+
+              if (match) {
+                const [, key, val] = match;
+                return (
+                  <div
+                    key={lIdx}
+                    className="p-4.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/90 hover:border-sky-300 hover:bg-sky-50/20 transition-all duration-200 flex flex-col justify-between space-y-2.5 group shadow-2xs"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-3 py-1 rounded-xl bg-sky-100 text-[#0284C7] font-mono text-xs font-extrabold uppercase tracking-wider shadow-2xs">
+                        {key}
+                      </span>
+                      <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          onClick={() => handleSpeakPhrase(`${key}. ${val}`)}
+                          className="p-1.5 rounded-lg hover:bg-white text-slate-400 hover:text-[#0284C7] transition-colors cursor-pointer"
+                          title="Dengarkan Pengucapan"
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyPhrase(`${key}: ${val}`, currentIndex)}
+                          className="p-1.5 rounded-lg hover:bg-white text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer"
+                          title="Salin Frasa"
+                        >
+                          {copiedPhraseIndex === currentIndex ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                      {parseInlineMarkdown(val)}
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  key={lIdx}
+                  className="col-span-full flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-700"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                  <span>{parseInlineMarkdown(cleanLine)}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+
+      // Regular clean bullet list
+      return (
+        <div key={keyPrefix} className="space-y-2.5 py-1">
+          {lines.map((line, lIdx) => {
+            const cleanLine = line.replace(/^[-*]\s*/, '');
+            return (
+              <div
+                key={lIdx}
+                className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium"
+              >
+                <div className="w-2 h-2 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                <span>{parseInlineMarkdown(cleanLine)}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Standard styled paragraphs
+    return (
+      <div key={keyPrefix} className="space-y-3">
+        {lines.map((line, lIdx) => {
+          if (line.startsWith('- ') || line.startsWith('* ')) {
+            const cleanLine = line.replace(/^[-*]\s*/, '');
+            return (
+              <div
+                key={lIdx}
+                className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                <span>{parseInlineMarkdown(cleanLine)}</span>
+              </div>
+            );
+          }
+          return (
+            <p key={lIdx} className="leading-relaxed font-normal text-slate-600">
+              {parseInlineMarkdown(line)}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-5 pb-16 font-sans min-w-0">
@@ -617,95 +824,7 @@ Peralatan wajib standar IMO SOLAS:
 
         {/* Structured Reading Content */}
         <div className={`space-y-6 pt-1 text-slate-700 ${textSizeClass}`}>
-          {/* Helper Parser to render headings, key-value cards, and bullet items cleanly */}
-          {article.content.split(/\n\n+/).map((block, blockIdx) => {
-            const trimmed = block.trim();
-            if (!trimmed) return null;
-
-            // Headings
-            if (trimmed.startsWith('###') || trimmed.startsWith('##')) {
-              const headingText = trimmed.replace(/^###?\s*/, '').trim();
-              return (
-                <div key={blockIdx} className="pt-4 border-t border-slate-100 first:pt-0 first:border-0">
-                  <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-950 flex items-center gap-2.5 tracking-tight text-[#0B192C]">
-                    <span className="w-1.5 h-5 rounded-full bg-[#0284C7] shrink-0" />
-                    <span>{headingText}</span>
-                  </h2>
-                </div>
-              );
-            }
-
-            const lines = trimmed.split('\n').map((l) => l.trim()).filter(Boolean);
-            const isBulletList = lines.every((l) => l.startsWith('- ') || l.startsWith('* '));
-
-            if (isBulletList) {
-              return (
-                <div key={blockIdx} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-                  {lines.map((line, lIdx) => {
-                    const cleanLine = line.replace(/^[-*]\s*/, '');
-                    const match = cleanLine.match(/^\*\*(.*?)\*\*:\s*(.*)$/);
-
-                    if (match) {
-                      const [, key, val] = match;
-                      return (
-                        <div
-                          key={lIdx}
-                          className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/90 hover:border-sky-300 hover:bg-sky-50/20 transition-all duration-200 flex flex-col justify-between space-y-2 group shadow-2xs"
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="px-2.5 py-1 rounded-lg bg-sky-100/80 text-[#0284C7] font-mono text-xs font-bold uppercase tracking-wider">
-                              {key}
-                            </span>
-                            <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                              <button
-                                type="button"
-                                onClick={() => handleSpeakPhrase(`${key}. ${val}`)}
-                                className="p-1 rounded-lg hover:bg-white text-slate-400 hover:text-[#0284C7] transition-colors"
-                                title="Dengarkan Pengucapan"
-                              >
-                                <Volume2 className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleCopyPhrase(`${key}: ${val}`, blockIdx * 10 + lIdx)}
-                                className="p-1 rounded-lg hover:bg-white text-slate-400 hover:text-emerald-600 transition-colors"
-                                title="Salin Frasa"
-                              >
-                                {copiedPhraseIndex === blockIdx * 10 + lIdx ? (
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                ) : (
-                                  <Copy className="w-3.5 h-3.5" />
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                            {val}
-                          </p>
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div
-                        key={lIdx}
-                        className="col-span-full flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-700"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
-                        <span>{cleanLine}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            }
-
-            return (
-              <p key={blockIdx} className="leading-relaxed font-normal text-slate-700">
-                {trimmed}
-              </p>
-            );
-          })}
+          {renderStructuredContent(article.content)}
         </div>
 
         {/* Interactive Mini-Quiz Checkpoint Section */}

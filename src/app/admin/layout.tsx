@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import AdminSidebar from '@/components/navbar/AdminSidebar';
 import { Shield, Menu } from 'lucide-react';
@@ -14,6 +14,7 @@ export default function AdminLayout({
 }) {
   const { user, loading, isAdmin, profile, isSuperAdmin, isInstructor } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -84,8 +85,8 @@ export default function AdminLayout({
         onCloseMobile={() => setMobileMenuOpen(false)}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto overflow-y-auto min-w-0 w-full">
+      {/* Main Content Area with Smooth Page Transition on Navigation */}
+      <main key={pathname} className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto overflow-y-auto min-w-0 w-full animate-page-enter">
         {children}
       </main>
     </div>

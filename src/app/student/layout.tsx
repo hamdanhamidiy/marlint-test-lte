@@ -84,8 +84,8 @@ export default function StudentLayout({
             <TopHeader onOpenMobileMenu={() => setMobileMenuOpen(true)} />
           </div>
 
-          {/* Page Content */}
-          <main className="flex-1 p-4 sm:p-5 lg:p-5.5">
+          {/* Page Content with Smooth Transition on Route Change */}
+          <main key={pathname} className="flex-1 p-4 sm:p-5 lg:p-5.5 animate-page-enter">
             {children}
           </main>
         </div>

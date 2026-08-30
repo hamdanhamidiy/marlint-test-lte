@@ -17,6 +17,7 @@ import {
   Layers,
   History,
   Check,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
@@ -145,6 +146,10 @@ export default function StudentHistoryPage() {
       ? Math.round(results.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalSessions)
       : 0;
   const passRate = totalSessions > 0 ? Math.round((passedSessions / totalSessions) * 100) : 0;
+  const highestLevel =
+    results.length > 0
+      ? results.find((r) => r.level)?.level || profile?.level_code || 'A1'
+      : (profile?.level_code || 'A1');
 
   const filteredResults = results.filter((r) => {
     if (activeFilter === 'passed') return r.is_passed;
@@ -236,7 +241,7 @@ export default function StudentHistoryPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Card 1: Total Sesi */}
-        <div className="bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white p-4 sm:p-5 rounded-2xl shadow-md shadow-sky-500/10 flex flex-col justify-between space-y-2">
+        <div className="bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white p-4 sm:p-5 rounded-2xl shadow-md shadow-sky-500/10 hover-lift flex flex-col justify-between space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-cyan-200">
               Total Sesi
@@ -257,7 +262,7 @@ export default function StudentHistoryPage() {
         </div>
 
         {/* Card 2: Rata-Rata Skor */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover-lift flex flex-col justify-between space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
               Rata-Rata Skor
@@ -278,64 +283,69 @@ export default function StudentHistoryPage() {
         </div>
 
         {/* Card 3: Tingkat Kelulusan */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover-lift flex flex-col justify-between space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-              Tingkat Kelulusan
+              Kelulusan
             </span>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />
-          </div>
-          <div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight">
-                {passRate}%
-              </span>
-              <span className="text-xs text-slate-400 font-medium">lulus</span>
-            </div>
-            <p className="text-[11px] text-emerald-700 mt-0.5 font-bold">
-              {passedSessions} dari {totalSessions} Sesi Lulus
-            </p>
-          </div>
-        </div>
-
-        {/* Card 4: Poin Kemahiran */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-              Poin Kemahiran
-            </span>
-            <span className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
-              <Sparkles className="w-4 h-4" />
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
+              <CheckCircle2 className="w-4 h-4" />
             </span>
           </div>
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                {profile?.total_points || (results.length > 0 ? results.reduce((acc, r) => acc + (r.points_earned || 50), 0) : 0)}
+                {passRate}%
               </span>
-              <span className="text-xs text-slate-400 font-medium">XP</span>
+              <span className="text-xs text-slate-400 font-medium">tingkat lulus</span>
             </div>
-            <p className="text-[11px] text-amber-700 mt-0.5 font-bold">
-              Level {profile?.level_code || 'A1'} Operational
+            <p className="text-[11px] text-emerald-600 mt-0.5 font-bold">
+              {passedSessions} dari {totalSessions} Sesi Lulus
             </p>
           </div>
         </div>
 
+        {/* Card 4: Level CEFR Tertinggi */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs hover-lift flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              Level Tertinggi
+            </span>
+            <span className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
+              <Award className="w-4 h-4" />
+            </span>
+          </div>
+          <div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                {highestLevel}
+              </span>
+              <span className="text-xs text-purple-600 font-bold">CEFR</span>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Standar STCW Maritim</p>
+          </div>
+        </div>
       </div>
 
-      {/* Test History Results List */}
+      {/* History Items Container */}
       <div className="space-y-3.5">
         {loading ? (
-          <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-400 text-xs shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
+          <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-400 text-xs shadow-xs space-y-2.5">
+            <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-spin">
               <History className="w-4 h-4" />
             </div>
-            <p className="font-bold text-slate-700">Memuat riwayat ujian...</p>
+            <p className="font-bold text-slate-700">Memuat catatan riwayat ujian Anda...</p>
           </div>
         ) : filteredResults.length === 0 ? (
           <div className="p-12 text-center bg-white border border-slate-200/90 rounded-2xl text-slate-500 text-xs shadow-xs space-y-3">
-            <p className="text-sm font-semibold text-slate-800">
-              Belum ada riwayat ujian pada kategori ini.
+            <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="font-extrabold text-slate-900 text-base">Belum Ada Sesi Ujian</h3>
+            <p className="max-w-md mx-auto text-slate-500 leading-relaxed font-normal">
+              {activeFilter === 'all'
+                ? 'Anda belum pernah menyelesaikan sesi simulasi Marlins Test. Mulai sekarang untuk mendapatkan skor dan sertifikat resmi!'
+                : `Tidak ada catatan riwayat ujian dengan kategori "${activeFilter === 'passed' ? 'Lulus' : 'Remedial'}".`}
             </p>
             <Link
               href="/student/tests"
@@ -349,7 +359,7 @@ export default function StudentHistoryPage() {
           filteredResults.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-sky-300 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover-lift flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
             >
               {/* Left Score Box & Details */}
               <div className="flex items-center gap-3.5 sm:gap-4.5 min-w-0">

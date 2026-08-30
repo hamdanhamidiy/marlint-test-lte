@@ -64,8 +64,8 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      {/* Main Register Card */}
-      <div className="max-w-[460px] w-full mx-auto my-auto py-8">
+      {/* Main Register Card with Smooth Entry */}
+      <div className="max-w-[460px] w-full mx-auto my-auto py-8 animate-page-enter">
         <div className="bg-white p-7 sm:p-9 rounded-[28px] border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 relative overflow-hidden">
           
           {/* Subtle Top Accent Line */}

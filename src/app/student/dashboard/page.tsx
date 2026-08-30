@@ -313,7 +313,7 @@ export default function StudentDashboardPage() {
                 return (
                   <div
                     key={test.id}
-                    className="bg-white rounded-2xl p-4 sm:p-4.5 border border-slate-200/80 hover:border-sky-300/80 shadow-xs hover:shadow-md transition-all duration-150 flex flex-col justify-between h-full group"
+                    className="bg-white rounded-2xl p-4 sm:p-4.5 border border-slate-200/80 hover-lift shadow-xs flex flex-col justify-between h-full group"
                   >
                     {/* Top Tag & Access Indicator */}
                     <div className="space-y-2">

@@ -24,7 +24,7 @@ import {
 import { useAuth } from '@/lib/context/AuthContext';
 import { supabase } from '@/lib/supabase/client';
 import { Question } from '@/lib/supabase/types';
-import { getCategoryInfo, formatStopwatch, randomizeTestQuestions } from '@/lib/utils';
+import { getCategoryInfo, formatStopwatch, randomizeTestQuestions, sanitizeExamQuestions } from '@/lib/utils';
 import Logo from '@/components/brand/Logo';
 import MultipleChoiceQuestion from '@/components/test-engine/MultipleChoiceQuestion';
 import GapFillQuestion from '@/components/test-engine/GapFillQuestion';
@@ -317,7 +317,7 @@ export default function TestTakingPage() {
           } catch (e) {}
 
           if (randomizedList.length === 0) {
-            randomizedList = randomizeTestQuestions(info.questions, attemptId);
+            randomizedList = sanitizeExamQuestions(randomizeTestQuestions(info.questions, attemptId));
             try {
               localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
             } catch (e) {}
@@ -359,7 +359,7 @@ export default function TestTakingPage() {
         } catch (e) {}
 
         if (randomizedList.length === 0) {
-          randomizedList = randomizeTestQuestions(rawQuestionsList, attemptId);
+          randomizedList = sanitizeExamQuestions(randomizeTestQuestions(rawQuestionsList, attemptId));
           try {
             localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
           } catch (e) {}
@@ -393,7 +393,7 @@ export default function TestTakingPage() {
         } catch (e) {}
 
         if (randomizedList.length === 0) {
-          randomizedList = randomizeTestQuestions(info.questions, attemptId);
+          randomizedList = sanitizeExamQuestions(randomizeTestQuestions(info.questions, attemptId));
           try {
             localStorage.setItem(`marlins_attempt_questions_${attemptId}`, JSON.stringify(randomizedList));
           } catch (e) {}
@@ -526,16 +526,37 @@ export default function TestTakingPage() {
         })
       );
 
-      const { data, error } = await supabase.rpc('submit_test_attempt', {
-        p_attempt_id: attemptId,
-        p_answers: formattedAnswers,
+      const timeSpentSec = Math.max(30, Math.floor((Date.now() - getOrSetStartTime(attemptId)) / 1000));
+      const studentUserId = user?.id || profile?.id || '65a606b2-3074-43b1-ade6-fbbd7e00b7d6';
+      const studentUserName = profile?.full_name || user?.user_metadata?.full_name || 'Siswa Marlins Test';
+      const studentEmail = (user?.email || profile?.email || 'student@marlinstest.com').toLowerCase();
+
+      // 1. Submit to secure server-side API endpoint
+      const response = await fetch('/api/test/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          attempt_id: attemptId,
+          test_number: attempt.test_number,
+          student_id: studentUserId,
+          student_name: studentUserName,
+          student_email: studentEmail,
+          answers: formattedAnswers,
+          time_spent_seconds: timeSpentSec,
+        }),
       });
 
-      if (error) {
+      const serverRes = await response.json();
+
+      if (!response.ok || !serverRes.success) {
+        console.warn('Server submit fallback triggering:', serverRes?.error);
         evaluateAndSaveClientSide(formattedAnswers);
         return;
       }
 
+      // 2. Cache review & navigation state
       try {
         localStorage.setItem(
           `marlins_review_${attemptId}`,
@@ -553,6 +574,7 @@ export default function TestTakingPage() {
 
       router.replace(`/student/test/result/${attemptId}`);
     } catch (err: any) {
+      console.warn('Exception during submit, fallback to client save:', err);
       evaluateAndSaveClientSide(
         Object.entries(answersRef.current).map(([qId, val]) => ({
           question_id: qId,

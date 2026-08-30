@@ -267,3 +267,44 @@ export function randomizeTestQuestions(questions: any[], sessionKey: string): an
   });
 }
 
+/**
+ * Sanitizes test questions by stripping all answers, correct matches,
+ * and solution hints before providing them to the student's browser.
+ */
+export function sanitizeExamQuestions(questions: any[]): any[] {
+  if (!questions || !Array.isArray(questions)) return [];
+
+  return questions.map((q) => {
+    const sanitized = { ...q };
+    delete sanitized.correct_answer;
+    delete sanitized.explanation;
+
+    if (sanitized.question_data && typeof sanitized.question_data === 'object') {
+      const qData = { ...sanitized.question_data };
+      delete qData.correct_sentence;
+      delete qData.correct_matches;
+
+      if (qData.drop_zones && Array.isArray(qData.drop_zones)) {
+        qData.drop_zones = qData.drop_zones.map((dz: any) => {
+          const cleanDz = { ...dz };
+          delete cleanDz.correct_label;
+          return cleanDz;
+        });
+      }
+
+      if (qData.gaps && Array.isArray(qData.gaps)) {
+        qData.gaps = qData.gaps.map((gap: any) => {
+          const cleanGap = { ...gap };
+          delete cleanGap.correct;
+          return cleanGap;
+        });
+      }
+
+      sanitized.question_data = qData;
+    }
+
+    return sanitized;
+  });
+}
+
+

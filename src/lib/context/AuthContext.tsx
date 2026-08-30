@@ -183,35 +183,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             restoreDemoUser(savedDemo);
           }
         } else {
-          // Default to live Ahmad Hamdan Hamidiy profile from Supabase
-          try {
-            const { data: liveStudent } = await supabase
-              .from('users')
-              .select('*')
-              .eq('email', 'hamdan@gmail.com')
-              .maybeSingle();
-
-            const activeProf = (liveStudent as UserProfile) || REAL_STUDENT_PROFILE;
-            setProfile(activeProf);
-            setUser({
-              id: activeProf.id,
-              email: activeProf.email,
-              app_metadata: {},
-              user_metadata: { full_name: activeProf.full_name, role: activeProf.role },
-              aud: 'authenticated',
-              created_at: activeProf.created_at,
-            } as User);
-          } catch {
-            setProfile(REAL_STUDENT_PROFILE);
-            setUser({
-              id: REAL_STUDENT_PROFILE.id,
-              email: REAL_STUDENT_PROFILE.email,
-              app_metadata: {},
-              user_metadata: { full_name: REAL_STUDENT_PROFILE.full_name, role: REAL_STUDENT_PROFILE.role },
-              aud: 'authenticated',
-              created_at: REAL_STUDENT_PROFILE.created_at,
-            } as User);
-          }
+          // Clean guest state for unauthenticated visitors in production
+          setUser(null);
+          setSession(null);
+          setProfile(null);
         }
       } catch (err) {
         console.error('Auth initialization error:', err);

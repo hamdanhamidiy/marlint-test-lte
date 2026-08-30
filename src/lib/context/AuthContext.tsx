@@ -159,12 +159,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else if (savedDemo) {
           try {
             const parsed = JSON.parse(savedDemo) as UserProfile;
+
+            // Automatically purge deprecated hamdan@marlinstest.com
+            if (parsed?.email === 'hamdan@marlinstest.com') {
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('marlins_demo_user');
+              }
+              setUser(null);
+              setSession(null);
+              setProfile(null);
+              return;
+            }
+
             // Always refresh live data & photo from Supabase users table
             const { data: liveUser } = await supabase
               .from('users')
               .select('*')
               .or(`id.eq.${parsed.id},email.eq.${parsed.email}`)
               .maybeSingle();
+
+            if (!liveUser && parsed?.email === 'hamdan@marlinstest.com') {
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('marlins_demo_user');
+              }
+              setUser(null);
+              setSession(null);
+              setProfile(null);
+              return;
+            }
 
             const activeProfile = (liveUser as UserProfile) || parsed;
             setProfile(activeProfile);
@@ -270,6 +292,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const cleanEmail = email.trim().toLowerCase();
       const cleanPass = password.trim();
+
+      // Explicitly reject removed legacy account
+      if (cleanEmail === 'hamdan@marlinstest.com') {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('marlins_demo_user');
+        }
+        return {
+          error: new Error('Akun hamdan@marlinstest.com telah dihapus secara permanen. Silakan masuk menggunakan hamdan@gmail.com.'),
+          profile: null,
+        };
+      }
 
       // 1. Direct query against live Supabase database for the exact user account
       try {

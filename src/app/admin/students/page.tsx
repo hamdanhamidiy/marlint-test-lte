@@ -70,6 +70,26 @@ const MARLINT_TEST_UUIDS: Record<number, string> = {
 
 const DEFAULT_STUDENTS: UserProfile[] = [
   {
+    id: 'a1c181cd-4d43-49b7-9814-d724ba27ea2e',
+    email: 'hamdan@gmail.com',
+    full_name: 'Ahmad Hamdan Hamidiy',
+    role: 'student',
+    status: 'active',
+    level: 'A1',
+    level_code: 'A1',
+    total_points: 320,
+    phone_number: '0813318044694',
+    photo_url: 'https://xekfarqemnyfguxtpeoj.supabase.co/storage/v1/object/public/avatars/profile_photos/a1c181cd-4d43-49b7-9814-d724ba27ea2e-1770544970243.jpg',
+    job_title: 'F&B Service / Restaurant Waiter - Cruise Ship',
+    date_of_birth: '1998-08-14',
+    nationality: 'Indonesia',
+    about: 'Siswa sekolah perhotelan & kapal pesiar LTE Cruise Training Center spesialis F&B Service dan pelayanan tamu internasional.',
+    placement_test_taken: true,
+    placement_test_date: '2026-02-10T00:00:00.000Z',
+    created_at: '2026-02-10T00:00:00.000Z',
+    updated_at: new Date().toISOString(),
+  },
+  {
     id: '3f5812ac-0a1b-48e3-9a5d-6dfb73c52611',
     email: 'asfa@gmail.com',
     full_name: 'Asfa Ahmad',

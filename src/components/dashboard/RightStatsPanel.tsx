@@ -43,10 +43,10 @@ export default function RightStatsPanel({
 
   return (
     <>
-      <aside className="w-full lg:w-72 xl:w-80 space-y-4 select-none shrink-0 font-sans">
+      <aside className="w-full lg:w-72 xl:w-80 space-y-3.5 sm:space-y-4 select-none shrink-0 font-sans">
         
         {/* Widget 1: Status Sertifikasi & Kualifikasi Pelaut (Modern Executive Card) */}
-        <div className="bg-white rounded-[24px] p-4 sm:p-5 border border-slate-200/90 space-y-3.5 shadow-2xs hover-lift relative overflow-hidden">
+        <div className="bg-white rounded-2xl sm:rounded-[24px] p-4 sm:p-5 border border-slate-200/90 space-y-3 sm:space-y-3.5 shadow-2xs hover-lift relative overflow-hidden">
           {/* Subtle Ambient Accent Top Bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C]" />
 
@@ -71,7 +71,7 @@ export default function RightStatsPanel({
           </div>
 
           {/* Live Status Badge Container */}
-          <div className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 space-y-3">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 space-y-2.5 sm:space-y-3">
             
             {/* Live Indicator Strip */}
             <div className="flex items-center justify-between">
@@ -151,7 +151,7 @@ export default function RightStatsPanel({
         </div>
 
         {/* Widget 2: Maritime Competency Chart Widget (Clean & Modern Bar Chart) */}
-        <div className="bg-white rounded-[24px] p-4 sm:p-5 border border-slate-200/90 space-y-3 shadow-2xs hover-lift">
+        <div className="bg-white rounded-2xl sm:rounded-[24px] p-4 sm:p-5 border border-slate-200/90 space-y-3 shadow-2xs hover-lift">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-[#0284C7]" />

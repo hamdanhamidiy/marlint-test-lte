@@ -172,34 +172,34 @@ export default function TopHeader({
 
   return (
     <>
-      <header className="flex items-center justify-between gap-2.5 sm:gap-4 py-1 select-none font-sans">
+      <header className="flex items-center justify-between gap-2 sm:gap-4 py-1 select-none font-sans">
         {/* Left: Mobile menu toggle + Search Bar */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-2xl min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-1 max-w-2xl min-w-0">
           {onOpenMobileMenu && (
             <button
               type="button"
               onClick={onOpenMobileMenu}
-              className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 transition-all"
+              className="lg:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 cursor-pointer shadow-2xs active:scale-95 transition-all"
               aria-label="Toggle menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           )}
 
           <div className="relative w-full min-w-0">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Cari ujian atau materi..."
+              placeholder="Cari ujian / materi..."
               value={searchValue}
               onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-              className="w-full pl-9 sm:pl-11 pr-3 sm:pr-4 py-2 sm:py-2.5 rounded-full bg-[#F4F6F9] border border-slate-200/70 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
+              className="w-full pl-8 sm:pl-11 pr-2.5 sm:pr-4 py-1.5 sm:py-2.5 rounded-full bg-[#F4F6F9] border border-slate-200/70 text-xs sm:text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
             />
           </div>
         </div>
 
         {/* Right: Actions, Token shortcut, Notification Center & Profile */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Token Voucher Shortcut Button (Ocean Blue Gradient) */}
           <Link
             href="/student/redeem"
@@ -209,10 +209,10 @@ export default function TopHeader({
             <span>Klaim Token</span>
           </Link>
 
-          {/* Learning Materials Button */}
+          {/* Learning Materials Button (Hidden on small mobile to save space) */}
           <Link
             href="/student/articles"
-            className="w-9 h-9 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/80 hover:scale-105 active:scale-95 transition-all shadow-xs relative"
+            className="hidden sm:flex w-9 h-9 rounded-full bg-white border border-slate-200/80 items-center justify-center text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/80 hover:scale-105 active:scale-95 transition-all shadow-xs relative"
             title="Materi SMCP"
           >
             <BookOpen className="w-4 h-4" />
@@ -224,7 +224,7 @@ export default function TopHeader({
             <button
               type="button"
               onClick={() => setNotifOpen(!notifOpen)}
-              className={`w-9 h-9 rounded-full border transition-all duration-150 flex items-center justify-center relative cursor-pointer shadow-xs active:scale-95 ${
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all duration-150 flex items-center justify-center relative cursor-pointer shadow-xs active:scale-95 ${
                 notifOpen
                   ? 'bg-sky-50 border-[#0284C7] text-[#0284C7] ring-2 ring-sky-500/20'
                   : 'bg-white border-slate-200/80 text-slate-700 hover:text-[#0284C7] hover:bg-sky-50/70 hover:scale-105'
@@ -232,21 +232,21 @@ export default function TopHeader({
               title="Pusat Notifikasi"
               aria-label="Buka notifikasi"
             >
-              <Bell className={`w-4 h-4 ${unreadCount > 0 ? 'text-[#0284C7]' : 'text-slate-600'}`} />
+              <Bell className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${unreadCount > 0 ? 'text-[#0284C7]' : 'text-slate-600'}`} />
               
               {/* Dynamic Notification Badge with pulse effect */}
               {unreadCount > 0 ? (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center px-1 shadow-sm ring-2 ring-white animate-pulse">
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] sm:min-w-[18px] sm:h-[18px] rounded-full bg-rose-500 text-white text-[9px] sm:text-[10px] font-extrabold flex items-center justify-center px-0.5 shadow-sm ring-2 ring-white animate-pulse">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               ) : (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-slate-300 ring-2 ring-white" />
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-slate-300 ring-2 ring-white" />
               )}
             </button>
 
             {/* Notification Dropdown Panel */}
             {notifOpen && (
-              <div className="absolute right-0 mt-2.5 w-[340px] sm:w-[420px] bg-white rounded-[26px] shadow-2xl border border-slate-200/90 overflow-hidden animate-in fade-in zoom-in-95 duration-150 z-50 font-sans">
+              <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2.5 w-auto sm:w-[420px] max-w-[calc(100vw-24px)] bg-white rounded-2xl sm:rounded-[26px] shadow-2xl border border-slate-200/90 overflow-hidden animate-in fade-in zoom-in-95 duration-150 z-50 font-sans">
                 
                 {/* Header Row */}
                 <div className="p-4 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white flex items-center justify-between">
@@ -480,11 +480,11 @@ export default function TopHeader({
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 sm:pr-3.5 rounded-full bg-white hover:bg-sky-50/40 border border-slate-200/90 text-slate-800 transition-all duration-200 shadow-xs cursor-pointer hover:border-sky-300 hover:scale-[1.01]"
+              className="flex items-center gap-2 p-0.5 sm:p-1 sm:pl-1.5 sm:pr-3.5 rounded-full bg-white hover:bg-sky-50/40 border border-slate-200/90 text-slate-800 transition-all duration-200 shadow-xs cursor-pointer hover:border-sky-300 hover:scale-[1.01]"
             >
               {/* Avatar with Vibrant Gradient Ring & Live Status Dot */}
               <div className="relative">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-amber-500 p-0.5 shadow-xs">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0284C7] via-[#0369A1] to-amber-500 p-0.5 shadow-xs">
                   <div className="w-full h-full rounded-full bg-amber-50 flex items-center justify-center text-xs font-bold text-slate-800 overflow-hidden">
                     {profile?.photo_url ? (
                       <img
@@ -516,7 +516,7 @@ export default function TopHeader({
                 </div>
               </div>
 
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
             </button>
 
             {/* Profile Dropdown Menu */}

@@ -209,12 +209,12 @@ export default function StudentDashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 lg:gap-6 items-start max-w-7xl mx-auto font-sans pb-16">
+    <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 lg:gap-6 items-start max-w-7xl mx-auto font-sans pb-16">
       {/* Center Main Content Area */}
-      <div className="flex-1 w-full space-y-4 sm:space-y-5 min-w-0">
+      <div className="flex-1 w-full space-y-3.5 sm:space-y-5 min-w-0">
 
-        {/* Executive Maritime Hero Card - Well-Proportioned, Elegant & Spacious */}
-        <div className="relative overflow-hidden rounded-[26px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-sky-500/15">
+        {/* Executive Maritime Hero Card - Well-Proportioned & Mobile Ergonomic */}
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-[26px] bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] p-4 sm:p-6 lg:p-7 text-white shadow-md sm:shadow-lg shadow-sky-500/15">
           {/* Decorative Star Watermark */}
           <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none opacity-25 hidden sm:block">
             <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
@@ -226,35 +226,35 @@ export default function StudentDashboardPage() {
             </svg>
           </div>
 
-          <div className="relative z-10 space-y-3.5 sm:space-y-4">
+          <div className="relative z-10 space-y-2.5 sm:space-y-4">
             {/* Top Subtitle Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold text-slate-100 backdrop-blur-xs w-fit">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span>LTE Cruise Training Center</span>
-              <span className="text-white/30">•</span>
-              <span className="text-slate-200 font-medium">Perhotelan & Kapal Pesiar</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] sm:text-[11px] font-bold text-slate-100 backdrop-blur-xs w-fit max-w-full">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="truncate">LTE Cruise Training Center</span>
+              <span className="text-white/30 hidden sm:inline">•</span>
+              <span className="text-slate-200 font-medium hidden sm:inline">Perhotelan & Kapal Pesiar</span>
             </div>
 
             {/* Main Greeting & Dynamic Typewriter */}
             <div className="space-y-1 sm:space-y-1.5">
-              <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-tight flex items-center gap-2">
+              <h1 className="font-heading text-lg sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-tight flex items-center gap-2">
                 <span>Halo, {greetingName}!</span>
-                <span className="animate-wave inline-block text-2xl sm:text-3xl ml-0.5">👋</span>
+                <span className="animate-wave inline-block text-xl sm:text-3xl ml-0.5">👋</span>
               </h1>
 
-            <div className="min-h-[24px] flex items-center">
-              <p className="text-xs sm:text-sm text-slate-100 font-normal leading-relaxed max-w-2xl">
-                <span>{currentText}</span>
-                <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
-              </p>
-            </div>
+              <div className="min-h-[32px] sm:min-h-[24px] flex items-center">
+                <p className="text-xs sm:text-sm text-slate-100 font-normal leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none">
+                  <span>{currentText}</span>
+                  <span className="font-bold text-amber-300 animate-pulse ml-0.5">|</span>
+                </p>
+              </div>
             </div>
 
-            {/* Quick Action Buttons */}
-            <div className="pt-1 flex flex-wrap items-center gap-2.5">
+            {/* Quick Action Buttons - Ergonomic Touch Friendly */}
+            <div className="pt-1.5 grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5">
               <Link
                 href="/student/tests"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Compass className="w-3.5 h-3.5 text-[#0284C7]" />
                 <span>Pilih Paket Ujian Marlins</span>
@@ -263,7 +263,7 @@ export default function StudentDashboardPage() {
 
               <Link
                 href="/student/history"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-xs hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-xs hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Lihat Riwayat Nilai</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-slate-200" />
@@ -273,30 +273,32 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Featured Marlins Test Cards Grid (3 Paket Utama) */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-950 tracking-tight flex items-center gap-2">
-                <span>Paket Ujian Marlins</span>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/90 shadow-2xs">
+        <div className="space-y-2.5 sm:space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-3">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-extrabold text-slate-950 tracking-tight">
+                  Paket Ujian Marlins
+                </h2>
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/90 shadow-2xs shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>10 Paket Tersedia</span>
+                  <span>10 Paket</span>
                 </span>
-              </h2>
-              <p className="text-xs text-slate-500 font-normal mt-0.5">
+              </div>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-normal">
                 Pilihan paket asesmen kompetensi maritim standar perwira & rating kapal
               </p>
             </div>
             <Link
               href="/student/tests"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] transition-colors shrink-0 self-start sm:self-auto pt-0.5"
             >
               <span>Lihat Semua (10)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-3.5">
             {loading ? (
               <div className="col-span-full p-8 text-center bg-white border border-slate-200/80 rounded-2xl text-slate-400 text-xs shadow-xs space-y-2">
                 <div className="w-7 h-7 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-spin">
@@ -360,7 +362,7 @@ export default function StudentDashboardPage() {
 
                       <Link
                         href={hasAccess ? `/student/test/${test.test_number}` : `/student/checkout/${test.test_number}`}
-                        className={`w-full flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99] ${
+                        className={`w-full flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99] ${
                           hasAccess
                             ? 'bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:from-[#0369A1] hover:to-[#075985] text-white shadow-sky-500/25'
                             : 'bg-gradient-to-r from-[#0B192C] via-[#1E293B] to-[#0B192C] hover:from-[#0369A1] hover:to-[#0284C7] text-white border border-slate-700/30'
@@ -378,19 +380,20 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Riwayat Hasil & Modul Pembelajaran */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 space-y-4 shadow-xs">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 space-y-3.5 sm:space-y-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
             <div>
               <h2 className="text-base sm:text-lg font-extrabold text-slate-950">
                 Riwayat Hasil & Modul Pembelajaran
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5 font-normal">Hasil evaluasi tes dan materi referensi maritim Anda</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 font-normal">Hasil evaluasi tes dan materi referensi maritim Anda</p>
             </div>
             <Link
               href="/student/history"
-              className="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0"
+              className="text-xs font-bold text-[#0284C7] hover:text-[#0369A1] shrink-0 self-start sm:self-auto inline-flex items-center gap-1"
             >
-              Lihat Semua
+              <span>Lihat Semua</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 

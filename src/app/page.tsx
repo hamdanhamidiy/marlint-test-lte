@@ -170,12 +170,14 @@ export default function LandingPage() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            entry.target.setAttribute('data-revealed', 'true');
+            observer.unobserve(entry.target);
           }
         });
       },
       {
-        threshold: 0.08,
-        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.05,
+        rootMargin: '0px 0px -20px 0px',
       }
     );
 
@@ -183,10 +185,16 @@ export default function LandingPage() {
       '.scroll-reveal, .scroll-reveal-scale, .scroll-reveal-left, .scroll-reveal-right'
     );
 
-    revealElements.forEach((el) => observer.observe(el));
+    revealElements.forEach((el) => {
+      if (el.getAttribute('data-revealed') === 'true') {
+        el.classList.add('is-visible');
+      } else {
+        observer.observe(el);
+      }
+    });
 
     return () => {
-      revealElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
     };
   }, [tests, activeFilter]);
 
@@ -254,7 +262,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* 4 Clean Interactive Trust Metrics with Scroll Reveal Stagger */}
+          {/* 4 Clean Interactive Trust Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 text-left">
             <div className="scroll-reveal stagger-1 p-3.5 sm:p-4 rounded-2xl bg-white/90 border border-slate-200/80 shadow-2xs backdrop-blur-xs hover:border-sky-300 hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
               <div className="flex items-center gap-3">
@@ -402,20 +410,20 @@ export default function LandingPage() {
               <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
                 Paket Ujian Marlins Test Pilihan
               </h2>
-              <p className="text-xs text-slate-500 font-normal">
+              <p className="text-xs sm:text-sm text-slate-500 font-normal">
                 Pilih paket evaluasi kompetensi sesuai divisi kerja dan jenjang karier pelayaran Anda.
               </p>
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl self-start sm:self-auto shadow-2xs">
+            <div className="flex items-center gap-1 p-1 bg-white border border-slate-200/90 rounded-2xl self-start sm:self-auto shadow-2xs">
               <button
                 type="button"
                 onClick={() => setActiveFilter('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   activeFilter === 'all'
-                    ? 'bg-[#0284C7] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 Semua (6)
@@ -423,10 +431,10 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => setActiveFilter('free')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   activeFilter === 'free'
-                    ? 'bg-[#0284C7] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 Gratis
@@ -434,10 +442,10 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => setActiveFilter('specialist')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   activeFilter === 'specialist'
-                    ? 'bg-[#0284C7] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 Spesialisasi
@@ -445,55 +453,111 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Cards Grid with Scroll Reveal Scale */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredTests.slice(0, 6).map((test, idx) => (
-              <div
-                key={test.id}
-                className={`scroll-reveal-scale stagger-${(idx % 3) + 1} card-modern-hover bg-white p-5.5 rounded-[24px] border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-4 group`}
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-800 text-[10px] font-bold">
-                      Paket #{test.test_number}
-                    </span>
-                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200/80">
-                      {test.is_free || test.test_number === 1 ? 'GRATIS' : formatPriceIDR(test.price || 49000)}
-                    </span>
+          {/* Cards Grid — Pixel-perfect & Balanced */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTests.slice(0, 6).map((test, idx) => {
+              const isFree = test.is_free || test.test_number === 1;
+              const formattedName = test.test_name
+                ? test.test_name.replace(/marlint/gi, 'Marlins')
+                : `Marlins Test ${test.test_number}`;
+
+              return (
+                <div
+                  key={test.id}
+                  className={`scroll-reveal-scale stagger-${(idx % 3) + 1} relative rounded-[24px] p-6 border transition-all duration-300 flex flex-col justify-between h-full group bg-white ${
+                    isFree
+                      ? 'border-sky-300/90 shadow-[0_4px_20px_rgba(2,132,199,0.08)] hover:shadow-xl hover:border-[#0284C7] hover:-translate-y-1'
+                      : 'border-slate-200/90 shadow-[0_2px_12px_rgba(15,23,42,0.03)] hover:shadow-xl hover:border-sky-300 hover:-translate-y-1'
+                  }`}
+                >
+                  <div className="space-y-4">
+                    {/* Header Row: Badge & Price */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-[11px] font-extrabold">
+                          Paket #{test.test_number}
+                        </span>
+                        {isFree && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/80 text-[10px] font-extrabold uppercase">
+                            <Sparkles className="w-3 h-3 text-amber-500" />
+                            Starter
+                          </span>
+                        )}
+                      </div>
+
+                      <span
+                        className={`text-xs font-extrabold px-3 py-1 rounded-lg border ${
+                          isFree
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-200/90'
+                            : 'text-[#0284C7] bg-sky-50 border-sky-200/80'
+                        }`}
+                      >
+                        {isFree ? 'GRATIS' : formatPriceIDR(test.price || 49000)}
+                      </span>
+                    </div>
+
+                    {/* Test Title & Description */}
+                    <div className="space-y-2">
+                      <h3 className="font-heading text-base font-extrabold text-slate-900 group-hover:text-[#0284C7] transition-colors leading-snug line-clamp-2 min-h-[44px]">
+                        {formattedName}
+                      </h3>
+                      <p className="text-xs text-slate-500 font-normal leading-relaxed line-clamp-2 min-h-[34px]">
+                        {test.description || 'Simulasi ujian standar Marlins untuk evaluasi kecakapan bahasa maritim.'}
+                      </p>
+                    </div>
+
+                    {/* Structured Specs Metric Box */}
+                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-50/90 border border-slate-100 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-slate-400" />
+                          Durasi
+                        </span>
+                        <span className="text-xs font-extrabold text-slate-800">
+                          {test.duration || 60} Menit
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center border-x border-slate-200/60">
+                        <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                          <BookOpen className="w-3 h-3 text-slate-400" />
+                          Soal
+                        </span>
+                        <span className="text-xs font-extrabold text-slate-800">
+                          {test.total_questions || 60} Butir
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center">
+                        <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                          <Award className="w-3 h-3 text-slate-400" />
+                          Passing
+                        </span>
+                        <span className="text-xs font-extrabold text-emerald-700">
+                          {test.passing_grade || 70}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="font-heading text-sm sm:text-base font-bold text-slate-950 group-hover:text-[#0284C7] transition-colors leading-snug">
-                    {test.test_name}
-                  </h3>
-
-                  <p className="text-xs text-slate-500 line-clamp-2 font-normal leading-relaxed">
-                    {test.description}
-                  </p>
-                </div>
-
-                <div className="pt-3.5 border-t border-slate-100 space-y-3">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      60 Menit
-                    </span>
-                    <span>60 Soal</span>
-                    <span>Pass: <strong className="text-emerald-700 font-bold">{test.passing_grade || 70}%</strong></span>
+                  {/* Card Bottom CTA Button */}
+                  <div className="pt-4 mt-2">
+                    <Link
+                      href={`/student/test/${test.test_number}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer ${
+                        isFree
+                          ? 'text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 hover:scale-[1.01] active:scale-[0.98]'
+                          : 'text-slate-800 bg-slate-100 hover:bg-[#0284C7] hover:text-white border border-slate-200/70 hover:border-transparent hover:scale-[1.01] active:scale-[0.98]'
+                      }`}
+                    >
+                      <span>{isFree ? 'Mulai Ujian Gratis' : 'Mulai Ujian'}</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                   </div>
-
-                  <Link
-                    href={`/student/test/${test.test_number}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] hover:opacity-95 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.01] active:scale-[0.98]"
-                  >
-                    <span>Mulai Ujian</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Banner link to all 10 with Stagger */}
+          {/* Banner link to all 10 with Clean Styling */}
           <div className="scroll-reveal p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left hover:border-sky-200 transition-colors">
             <div className="space-y-0.5">
               <span className="text-xs font-bold text-slate-900 flex items-center justify-center sm:justify-start gap-1.5">
@@ -517,7 +581,7 @@ export default function LandingPage() {
       </section>
 
       {/* =========================================================================
-          FAQ ACCORDION SECTION — Interactive & Smooth
+          FAQ ACCORDION SECTION — Interactive, Smooth & Always Visible
           ========================================================================= */}
       <section className="py-16 sm:py-24 bg-white border-b border-slate-200/70">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
@@ -534,38 +598,65 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="scroll-reveal space-y-3.5">
             {FAQS.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
                 <div
                   key={index}
-                  className={`scroll-reveal stagger-${index + 1} rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
                     isOpen
-                      ? 'bg-[#F8FAFC] border-sky-300 shadow-sm'
-                      : 'bg-white border-slate-200/80 hover:border-slate-300'
+                      ? 'bg-sky-50/40 border-sky-300/90 shadow-md shadow-sky-500/5 ring-1 ring-sky-300/30'
+                      : 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
                   }`}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 cursor-pointer"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-4.5 text-left flex items-center justify-between gap-4 cursor-pointer group select-none"
+                    aria-expanded={isOpen}
                   >
-                    <span className={`text-xs sm:text-sm font-bold ${isOpen ? 'text-[#0284C7]' : 'text-slate-900'}`}>
-                      {faq.q}
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${
-                        isOpen ? 'rotate-180 text-[#0284C7]' : ''
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <span
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-extrabold shrink-0 transition-colors ${
+                          isOpen
+                            ? 'bg-[#0284C7] text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-500 group-hover:bg-sky-50 group-hover:text-[#0284C7]'
+                        }`}
+                      >
+                        0{index + 1}
+                      </span>
+                      <span
+                        className={`text-xs sm:text-sm font-bold transition-colors ${
+                          isOpen ? 'text-[#0284C7]' : 'text-slate-900 group-hover:text-slate-950'
+                        }`}
+                      >
+                        {faq.q}
+                      </span>
+                    </div>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isOpen
+                          ? 'bg-sky-100 text-[#0284C7] rotate-180'
+                          : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600'
                       }`}
-                    />
+                    >
+                      <ChevronDown className="w-4 h-4 transition-transform" />
+                    </div>
                   </button>
 
-                  {isOpen && (
-                    <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-200/50">
-                      {faq.a}
+                  <div
+                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                      isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-5 sm:px-6 pb-5 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-sky-100/80">
+                      <div className="flex items-start gap-2.5 pt-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <p>{faq.a}</p>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Search,
   BookOpen,
@@ -27,10 +28,55 @@ import {
   BellOff,
   Clock,
   ArrowRight,
+  TrendingUp,
+  Radio,
+  Compass,
+  GraduationCap,
 } from 'lucide-react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useNotifications, ExtendedNotificationItem } from '@/lib/context/NotificationContext';
+import { supabase } from '@/lib/supabase/client';
 import StatusDetailModal from './StatusDetailModal';
+
+// Default search items for 0ms instantaneous results
+const DEFAULT_TESTS_DATA = [
+  { id: '1', test_number: 1, test_name: 'Marlins Test 1 - Foundation & Basic Maritime English', category: 'Foundation / General', is_free: true, price: 0, description: 'Simulasi dasar Bahasa Inggris Maritim untuk seluruh kru & pelaut pemula.' },
+  { id: '2', test_number: 2, test_name: 'Marlins Test 2 - Elementary Maritime Communication', category: 'F&B Service & Bar', is_free: false, price: 49000, description: 'Komunikasi maritim level dasar untuk kru perhotelan & kapal pesiar.' },
+  { id: '3', test_number: 3, test_name: 'Marlins Test 3 - Pre-Intermediate Maritime English', category: 'F&B Service & Guest', is_free: false, price: 49000, description: 'Kecakapan dialog interaktif tamu & operasional kapal pesiar.' },
+  { id: '4', test_number: 4, test_name: 'Marlins Test 4 - Intermediate Housekeeping & Public Area', category: 'Housekeeping & Laundry', is_free: false, price: 49000, description: 'Bahasa Inggris perhotelan spesialisasi departemen Housekeeping & Laundry.' },
+  { id: '5', test_number: 5, test_name: 'Marlins Test 5 - Upper Intermediate Hospitality & Deck', category: 'Housekeeping & Deck', is_free: false, price: 49000, description: 'Terminologi hospitality kabin dan keselamatan navigasi geladak.' },
+  { id: '6', test_number: 6, test_name: 'Marlins Test 6 - Advanced Maritime Culinary & Galley Operations', category: 'Culinary & Galley', is_free: false, price: 49000, description: 'Standar kuliner maritim, kitchen hygiene & operasional galley.' },
+  { id: '7', test_number: 7, test_name: 'Marlins Test 7 - Beverage Service, Wine & Barista English', category: 'F&B Service & Bar', is_free: false, price: 49000, description: 'Kosakata pelayanan minuman, racikan wine, dan percakapan bar cruise.' },
+  { id: '8', test_number: 8, test_name: 'Marlins Test 8 - Food Safety, Sanitation & Galley Terminology', category: 'Culinary & Safety', is_free: false, price: 49000, description: 'HACCP, sanitasi makanan, dan kepatuhan audit kebersihan kapal.' },
+  { id: '9', test_number: 9, test_name: 'Marlins Test 9 - Cabin Steward & Guest Relations English', category: 'Housekeeping & Guest', is_free: false, price: 49000, description: 'Penanganan komplain tamu kabin, briefing keselamatan, dan perhotelan.' },
+  { id: '10', test_number: 10, test_name: 'Marlins Test 10 - Comprehensive Maritime English Master', category: 'Comprehensive Master', is_free: false, price: 49000, description: 'Evaluasi komprehensif tingkat mahir seluruh departemen kapal.' },
+];
+
+const DEFAULT_ARTICLES_DATA = [
+  { id: 'art-1', title: 'Standard Marine Communication Phrases (SMCP) Essentials', category: 'Radio Communication', summary: 'Panduan lengkap frasa komunikasi standar IMO untuk percakapan radio VHF.' },
+  { id: 'art-2', title: 'Essential Maritime Vocabulary: Deck & Engine Terminology', category: 'Vocabulary', summary: 'Daftar istilah kunci kosakata maritim seputar peralatan geladak dan kamar mesin.' },
+  { id: 'art-3', title: 'Mastering Prepositions and Directions at Sea', category: 'Grammar & Navigation', summary: 'Memahami preposisi arah navigasi kapal: Ahead, Astern, Port, Starboard.' },
+  { id: 'art-4', title: 'Emergency Drill Commands and Life-Saving Appliances (LSA)', category: 'Safety & Emergency', summary: 'Perintah baku saat latihan darurat kapal: Fire Drill, Abandon Ship, MOB.' },
+];
+
+const QUICK_SHORTCUTS = [
+  { title: 'Klaim Token Voucher', subtitle: 'Aktivasi akses paket ujian dengan voucher', href: '/student/redeem', icon: KeyRound, badge: 'Aktivasi' },
+  { title: 'Katalog Paket Ujian (Test 1–10)', subtitle: 'Pilihan simulasi asesmen Marlins Test', href: '/student/tests', icon: FileCheck2, badge: 'Katalog' },
+  { title: 'Sertifikat Resmi Saya', subtitle: 'Cek & unduh sertifikat berstandar STCW 2010', href: '/student/certificates', icon: Award, badge: 'Sertifikat' },
+  { title: 'Riwayat Hasil & Evaluasi', subtitle: 'Lihat progres skor dan analisis kemampuan', href: '/student/history', icon: Clock, badge: 'Riwayat' },
+  { title: 'Matriks Jenjang CEFR', subtitle: 'Panduan level kemahiran A1–C2 Maritim', href: '/student/level', icon: TrendingUp, badge: 'Level' },
+  { title: 'Materi & Modul SMCP', subtitle: 'Kumpulan materi pembelajaran & referensi', href: '/student/articles', icon: BookOpen, badge: 'Materi' },
+];
+
+const POPULAR_SEARCH_TAGS = [
+  'Marlins Test 1',
+  'SMCP Radio',
+  'F&B Service',
+  'Housekeeping',
+  'Emergency Drill',
+  'Klaim Token',
+  'Sertifikat Resmi',
+];
 
 interface TopHeaderProps {
   onOpenMobileMenu?: () => void;
@@ -43,6 +89,7 @@ export default function TopHeader({
   searchValue = '',
   onSearchChange,
 }: TopHeaderProps) {
+  const router = useRouter();
   const { profile, signOut } = useAuth();
   const {
     notifications,
@@ -55,16 +102,61 @@ export default function TopHeader({
     loading: notifLoading,
   } = useNotifications();
 
+  // Search state
+  const [localQuery, setLocalQuery] = useState(searchValue || '');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [availableTests, setAvailableTests] = useState(DEFAULT_TESTS_DATA);
+  const [availableArticles, setAvailableArticles] = useState(DEFAULT_ARTICLES_DATA);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifFilter, setNotifFilter] = useState<'all' | 'unread' | 'test' | 'cert_token' | 'system'>('all');
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const searchRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  // Close menus on outside click
+  // Sync search value if controlled prop changes
+  useEffect(() => {
+    if (searchValue !== undefined && searchValue !== localQuery) {
+      setLocalQuery(searchValue);
+    }
+  }, [searchValue]);
+
+  // Load latest tests & articles from Supabase in background
+  useEffect(() => {
+    async function fetchSearchDatasets() {
+      try {
+        const [testsRes, articlesRes] = await Promise.all([
+          supabase
+            .from('marlint_tests')
+            .select('id, test_number, test_name, is_free, price, description')
+            .eq('is_active', true)
+            .order('test_number', { ascending: true }),
+          supabase
+            .from('articles')
+            .select('id, title, category, summary')
+            .eq('is_published', true)
+            .order('created_at', { ascending: false }),
+        ]);
+
+        if (testsRes.data && testsRes.data.length > 0) {
+          setAvailableTests(testsRes.data as any);
+        }
+        if (articlesRes.data && articlesRes.data.length > 0) {
+          setAvailableArticles(articlesRes.data as any);
+        }
+      } catch (err) {
+        console.error('Error prefetching search datasets:', err);
+      }
+    }
+
+    fetchSearchDatasets();
+  }, []);
+
+  // Close menus on outside click or Escape key
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -73,9 +165,25 @@ export default function TopHeader({
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setNotifOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
     }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsSearchOpen(false);
+        setDropdownOpen(false);
+        setNotifOpen(false);
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const displayName = profile?.full_name || 'Pelaut Indonesia';
@@ -116,6 +224,66 @@ export default function TopHeader({
     } finally {
       setTimeout(() => setRefreshing(false), 500);
     }
+  };
+
+  // Live Search Filtering Logic
+  const queryTrimmed = localQuery.trim().toLowerCase();
+
+  const matchingTests = availableTests.filter((t) => {
+    if (!queryTrimmed) return false;
+    const name = (t.test_name || '').toLowerCase().replace(/marlint/g, 'marlins');
+    const desc = (t.description || '').toLowerCase();
+    const cat = (t.category || '').toLowerCase();
+    const num = String(t.test_number);
+    return name.includes(queryTrimmed) || desc.includes(queryTrimmed) || cat.includes(queryTrimmed) || num === queryTrimmed;
+  });
+
+  const matchingArticles = availableArticles.filter((a) => {
+    if (!queryTrimmed) return false;
+    const title = (a.title || '').toLowerCase();
+    const summary = (a.summary || '').toLowerCase();
+    const cat = (a.category || '').toLowerCase();
+    return title.includes(queryTrimmed) || summary.includes(queryTrimmed) || cat.includes(queryTrimmed);
+  });
+
+  const matchingShortcuts = QUICK_SHORTCUTS.filter((s) => {
+    if (!queryTrimmed) return false;
+    const title = s.title.toLowerCase();
+    const sub = s.subtitle.toLowerCase();
+    return title.includes(queryTrimmed) || sub.includes(queryTrimmed);
+  });
+
+  const totalResultsCount = matchingTests.length + matchingArticles.length + matchingShortcuts.length;
+
+  const handleInputChange = (val: string) => {
+    setLocalQuery(val);
+    if (onSearchChange) onSearchChange(val);
+    setIsSearchOpen(true);
+  };
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!localQuery.trim()) return;
+
+    setIsSearchOpen(false);
+
+    // If query looks like an article or matches only articles, navigate to articles
+    if (matchingArticles.length > 0 && matchingTests.length === 0) {
+      router.push(`/student/articles?search=${encodeURIComponent(localQuery.trim())}`);
+    } else {
+      router.push(`/student/tests?search=${encodeURIComponent(localQuery.trim())}`);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setLocalQuery('');
+    if (onSearchChange) onSearchChange('');
+  };
+
+  const handleSelectTag = (tag: string) => {
+    setLocalQuery(tag);
+    if (onSearchChange) onSearchChange(tag);
+    setIsSearchOpen(true);
   };
 
   // Render Category Icon with refined color styling
@@ -173,8 +341,8 @@ export default function TopHeader({
   return (
     <>
       <header className="flex items-center justify-between gap-2 sm:gap-4 py-1 select-none font-sans">
-        {/* Left: Mobile menu toggle + Search Bar */}
-        <div className="flex items-center gap-1.5 sm:gap-3 flex-1 max-w-2xl min-w-0">
+        {/* Left: Mobile menu toggle + Interactive Live Search Bar */}
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-1 max-w-2xl min-w-0" ref={searchRef}>
           {onOpenMobileMenu && (
             <button
               type="button"
@@ -187,14 +355,314 @@ export default function TopHeader({
           )}
 
           <div className="relative w-full min-w-0">
-            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Cari ujian / materi..."
-              value={searchValue}
-              onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-              className="w-full pl-8 sm:pl-11 pr-2.5 sm:pr-4 py-1.5 sm:py-2.5 rounded-full bg-[#F4F6F9] border border-slate-200/70 text-xs sm:text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
-            />
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+              
+              <input
+                type="text"
+                placeholder="Cari ujian / materi..."
+                value={localQuery}
+                onChange={(e) => handleInputChange(e.target.value)}
+                onFocus={() => setIsSearchOpen(true)}
+                className="w-full pl-8 sm:pl-11 pr-8 sm:pr-10 py-1.5 sm:py-2.5 rounded-full bg-[#F4F6F9] border border-slate-200/70 text-xs sm:text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0284C7] focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
+              />
+
+              {localQuery.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 absolute right-2 sm:right-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors cursor-pointer"
+                  title="Hapus pencarian"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </form>
+
+            {/* Live Interactive Search Results Popover */}
+            {isSearchOpen && (
+              <div className="absolute top-full left-0 mt-2 w-full min-w-[300px] sm:min-w-[480px] max-w-[560px] bg-white rounded-2xl sm:rounded-[22px] shadow-2xl border border-slate-200/90 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 font-sans">
+                
+                {/* Search Header Info */}
+                <div className="px-4 py-2.5 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0B192C] text-white flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5 text-cyan-300" />
+                    <span className="text-xs font-bold tracking-tight">
+                      {queryTrimmed ? `Hasil Pencarian: "${localQuery}"` : 'Pencarian Cepat & Rekomendasi'}
+                    </span>
+                  </div>
+                  {queryTrimmed && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-cyan-100 backdrop-blur-xs">
+                      {totalResultsCount} Ditemukan
+                    </span>
+                  )}
+                </div>
+
+                {/* Popover Content Scroll Area */}
+                <div className="max-h-[380px] sm:max-h-[420px] overflow-y-auto divide-y divide-slate-100 p-2">
+                  
+                  {/* Case 1: Empty Query - Show Recommended Tags & Quick Shortcuts */}
+                  {!queryTrimmed && (
+                    <div className="space-y-3.5 p-2">
+                      {/* Popular Tags */}
+                      <div>
+                        <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2 px-1">
+                          Paling Sering Dicari
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {POPULAR_SEARCH_TAGS.map((tag) => (
+                            <button
+                              key={tag}
+                              type="button"
+                              onClick={() => handleSelectTag(tag)}
+                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-[#0284C7] hover:border-sky-200 border border-slate-200/60 transition-all cursor-pointer flex items-center gap-1.5"
+                            >
+                              <Search className="w-3 h-3 text-slate-400" />
+                              <span>{tag}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Quick Shortcuts */}
+                      <div>
+                        <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2 px-1">
+                          Akses & Navigasi Cepat
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                          {QUICK_SHORTCUTS.slice(0, 4).map((s) => {
+                            const IconComponent = s.icon;
+                            return (
+                              <Link
+                                key={s.href}
+                                href={s.href}
+                                onClick={() => setIsSearchOpen(false)}
+                                className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200/70 transition-all group"
+                              >
+                                <div className="w-7 h-7 rounded-lg bg-sky-100 text-[#0284C7] group-hover:bg-[#0284C7] group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                                  <IconComponent className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-bold text-slate-800 group-hover:text-[#0284C7] truncate">
+                                    {s.title}
+                                  </p>
+                                  <p className="text-[10px] text-slate-500 truncate">
+                                    {s.subtitle}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Case 2: Query has matches */}
+                  {queryTrimmed && totalResultsCount > 0 && (
+                    <div className="space-y-3 p-1">
+                      {/* Matching Tests Group */}
+                      {matchingTests.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between px-2 pt-1 pb-1">
+                            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                              <FileCheck2 className="w-3 h-3 text-[#0284C7]" />
+                              <span>Paket Ujian Marlins ({matchingTests.length})</span>
+                            </span>
+                            <Link
+                              href={`/student/tests?search=${encodeURIComponent(queryTrimmed)}`}
+                              onClick={() => setIsSearchOpen(false)}
+                              className="text-[10px] font-bold text-[#0284C7] hover:underline"
+                            >
+                              Lihat Semua
+                            </Link>
+                          </div>
+
+                          <div className="space-y-1">
+                            {matchingTests.map((t) => {
+                              const isTest1 = t.test_number === 1;
+                              const testTitle = (t.test_name || `Marlins Test ${t.test_number}`).replace(/marlint/gi, 'Marlins');
+
+                              return (
+                                <Link
+                                  key={t.id || t.test_number}
+                                  href={`/student/test/${t.test_number}`}
+                                  onClick={() => setIsSearchOpen(false)}
+                                  className="flex items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200/80 transition-all group"
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#0284C7] to-[#0369A1] text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-2xs">
+                                      #{t.test_number}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-bold text-slate-900 group-hover:text-[#0284C7] truncate">
+                                        {testTitle}
+                                      </p>
+                                      <p className="text-[10px] text-slate-500 truncate">
+                                        {t.category || t.description || 'Paket asesmen bahasa Inggris maritim'}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div className="shrink-0 flex items-center gap-2">
+                                    {t.is_free || isTest1 ? (
+                                      <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                                        Gratis
+                                      </span>
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/70">
+                                        Rp 49.000
+                                      </span>
+                                    )}
+                                    <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-all" />
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Matching Articles Group */}
+                      {matchingArticles.length > 0 && (
+                        <div className="space-y-1 pt-2 border-t border-slate-100">
+                          <div className="flex items-center justify-between px-2 pt-1 pb-1">
+                            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                              <BookOpen className="w-3 h-3 text-indigo-600" />
+                              <span>Materi & Modul Pembelajaran ({matchingArticles.length})</span>
+                            </span>
+                            <Link
+                              href={`/student/articles?search=${encodeURIComponent(queryTrimmed)}`}
+                              onClick={() => setIsSearchOpen(false)}
+                              className="text-[10px] font-bold text-[#0284C7] hover:underline"
+                            >
+                              Lihat Semua
+                            </Link>
+                          </div>
+
+                          <div className="space-y-1">
+                            {matchingArticles.map((a) => (
+                              <Link
+                                key={a.id}
+                                href={`/student/articles`}
+                                onClick={() => setIsSearchOpen(false)}
+                                className="flex items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200/80 transition-all group"
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200/60 flex items-center justify-center shrink-0">
+                                    <BookOpen className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-bold text-slate-900 group-hover:text-[#0284C7] truncate">
+                                      {a.title}
+                                    </p>
+                                    <p className="text-[10px] text-slate-500 truncate">
+                                      {a.category} • {a.summary || 'Panduan bahasa Inggris maritim'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-all shrink-0" />
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Matching Quick Shortcuts Group */}
+                      {matchingShortcuts.length > 0 && (
+                        <div className="space-y-1 pt-2 border-t border-slate-100">
+                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 px-2">
+                            <Sparkles className="w-3 h-3 text-amber-500" />
+                            <span>Aksi & Fitur Cepat ({matchingShortcuts.length})</span>
+                          </span>
+
+                          <div className="space-y-1">
+                            {matchingShortcuts.map((s) => {
+                              const IconComponent = s.icon;
+                              return (
+                                <Link
+                                  key={s.href}
+                                  href={s.href}
+                                  onClick={() => setIsSearchOpen(false)}
+                                  className="flex items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-sky-50/70 border border-transparent hover:border-sky-200/80 transition-all group"
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60 flex items-center justify-center shrink-0">
+                                      <IconComponent className="w-4 h-4" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-bold text-slate-900 group-hover:text-[#0284C7] truncate">
+                                        {s.title}
+                                      </p>
+                                      <p className="text-[10px] text-slate-500 truncate">
+                                        {s.subtitle}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-slate-100 text-slate-600">
+                                    {s.badge}
+                                  </span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Case 3: Zero results */}
+                  {queryTrimmed && totalResultsCount === 0 && (
+                    <div className="py-8 px-4 text-center space-y-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <Search className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">
+                          Tidak ada hasil untuk &quot;{localQuery}&quot;
+                        </p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          Coba cari dengan kata kunci lain seperti &quot;Test 1&quot;, &quot;SMCP&quot;, &quot;Housekeeping&quot;, atau &quot;Token&quot;.
+                        </p>
+                      </div>
+                      <div className="pt-1 flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleClearSearch}
+                          className="px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+                        >
+                          Hapus Kata Kunci
+                        </button>
+                        <Link
+                          href="/student/tests"
+                          onClick={() => setIsSearchOpen(false)}
+                          className="px-3.5 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#0284C7] to-[#0369A1] shadow-xs hover:opacity-95 transition-opacity"
+                        >
+                          Buka Katalog Ujian
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Search Footer Action */}
+                {queryTrimmed && (
+                  <div className="p-2.5 bg-[#F8FAFC] border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500">
+                      Tekan <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700 font-mono text-[10px] shadow-2xs">Enter ↵</kbd> untuk hasil lengkap
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleSearchSubmit()}
+                      className="font-bold text-[#0284C7] hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Cari di Katalog</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

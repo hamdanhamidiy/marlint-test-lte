@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ShieldCheck,
   Search,
@@ -20,13 +21,21 @@ import { MarlintTest } from '@/lib/supabase/types';
 import { formatPriceIDR } from '@/lib/utils';
 import { getUserUnlockedTests } from '@/lib/entitlements';
 
-export default function StudentTestsCatalogPage() {
+function TestsCatalogContent() {
+  const searchParams = useSearchParams();
   const { user, profile, isSuperAdmin, isInstructor } = useAuth();
   const [tests, setTests] = useState<MarlintTest[]>([]);
   const [entitlements, setEntitlements] = useState<Set<number>>(new Set([1]));
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || searchParams.get('q') || '');
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'unlocked' | 'fb' | 'housekeeping' | 'culinary'>('all');
+
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('q');
+    if (q !== null && q !== undefined) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
 
   const isStaff = isSuperAdmin || isInstructor || profile?.role === 'admin' || profile?.role === 'super_admin' || profile?.role === 'instructor';
 
@@ -326,5 +335,22 @@ export default function StudentTestsCatalogPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function StudentTestsCatalogPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-xs space-y-2.5">
+          <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center mx-auto animate-pulse">
+            <FileCheck2 className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-700">Memuat katalog ujian...</p>
+        </div>
+      }
+    >
+      <TestsCatalogContent />
+    </Suspense>
   );
 }

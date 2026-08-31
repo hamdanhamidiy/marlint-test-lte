@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   BookOpen,
   Clock,
@@ -132,11 +133,19 @@ Peralatan wajib standar IMO SOLAS:
   },
 ];
 
-export default function StudentArticlesPage() {
+function ArticlesContent() {
+  const searchParams = useSearchParams();
   const [articles, setArticles] = useState<Article[]>(DEFAULT_ARTICLES);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'radio' | 'vocab' | 'grammar' | 'safety'>('all');
+
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('q');
+    if (q !== null && q !== undefined) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     async function loadArticles() {
@@ -392,5 +401,22 @@ export default function StudentArticlesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function StudentArticlesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center bg-white border border-slate-200/90 rounded-[28px] text-slate-400 text-xs shadow-xs space-y-2.5">
+          <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto animate-pulse">
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-700">Memuat materi maritim...</p>
+        </div>
+      }
+    >
+      <ArticlesContent />
+    </Suspense>
   );
 }
